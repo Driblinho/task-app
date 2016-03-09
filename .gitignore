@@ -36,6 +36,7 @@ buildNumber.properties
 
 ## File-based project format:
 *.iws
+*.dia.autosave
 
 ## Plugin-specific files:
 
