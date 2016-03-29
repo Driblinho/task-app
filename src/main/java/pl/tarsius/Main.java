@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import pl.tarsius.database.SqlPrev;
 
 import java.io.IOException;
 
@@ -15,10 +16,15 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("sample.fxml"));
-        Scene scene = new Scene(root, 300, 275);
 
-        primaryStage.setTitle("FXML Welcome");
+        //InitializeConnection in = new InitializeConnection();
+        //SqlPrev sqlPrev = new SqlPrev();
+        //sqlPrev.getUsers();
+        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("view/startup/welcome.fxml"));
+
+        Scene scene = new Scene(root, 800, 600);
+
+        primaryStage.setTitle("Task App");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
