@@ -11,7 +11,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="224.0" prefWidth="550.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.tarsius.controller.startup.LogInController" >
+<?import impl.org.controlsfx.skin.DecorationPane?>
+<DecorationPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="224.0" prefWidth="550.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.tarsius.controller.startup.LogInController" >
    <children>
       <VBox alignment="TOP_CENTER" prefHeight="224.0" prefWidth="550.0">
          <children>
@@ -55,4 +56,4 @@
          </padding>
       </VBox>
    </children>
-</AnchorPane>
+</DecorationPane>

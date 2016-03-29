@@ -1,5 +1,6 @@
 package pl.tarsius.controller.startup;
 
+import impl.org.controlsfx.skin.DecorationPane;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Tab;
@@ -14,7 +15,7 @@ import java.util.ResourceBundle;
  * Created by Ireneusz Kuliga on 25.03.16.
  */
 public class StartupController implements Initializable {
-    @FXML private AnchorPane logIn;
+    @FXML private DecorationPane logIn;
     @FXML private LogInController logInController;
     @FXML private ForgotPasswordController forgotPasswordController;
     @FXML private AnchorPane forgotPassword;

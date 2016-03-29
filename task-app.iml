@@ -16,7 +16,6 @@
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-classic:1.1.6" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-core:1.1.6" level="project" />
     <orderEntry type="library" name="Maven: commons-dbutils:commons-dbutils:1.6" level="project" />
-    <orderEntry type="library" name="Maven: com.dooapp.fxform2:core:8.0.12" level="project" />
-    <orderEntry type="library" name="Maven: javax.validation:validation-api:1.1.0.Final" level="project" />
+    <orderEntry type="library" name="Maven: org.controlsfx:controlsfx:8.40.10" level="project" />
   </component>
 </module>
