@@ -17,24 +17,14 @@ import java.util.ResourceBundle;
  * Created by Ireneusz Kuliga on 25.03.16.
  */
 public class ForgotPasswordController implements Initializable {
-    @FXML
-    public Button cancel;
-    @FXML
-    private AnchorPane content;
+    @FXML private Button cancel;
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        /*
-        cancel.setOnAction(event -> {
-            content.getChildren().clear();
-            try {
-                content.getChildren().setAll((Node) FXMLLoader.load(getClass().getClassLoader().getResource("view/startup/form/login.fxml")));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });*/
 
     }
 
-
+    public Button getCancel() {
+        return cancel;
+    }
 }

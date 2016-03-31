@@ -27,6 +27,7 @@ public class Main extends Application {
         primaryStage.setTitle("Task App");
         primaryStage.setScene(scene);
         primaryStage.show();
+
     }
 
 
