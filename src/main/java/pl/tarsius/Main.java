@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 import org.datafx.controller.flow.Flow;
 import org.datafx.controller.flow.FlowException;
 import org.slf4j.Logger;
-import pl.tarsius.controller.startup.StartupController;
+import pl.tarsius.controller.StartupController;
 import pl.tarsius.util.gui.ResponsiveDesign;
 
 public class Main extends Application {
