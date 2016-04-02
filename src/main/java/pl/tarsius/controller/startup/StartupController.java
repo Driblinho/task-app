@@ -16,17 +16,8 @@ import javax.annotation.PostConstruct;
 /**
  * Created by Ireneusz Kuliga on 25.03.16.
  */
-@FXMLController("/view/startup/welcome.fxml")
+@FXMLController(value = "/view/startup/welcome.fxml", title = "TaskApp")
 public class StartupController {
-//
-//    @FXML private BorderPane body;
-//    @FXML private DecorationPane logIn;
-//    @FXML private AnchorPane forgotPassword;
-//    @FXML private Tab logInTab;
-//    @FXML private ImageView logo;
-
-
-
 
     @FXML
     @ActionTrigger("showForgetForm")
