@@ -1,35 +1,34 @@
 package pl.tarsius.controller.startup;
 
-import javafx.application.Application;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import org.controlsfx.control.PopOver;
-import org.controlsfx.validation.ValidationMessage;
 import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
-import org.controlsfx.validation.decoration.ValidationDecoration;
+import pl.tarsius.controller.Controller;
 import pl.tarsius.util.validator.CustomValidator;
 
 import java.net.URL;
-import java.util.Iterator;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by Ireneusz Kuliga on 25.03.16.
  */
-public class LogInController implements Initializable {
+public class LogInController extends Controller {
     @FXML private Hyperlink forgotPassword;
     @FXML private Button logIn;
     @FXML private TextField logInEmail;
     @FXML private TextField logInPassword;
     private ValidationSupport validationSupport;
+
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         validationSupport = new ValidationSupport();
+
 
         //Stowrzenie Validator dla pola logInEmail
         Validator validatorsEmail = Validator.combine(
@@ -49,14 +48,22 @@ public class LogInController implements Initializable {
 
 
         logIn.setOnAction(event -> {
-            /*
-            Iterator<ValidationMessage> msg = validationSupport.getValidationResult().getMessages().iterator();
-            while (msg.hasNext()) {
-                System.out.println(msg.next().getText());
-            }*/
+
+            //((StackPane)ApplicationContext.getInstance().getRegisteredObject("loadingOverlay")).setVisible(true);
+            setLoading(true);
+            Timer t = new Timer();
+            t.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    setLoading(false);
+                    t.cancel();
+                }
+            }, 2000);
+
             if(validationSupport.isInvalid()) {
                 validationSupport.errorDecorationEnabledProperty();
                 validationSupport.initInitialDecoration();
+
             }
 
 
@@ -64,6 +71,7 @@ public class LogInController implements Initializable {
 
 
     }
+
 
     public Hyperlink getForgotPassword() {
         return forgotPassword;

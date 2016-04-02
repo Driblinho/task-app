@@ -3,14 +3,18 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
-
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.tarsius.controller.startup.StartupController">
-   <top>
-      <ImageView fitHeight="70.0" fitWidth="299.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
+<BorderPane fx:id="body" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.tarsius.controller.startup.StartupController">
+    <top>
+        <ImageView fx:id="logo" fitHeight="116.0" fitWidth="200.0" pickOnBounds="true">
+            <image>
+                <Image url="@/assets/img/login_logo.png" />
+            </image>
+        </ImageView>
    </top>
    <center>
        <fx:define>
@@ -19,7 +23,7 @@
        </fx:define>
       <TabPane prefHeight="306.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
-          <Tab fx:id="logInTab" text="Logowanie" >
+          <Tab fx:id="logInTab" text="Logowanie">
               <content>
                   <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
                       <fx:include fx:id="logIn" source="form/login.fxml" />
