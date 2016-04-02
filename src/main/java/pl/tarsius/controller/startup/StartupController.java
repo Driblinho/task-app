@@ -2,62 +2,104 @@ package pl.tarsius.controller.startup;
 
 import impl.org.controlsfx.skin.DecorationPane;
 import javafx.fxml.FXML;
-import javafx.scene.control.Tab;
-import javafx.scene.image.ImageView;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
+import org.controlsfx.validation.ValidationSupport;
+import org.controlsfx.validation.Validator;
 import org.datafx.controller.FXMLController;
-import org.datafx.controller.context.ApplicationContext;
-import pl.tarsius.controller.Controller;
+import org.datafx.controller.flow.action.ActionMethod;
+import org.datafx.controller.flow.action.ActionTrigger;
+import pl.tarsius.util.validator.CustomValidator;
 
-import java.net.URL;
-import java.util.ResourceBundle;
+import javax.annotation.PostConstruct;
 
 /**
  * Created by Ireneusz Kuliga on 25.03.16.
  */
-@FXMLController("view/startup/welcome.fxml")
-public class StartupController extends Controller {
-    @FXML private BorderPane body;
-    @FXML private DecorationPane logIn;
-    @FXML private LogInController logInController;
-    @FXML private ForgotPasswordController forgotPasswordController;
-    @FXML private AnchorPane forgotPassword;
+@FXMLController("/view/startup/welcome.fxml")
+public class StartupController {
+//
+//    @FXML private BorderPane body;
+//    @FXML private DecorationPane logIn;
+//    @FXML private AnchorPane forgotPassword;
+//    @FXML private Tab logInTab;
+//    @FXML private ImageView logo;
+
+
+
+
+    @FXML
+    @ActionTrigger("showForgetForm")
+    private Hyperlink forgotPassword;
+    @FXML
+    @ActionTrigger("showLogInForm")
+    private Button cancel;
+
+    @FXML
+    @ActionTrigger("validateLogin")
+    private Button logIn;
+
+    @FXML private DecorationPane logInForm;
+    @FXML private AnchorPane forgotPasswordForm;
+
+    @FXML private TextField logInEmail;
+    @FXML private PasswordField logInPassword;
+
     @FXML private Tab logInTab;
-    @FXML private ImageView logo;
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
 
-        logInController.getForgotPassword().setOnAction(event -> {
-            logInTab.setText("Odzyskiwanie hasła");
-            System.out.println(ApplicationContext.getInstance().getRegisteredObject("User"));
-            VBox vb = (VBox) logIn.getParent();
-            vb.getChildren().clear();
-            vb.getChildren().addAll(forgotPassword);
-        });
+    private ValidationSupport validationSupport;
 
 
-        forgotPasswordController.getCancel().setOnAction(event -> {
-            logInTab.setText("Logowanie");
-            VBox vb = (VBox) forgotPassword.getParent();
-            vb.getChildren().clear();
-            vb.getChildren().addAll(logIn);
-        });
+    @PostConstruct
+    public void init() {
+
+        validationSupport = new ValidationSupport();
+
+        //Stowrzenie Validator dla pola logInEmail
+        Validator validatorsEmail = Validator.combine(
+                Validator.createEmptyValidator("Email jest wymagany"),
+                CustomValidator.createMaxSizeValidator("Maksymalnie 10 znaków", 10),
+                CustomValidator.createEmailValidator("Nieprawidłowy email")
+        );
+
+        //Stworzenie Validatora dla pola logInPassword
+        Validator validatorsPass = Validator.combine(
+                Validator.createEmptyValidator("Hasło jest wymagane"),
+                CustomValidator.createMinSizeValidator("Minimalnie 6 znaków", 6)
+        );
+
+        validationSupport.registerValidator(logInEmail, true, validatorsEmail);
+        validationSupport.registerValidator(logInPassword, true, validatorsPass);
 
 
-
-
-    }
-    @Override
-    public void start() {
-
-        //Skalowanie baneru startowego
-        logo.setFitWidth(logo.getScene().getWidth());
-        logo.getScene().widthProperty().addListener((observable, oldValue, newValue) -> {
-            logo.setFitWidth(newValue.doubleValue());
-        });
 
     }
+
+    @ActionMethod("showForgetForm")
+    public void showForgetForm() {
+        logInForm.setVisible(false);
+        forgotPasswordForm.setVisible(true);
+        logInTab.setText("Odzyskiwanie hasła");
+    }
+
+    @ActionMethod("showLogInForm")
+    public void showLogInForm() {
+        logInForm.setVisible(true);
+        forgotPasswordForm.setVisible(false);
+        logInTab.setText("Logowanie");
+    }
+
+    @ActionMethod("validateLogin")
+    public void validateLogin() {
+        if(validationSupport.isInvalid()) {
+            validationSupport.errorDecorationEnabledProperty();
+            validationSupport.initInitialDecoration();
+
+        }
+    }
+
+
+
+
 
 }
