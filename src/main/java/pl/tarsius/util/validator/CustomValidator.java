@@ -1,8 +1,11 @@
 package pl.tarsius.util.validator;
 
+import javafx.scene.control.TextField;
 import org.controlsfx.validation.Severity;
 import org.controlsfx.validation.ValidationResult;
 import org.controlsfx.validation.Validator;
+
+import java.util.ArrayList;
 
 
 /**
@@ -76,6 +79,59 @@ public class CustomValidator {
     public static Validator<String> createMinSizeValidator(String msg, int minSize) {
         return createMinSizeValidator(msg, minSize, Severity.ERROR);
     }
+
+    public static Validator<String> createFirstNameValidator(String msg, Severity severity) {
+        return Validator.createRegexValidator(msg, "[A-Z][a-zA-Z]*", severity);
+    }
+
+    public static Validator<String> createFirstNameValidator(String msg) {
+        return Validator.createRegexValidator(msg, "[A-Z][a-zA-Z]*", Severity.ERROR);
+    }
+
+    public static Validator<String> createLastNameValidator(String msg, Severity severity) {
+        return Validator.createRegexValidator(msg, "^\\p{L}+[\\p{L}\\p{Z}\\p{P}]{0,}", severity);
+    }
+
+    public static Validator<String> createLastNameValidator(String msg) {
+        return createLastNameValidator(msg,Severity.ERROR);
+    }
+
+    public static Validator<String> createPhoneValidator(String msg, Severity severity) {
+        return Validator.createRegexValidator(msg, "^\\+(?:[0-9] ?){6,14}[0-9]$", severity);
+    }
+
+    public static Validator<String> createPhoneValidator(String msg) {
+        return createPhoneValidator(msg,Severity.ERROR);
+    }
+
+    public static Validator<String> createPESELValidator(String msg, Severity severity) {
+        return (control, value) -> {
+            PeselValidator peselValidator = new PeselValidator(value);
+            return ValidationResult.fromMessageIf(control,msg,severity,!peselValidator.isValid());
+        };
+    }
+
+    public static Validator<String> createPESELValidator(String msg) {
+        return createPESELValidator(msg,Severity.ERROR);
+    }
+
+    public static Validator<String> createCityValidator(String msg, Severity severity) {
+        return Validator.createRegexValidator(msg, "^([a-zA-Z\\u0080-\\u024F]+(?:(\\. )|-| |'))*[a-zA-Z\\u0080-\\u024F]*$", severity);
+    }
+
+    public static Validator<String> createCityValidator(String msg) {
+        return createCityValidator(msg,Severity.ERROR);
+    }
+
+    public static Validator<String> createZpiCodeValidator(String msg, Severity severity) {
+        return Validator.createRegexValidator(msg, "[0-9]{2}-[0-9]{3}", severity);
+    }
+
+    public static Validator<String> createZpiCodeValidator(String msg) {
+        return createZpiCodeValidator(msg,Severity.ERROR);
+    }
+
+
 
 
 }

@@ -1,17 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Hyperlink?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-
 <?import impl.org.controlsfx.skin.DecorationPane?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
 <DecorationPane fx:id="logInForm" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="224.0" prefWidth="550.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1"  >
    <children>
       <VBox alignment="TOP_CENTER" prefHeight="224.0" prefWidth="550.0">
@@ -23,7 +16,7 @@
             </Label>
             <HBox alignment="CENTER" prefHeight="42.0" prefWidth="550.0">
                <children>
-                  <TextField fx:id="logInEmail">
+                  <TextField fx:id="logInEmail" promptText="E-mail">
                      <opaqueInsets>
                         <Insets />
                      </opaqueInsets>
@@ -31,7 +24,7 @@
                         <Insets right="5.0" />
                      </HBox.margin>
                   </TextField>
-                  <PasswordField fx:id="logInPassword">
+                  <PasswordField fx:id="logInPassword" promptText="Hasło">
                      <opaqueInsets>
                         <Insets />
                      </opaqueInsets>
