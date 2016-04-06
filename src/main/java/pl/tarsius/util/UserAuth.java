@@ -11,10 +11,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Ireneusz Kuliga on 29.03.16.
@@ -27,32 +24,47 @@ public class UserAuth {
     }
 
 
-    /**
-     * Metoda do autoryzacji użytkowników
+     /**
      *
      * @param password
      * @param email
-     * @return int {1-Autoryzacja pomyślna}
+     * @return
      */
-    public static int authUser(String password, String email) {
+    public static Object[] authUser(String password, String email) {
+        Object [] value = new Object[2];
+        value[0] = false;
         String sql = "SELECT * FROM `Uzytkownicy` WHERE `email` = ?";
         String dbHash="";
-        Connection connection = new InitializeConnection().connect();
-        System.out.println(email);
+
         try {
+            Connection connection = new InitializeConnection().connect();
             PreparedStatement preparedStatement = (PreparedStatement) connection.prepareStatement(sql);
             preparedStatement.setString(1, email.trim());
-            System.out.println(preparedStatement.asSql());
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
-            if(!resultSet.getBoolean("aktywny")) return -1;
+            if(resultSet.getFetchSize()==0) {
+                value[1] = "Brak Użytkownika w Javie";
+                return value;
+            }
+            if(!resultSet.getBoolean("aktywny")) {
+                value[1] = "Użytkowniej nie jest aktywny";
+                return value;
+            };
             Timestamp lock = resultSet.getTimestamp("blokada");
-            if(lock!=null && lock.before(new Timestamp(new Date().getTime()))) return -2;
+            if(lock!=null && lock.before(new Timestamp(new Date().getTime()))) {
+                value[1] = "Użytkownik zablokowany do: "+lock.toString();
+                return value;
+            }
             dbHash = resultSet.getString("haslo");
         } catch (SQLException e) {
-            e.printStackTrace();
+            value[1] = e.getMessage();
+            return value;
         }
-        return BCrypt.checkpw(password, dbHash)?1:-3;
+        if( BCrypt.checkpw(password, dbHash)) {
+            return new Object[] {true,"Zalogowano"};
+        }
+        value[1] = "NIepoprawne hasło";
+        return value;
     }
 
     public static Object[] createUser(User userData) {
@@ -60,9 +72,10 @@ public class UserAuth {
         status[0] = false;
         List<String> errMsg = new ArrayList<>();
         String sql = "INSERT INTO `Uzytkownicy` (`email`, `imie`, `nazwisko`, `haslo`, `typ`, `data_urodzenia`, `telefon`, `kod_pocztowy`, `miasto`, `ulica`, `aktywny`, `PESEL`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
-        Connection connection = new InitializeConnection().connect();
+        Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
+            connection = new InitializeConnection().connect();
             preparedStatement = (PreparedStatement) connection.prepareStatement(sql);
             int i = 1;
             preparedStatement.setString(i++, userData.getEmail());
@@ -79,7 +92,7 @@ public class UserAuth {
             preparedStatement.setString(i++, userData.getPesel());
             int u = preparedStatement.executeUpdate();
             status[0] = u>0;
-
+            
         } catch (SQLException e) {
             errMsg.add(e.getLocalizedMessage());
 

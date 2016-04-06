@@ -45,15 +45,10 @@ public class InitializeConnection {
         }
     }
 
-    public Connection connect() {
+    public Connection connect() throws SQLException {
         loger.info("Connect to Database");
-        try {
-            connection = DriverManager.getConnection(jdbcUrl, username, password);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            return connection;
-        }
+        return connection = DriverManager.getConnection(jdbcUrl, username, password);
+
     }
 
 }
