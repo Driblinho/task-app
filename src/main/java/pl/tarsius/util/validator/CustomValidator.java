@@ -131,6 +131,13 @@ public class CustomValidator {
         return createZpiCodeValidator(msg,Severity.ERROR);
     }
 
+    public static Validator<String> createPasswordValidator(String msg, Severity severity) {
+        return Validator.createRegexValidator(msg, "^[^\\s]+$", severity);
+    }
+
+    public static Validator<String> createPasswordValidator(String msg) {
+        return createPasswordValidator(msg,Severity.ERROR);
+    }
 
 
 
