@@ -22,7 +22,7 @@ public class SqlPrev extends InitializeConnection {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            DbUtils.closeQuietly(getConnection(),statement,resultSet);
+            //DbUtils.closeQuietly(getConnection(),statement,resultSet);
         }
 
 

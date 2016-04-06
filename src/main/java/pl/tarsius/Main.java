@@ -7,6 +7,7 @@ import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import org.datafx.controller.context.ApplicationContext;
 import org.datafx.controller.flow.Flow;
 import org.datafx.controller.flow.FlowException;
 import org.slf4j.Logger;
@@ -24,10 +25,14 @@ public class Main extends Application {
         loger = loger = LoggerFactory.getLogger(getClass());
         primaryStage.setWidth(800);
         primaryStage.setHeight(600);
-        new Flow(StartupController.class).startInStage(primaryStage);
+        Flow flow = new Flow(StartupController.class);
+        flow.startInStage(primaryStage);
         new ResponsiveDesign(primaryStage);
 
+    }
 
+    @Override
+    public void stop(){
     }
 
 
