@@ -63,6 +63,11 @@
             <artifactId>datafx-flow</artifactId>
             <version>8.0b5</version>
         </dependency>
+        <dependency>
+            <groupId>de.svenkubiak</groupId>
+            <artifactId>jBCrypt</artifactId>
+            <version>0.4.1</version>
+        </dependency>
     </dependencies>
 
 

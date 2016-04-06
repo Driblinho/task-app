@@ -8,14 +8,16 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Properties;
 
 
 /**
  * Created by Ireneusz Kuliga on 23.03.16.
  */
-public abstract class InitializeConnection {
+public class InitializeConnection {
 
     private Logger loger;
     private Connection connection;
@@ -54,7 +56,4 @@ public abstract class InitializeConnection {
         }
     }
 
-    public Connection getConnection() {
-        return connection;
-    }
 }
