@@ -26,24 +26,32 @@ public class UserAuth {
         return BCrypt.hashpw(password, BCrypt.gensalt(12));
     }
 
+
+    /**
+     * Metoda do autoryzacji użytkowników
+     *
+     * @param password
+     * @param email
+     * @return int {1-Autoryzacja pomyślna}
+     */
     public static int authUser(String password, String email) {
         String sql = "SELECT * FROM `Uzytkownicy` WHERE `email` = ?";
-
+        String dbHash="";
         Connection connection = new InitializeConnection().connect();
+        System.out.println(email);
         try {
             PreparedStatement preparedStatement = (PreparedStatement) connection.prepareStatement(sql);
-            preparedStatement.setString(1, email);
+            preparedStatement.setString(1, email.trim());
+            System.out.println(preparedStatement.asSql());
             ResultSet resultSet = preparedStatement.executeQuery();
-            resultSet.getFetchSize();
-            System.out.println();
-            boolean status = resultSet.getBoolean("aktywny");
-            if(!status) return -1;
-            if (resultSet.getTimestamp("blokada").before(new Timestamp(new Date().getTime()))) return -2;
-
+            resultSet.next();
+            if(!resultSet.getBoolean("aktywny")) return -1;
+            Timestamp lock = resultSet.getTimestamp("blokada");
+            if(lock!=null && lock.before(new Timestamp(new Date().getTime()))) return -2;
+            dbHash = resultSet.getString("haslo");
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        String dbHash = "HH";
         return BCrypt.checkpw(password, dbHash)?1:-3;
     }
 
