@@ -3,6 +3,7 @@ package pl.tarsius.util;
 import com.mysql.jdbc.PreparedStatement;
 import com.sun.jersey.api.client.ClientResponse;
 import org.apache.commons.dbutils.DbUtils;
+import org.datafx.controller.context.ApplicationContext;
 import org.mindrot.jbcrypt.BCrypt;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.User;
@@ -38,7 +39,7 @@ public class UserAuth {
         value[0] = false;
         String sql = "SELECT * FROM `Uzytkownicy` WHERE `email` = ?";
         String dbHash="";
-
+        User userModel = null;
         try {
             Connection connection = new InitializeConnection().connect();
             PreparedStatement preparedStatement = (PreparedStatement) connection.prepareStatement(sql);
@@ -59,11 +60,20 @@ public class UserAuth {
                 return value;
             }
             dbHash = resultSet.getString("haslo");
+
+            userModel = new User();
+            userModel.setAvatarId(resultSet.getString("avatar_id"));
+            userModel.setImie(resultSet.getString("imie"));
+            userModel.setNazwisko(resultSet.getString("nazwisko"));
+            userModel.setAvatarId(resultSet.getString("avatar_id"));
+            userModel.setEmail(resultSet.getString("email"));
+
         } catch (SQLException e) {
             value[1] = e.getMessage();
             return value;
         }
         if( BCrypt.checkpw(password, dbHash)) {
+            ApplicationContext.getInstance().register("userSession", userModel);
             return new Object[] {true,"Zalogowano"};
         }
         value[1] = "Niepoprawne hasło";

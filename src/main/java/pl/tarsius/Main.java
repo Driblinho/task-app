@@ -24,13 +24,13 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws FlowException {
 
+        ApplicationContext.getInstance().register("userSesion", null);
         loger = loger = LoggerFactory.getLogger(getClass());
         primaryStage.setWidth(1180);
-        primaryStage.setHeight(900);
+        primaryStage.setHeight(800);
         Flow flow = new Flow(StartupController.class);
         flow.startInStage(primaryStage);
-        //new ResponsiveDesign(primaryStage);
-        //System.out.println(UserAuth.genRecoveryToken());
+        new ResponsiveDesign(primaryStage);
     }
 
     @Override
