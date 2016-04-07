@@ -32,6 +32,7 @@ buildNumber.properties
 .mvn/timing.properties
 
 /src/main/resources/properties/database.properties
+/src/main/resources/properties/mail.properties
 # Mongo Explorer plugin:
 .idea/mongoSettings.xml
 
