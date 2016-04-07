@@ -12,6 +12,7 @@ import org.datafx.controller.flow.Flow;
 import org.datafx.controller.flow.FlowException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.tarsius.controller.HomeController;
 import pl.tarsius.controller.StartupController;
 import pl.tarsius.util.UserAuth;
 import pl.tarsius.util.gui.ResponsiveDesign;
@@ -26,9 +27,9 @@ public class Main extends Application {
         loger = loger = LoggerFactory.getLogger(getClass());
         primaryStage.setWidth(1170);
         primaryStage.setHeight(800);
-        Flow flow = new Flow(StartupController.class);
+        Flow flow = new Flow(HomeController.class);
         flow.startInStage(primaryStage);
-        new ResponsiveDesign(primaryStage);
+        //new ResponsiveDesign(primaryStage);
         //System.out.println(UserAuth.genRecoveryToken());
     }
 
