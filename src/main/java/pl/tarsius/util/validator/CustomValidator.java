@@ -81,11 +81,11 @@ public class CustomValidator {
     }
 
     public static Validator<String> createFirstNameValidator(String msg, Severity severity) {
-        return Validator.createRegexValidator(msg, "[A-Z][a-zA-Z]*", severity);
+        return Validator.createRegexValidator(msg, "^\\p{L}+[\\p{L}\\p{Z}\\p{P}]{0,}", severity);
     }
 
     public static Validator<String> createFirstNameValidator(String msg) {
-        return Validator.createRegexValidator(msg, "[A-Z][a-zA-Z]*", Severity.ERROR);
+        return createFirstNameValidator(msg,Severity.ERROR);
     }
 
     public static Validator<String> createLastNameValidator(String msg, Severity severity) {
