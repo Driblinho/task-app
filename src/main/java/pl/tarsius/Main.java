@@ -25,8 +25,8 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws FlowException {
 
         loger = loger = LoggerFactory.getLogger(getClass());
-        primaryStage.setWidth(1170);
-        primaryStage.setHeight(800);
+        primaryStage.setWidth(1180);
+        primaryStage.setHeight(900);
         Flow flow = new Flow(StartupController.class);
         flow.startInStage(primaryStage);
         //new ResponsiveDesign(primaryStage);
