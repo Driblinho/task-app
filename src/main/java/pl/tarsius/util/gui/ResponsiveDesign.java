@@ -1,8 +1,7 @@
 package pl.tarsius.util.gui;
 
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 /**
@@ -10,49 +9,44 @@ import javafx.stage.Stage;
  */
 public class ResponsiveDesign {
     private final Stage stage;
+    private final GridPane topMsgContent;
     private String startUpLogoName = "#logo";
     private String bodyBorderPaneName = "#body";
     private String loadingName = "#loading";
+    private String userBarName = "#userBar";
+    private String alertTopMsg = "#topMsgContent";
     private StackPane loadingStackPane;
     private BorderPane bodyBorderPane;
     private ImageView logoImageView;
+    private GridPane userBar;
     public ResponsiveDesign(Stage stage) {
         this.stage = stage;
         this.bodyBorderPane = (BorderPane) stage.getScene().lookup(bodyBorderPaneName);
         this.logoImageView = (ImageView) stage.getScene().lookup(startUpLogoName);
         this.loadingStackPane = (StackPane) stage.getScene().lookup(loadingName);
-        this.startUp();
+        this.userBar = (GridPane) stage.getScene().lookup(userBarName);
+        this.topMsgContent = (GridPane) stage.getScene().lookup(alertTopMsg);
     }
 
-    public void startUp() {
-
-        this.resizeStartUpLogoWidth(stage.getScene().getWidth());
-        this.resizeBodyWidth(stage.getScene().getWidth());
-        this.resizeBodyHeight(stage.getScene().getHeight());
-
-        stage.getScene().widthProperty().addListener((observable, oldValue, newValue) -> {
-            this.resizeStartUpLogoWidth(newValue.doubleValue());
-            this.resizeBodyWidth(newValue.doubleValue());
 
 
-        });
 
-        stage.getScene().heightProperty().addListener((observable, oldValue, newValue) -> {
-            this.resizeBodyHeight(newValue.doubleValue());
-        });
-
-    }
-
-    private void resizeBodyWidth(Double width) {
+    public void resizeBodyWidth(Double width) {
+        stage.getScene().getRoot().prefWidth(width);
+        resizeStartUpLogoWidth(width);
         if (bodyBorderPane != null) {
             bodyBorderPane.setPrefWidth(width);
         }
         if (loadingStackPane != null) {
             loadingStackPane.setPrefWidth(width);
         }
+        if(userBar != null ) {
+            userBar.setPrefWidth(width-220.0);
+        }
     }
 
-    private void resizeBodyHeight(Double height) {
+    public void resizeBodyHeight(Double height) {
+        stage.getScene().getRoot().prefHeight(height);
         if (bodyBorderPane !=null) {
             bodyBorderPane.setPrefHeight(height);
         }
@@ -64,6 +58,10 @@ public class ResponsiveDesign {
     private void resizeStartUpLogoWidth(Double width) {
         if (logoImageView!=null) {
             logoImageView.setFitWidth(width);
+        }
+        if(topMsgContent != null) {
+            topMsgContent.setPrefWidth(width);
+            System.out.println("WORK");
         }
     }
 

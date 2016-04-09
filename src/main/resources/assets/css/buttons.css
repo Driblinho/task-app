@@ -1,0 +1,35 @@
+.stock-button
+{
+    -fx-background-color: #01a4a4;
+    -fx-text-fill: #fff;
+    -fx-font-weight: bold;
+    -fx-font-size: 16;
+}
+.stock-button:hover{
+-fx-background-color: #00b0b0
+}
+
+.stock-button:pressed
+{
+     -fx-background-color: #019b9b;
+}
+
+.squareButton
+{
+    -fx-text-fill: #a19d9d;
+    -fx-font-weight: bold;
+    -fx-background-color: #fff;
+    -fx-background-radius: 0;
+    -fx-effect: dropshadow(three-pass-box, rgb(0,0,0,0.1), 4, 0, 1, 1);
+}
+
+.squareButton:hover
+{
+    -fx-background-color: #f8f8f8;
+}
+
+.squareButton:pressed
+{
+   -fx-background-color: #e54028;
+   -fx-text-fill: #fff;
+}

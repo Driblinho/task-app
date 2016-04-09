@@ -145,5 +145,9 @@ public class User {
         this.ulica = ulica;
     }
 
+    public String getAvatarUrl() {
+        return  (this.getAvatarId() !=null)?""+this.getAvatarId():"assets/img/avatar.png";
+    }
+
 
 }

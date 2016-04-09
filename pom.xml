@@ -92,6 +92,12 @@
             <version>1.4.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.guigarage</groupId>
+            <artifactId>flatter</artifactId>
+            <version>0.7</version>
+        </dependency>
+
     </dependencies>
 
 

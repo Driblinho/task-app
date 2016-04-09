@@ -14,24 +14,42 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.tarsius.controller.HomeController;
 import pl.tarsius.controller.StartupController;
-import pl.tarsius.util.UserAuth;
+import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.util.gui.ResponsiveDesign;
+
+import java.sql.SQLException;
 
 public class Main extends Application {
 
     @FXML private StackPane stackPane;
     private Logger loger;
     @Override
-    public void start(Stage primaryStage) throws FlowException {
+    public void start(Stage primaryStage) throws FlowException, SQLException {
+
+        loger = LoggerFactory.getLogger(getClass());
+
+
+        ApplicationContext.getInstance().register("connection", new InitializeConnection().connect());
 
         ApplicationContext.getInstance().register("userSesion", null);
-        loger = loger = LoggerFactory.getLogger(getClass());
-        primaryStage.setWidth(1180);
-        primaryStage.setHeight(800);
-        Flow flow = new Flow(StartupController.class);
-        flow.startInStage(primaryStage);
-        new ResponsiveDesign(primaryStage);
+
+
+        new Flow(StartupController.class).startInStage(primaryStage);
+        primaryStage.setWidth(1170.0);
+        primaryStage.setHeight(835.0);
+        primaryStage.getScene().heightProperty().addListener((observable, oldValue, newValue) -> {
+            new ResponsiveDesign(primaryStage).resizeBodyHeight(newValue.doubleValue());
+            loger.info("H"+newValue);
+        });
+
+        primaryStage.getScene().widthProperty().addListener((observable, oldValue, newValue) -> {
+            new ResponsiveDesign(primaryStage).resizeBodyWidth(newValue.doubleValue());
+            loger.info("W"+newValue);
+        });
+
+
     }
+
 
     @Override
     public void stop(){
@@ -41,4 +59,6 @@ public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
+
 }

@@ -5,6 +5,8 @@ import com.sun.jersey.api.client.ClientResponse;
 import org.apache.commons.dbutils.DbUtils;
 import org.datafx.controller.context.ApplicationContext;
 import org.mindrot.jbcrypt.BCrypt;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.User;
 
@@ -28,6 +30,8 @@ import java.util.*;
  */
 public class UserAuth {
 
+    private static Logger loger = LoggerFactory.getLogger(UserAuth.class);;
+    private static Connection connection;
 
     public static String genHash(String password) {
         return BCrypt.hashpw(password, BCrypt.gensalt(12));
@@ -38,7 +42,7 @@ public class UserAuth {
         Object [] value = new Object[2];
         value[0] = false;
         String sql = "SELECT * FROM `Uzytkownicy` WHERE `email` = ?";
-        String dbHash="";
+        String dbHash;
         User userModel = null;
         try {
             Connection connection = new InitializeConnection().connect();
@@ -60,7 +64,6 @@ public class UserAuth {
                 return value;
             }
             dbHash = resultSet.getString("haslo");
-
             userModel = new User();
             userModel.setAvatarId(resultSet.getString("avatar_id"));
             userModel.setImie(resultSet.getString("imie"));
@@ -69,7 +72,8 @@ public class UserAuth {
             userModel.setEmail(resultSet.getString("email"));
 
         } catch (SQLException e) {
-            value[1] = e.getMessage();
+            loger.debug(e.getMessage());
+            value[1] = "Problem z bazą danych";
             return value;
         }
         if( BCrypt.checkpw(password, dbHash)) {
@@ -85,7 +89,7 @@ public class UserAuth {
         status[0] = false;
         List<String> errMsg = new ArrayList<>();
         String sql = "INSERT INTO `Uzytkownicy` (`email`, `imie`, `nazwisko`, `haslo`, `typ`, `data_urodzenia`, `telefon`, `kod_pocztowy`, `miasto`, `ulica`, `aktywny`, `PESEL`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
-        Connection connection = null;
+        //Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
             connection = new InitializeConnection().connect();

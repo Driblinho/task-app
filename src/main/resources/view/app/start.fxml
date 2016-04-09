@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.control.BreadCrumbBar?>
+<?import java.net.URL?>
+<StackPane alignment="TOP_CENTER" prefHeight="800.0" prefWidth="1170.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <BorderPane fx:id="body" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1170.0">
+         <left>
+            <fx:include source="../sidebar.fxml" />
+         </left>
+         <center>
+            <VBox prefHeight="784.0" prefWidth="962.0" spacing="10.0">
+               <padding>
+                  <Insets left="10.0" top="10.0" />
+               </padding>
+               <children>
+                  <fx:include source="../userbar.fxml" />
+                  <BreadCrumbBar fx:id="breadCrumb" />
+
+               </children>
+            </VBox>
+         </center>
+      </BorderPane>
+      <fx:include source="../loading.fxml" />
+
+
+   </children>
+   <stylesheets>
+      <URL value="@../../assets/css/buttons.css" />
+      <URL value="@../../assets/css/main.css" />
+   </stylesheets>
+</StackPane>

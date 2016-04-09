@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+<children>
+   <GridPane visible="false" fx:id="topMsgContent" prefHeight="23.0" prefWidth="1170.0" style="-fx-background-color: rgba(153, 0, 0, 0.7);">
+      <columnConstraints>
+         <ColumnConstraints hgrow="ALWAYS" maxWidth="725.0" minWidth="10.0" percentWidth="50.0" prefWidth="484.0" />
+         <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="686.0" minWidth="10.0" percentWidth="50.0" prefWidth="686.0" />
+      </columnConstraints>
+      <rowConstraints>
+         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      </rowConstraints>
+      <children>
+         <Hyperlink fx:id="topMsgClose" focusTraversable="false" GridPane.columnIndex="1">
+            <graphic>
+               <ImageView fitHeight="25.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                     <Image url="@../assets/img/ico/close.png" />
+                  </image>
+               </ImageView>
+            </graphic>
+         </Hyperlink>
+         <Label fx:id="topMsg" text="Komunikat">
+            <font>
+               <Font name="System Bold" size="15.0" />
+            </font>
+            <padding>
+               <Insets left="10.0" />
+            </padding>
+         </Label>
+      </children>
+   </GridPane>
+</children>
+</AnchorPane>
