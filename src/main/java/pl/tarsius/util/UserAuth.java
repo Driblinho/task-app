@@ -122,7 +122,8 @@ public class UserAuth {
             status[0] = u>0;
             
         } catch (SQLIntegrityConstraintViolationException e) {
-            status[1] = "Email musi być unikalny";
+            status[1] = "Email i PESEL muszą być unikalne";
+            loger.debug(e.getMessage());
         } catch (SQLException e) {
             status[1] = "Błąd bazy danych";
             loger.debug(e.getMessage());
@@ -320,6 +321,7 @@ public class UserAuth {
         userModel.setMiasto(resultSet.getString("miasto"));
         userModel.setUlica(resultSet.getString("ulica"));
         userModel.setKodPocztowy(resultSet.getString("kod_pocztowy"));
+        userModel.setTyp(resultSet.getInt("typ"));
         userModel.setHaslo(resultSet.getString("haslo"));
         return userModel;
     }

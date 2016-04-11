@@ -171,7 +171,7 @@ public class MyProfileController extends BaseController {
         profileDataEmail.setText(user.getEmail());
         String ranga = "Pracownik";
         if(user.getTyp() == 3) {
-            ranga = "Administrator";
+            ranga = "Admin";
         } else if (user.getTyp() == 2) {
             ranga = "Kierownik";
         }
@@ -207,7 +207,7 @@ public class MyProfileController extends BaseController {
     }
 
     @ActionMethod("changeAvatar")
-    public void changeAvatar() {
+    public void changeAvatar() throws VetoException, FlowException {
         User user = (User) applicationContext.getRegisteredObject("userSession");
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
@@ -220,6 +220,7 @@ public class MyProfileController extends BaseController {
              Object[] userAuth= UserAuth.setAvatar(file.getAbsolutePath(), user.getUzytkownikId());
             if((boolean)userAuth[0]) {
                 new Alert(Alert.AlertType.INFORMATION,(String)userAuth[1]).show();
+                flowActionHandler.navigate(MyProfileController.class);
             } else {
                 new Alert(Alert.AlertType.ERROR,(String)userAuth[1]).show();
             }
