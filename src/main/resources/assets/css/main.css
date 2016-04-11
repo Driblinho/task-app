@@ -2,5 +2,51 @@
 .manageOptions > Label {-fx-padding: 0 0 0 2;}
 .manageOptions > Hyperlink > Glyph,.manageOptions > Hyperlink { -fx-text-fill: #414141;}
 .manageOptions:hover Hyperlink > Glyph,.manageOptions:hover > Hyperlink { -fx-text-fill: #fff;-fx-underline:false;}
+#profileCard Label {-fx-font-weight:Bold;-fx-font-size: 13;}
+
+.text-field {
+    -fx-background-color: #fff;
+    -fx-prompt-text-fill: rgba(97, 97, 97, 0.5) ;
+    -fx-effect: dropshadow(three-pass-box, rgb(0,0,0,0.1), 4, 0, 1, 1);
+    -fx-border-radius: 0 0 0 0;
+    -fx-background-radius: 0 0 0 0;
+}
+
+.searchInput {
+        -fx-background-color: #fff;
+        -fx-prompt-text-fill: rgba(97, 97, 97, 0.5);
+        -fx-effect: dropshadow(three-pass-box, rgb(0,0,0,0.0), 0, 0, 0, 0);
+        -fx-border-radius: 0 0 0 0;
+        -fx-background-radius: 0 0 0 0;
+}
+
+.combo-box .text-field:focused {
+    -fx-prompt-text-fill: transparent ;
+}
+
+.tab {
+-fx-padding: 0px 5px 2px 5px;
+-fx-background-insets: 0 -20 0 0;
+-fx-background-color: #fff;
+-fx-text-fill: #c4d8de;
+-fx-border-color:#01A4A4 transparent transparent transparent;
+-fx-border-width: 5;
+
+}
+.tab:selected {
+-fx-background-insets: 0 -20 0 0;
+-fx-border-color:#E54028 transparent transparent transparent;
+-fx-background-color: #F6F6F6;
+-fx-text-fill: #333333;
+-fx-focus-color: transparent;
+}
+.tab-pane .tab-header-area {
+    -fx-padding: 0 0 0 0;
+}
+.tab-pane *.tab-header-background {
+
+    -fx-background-color: -fx-outer-border, -fx-inner-border, derive(-fx-color, 100%);
+    -fx-effect: innershadow(two-pass-box , rgba(255,255,255,1) , 4, 0.0 , 0 , 0);
+}
 
 

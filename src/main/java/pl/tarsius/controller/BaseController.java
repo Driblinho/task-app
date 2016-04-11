@@ -7,6 +7,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import org.controlsfx.control.BreadCrumbBar;
@@ -41,14 +42,12 @@ public class BaseController {
     protected Hyperlink sideBarProject;
 
     @FXML protected Label sideBarProjectCount;
+    @FXML protected StackPane loading;
 
 
     public void setUserBar(User user) {
         userBarFullName.setText(user.getImie()+" "+user.getNazwisko());
         userBarAvatar.setFill(new ImagePattern(new Image(user.getAvatarUrl())));
-
-        //sideBarProjectCount.setText(""+99);
-
     }
 
 

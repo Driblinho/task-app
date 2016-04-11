@@ -2,7 +2,9 @@
 
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -53,18 +55,26 @@
                                  <children>
                                     <VBox alignment="TOP_CENTER" prefHeight="281.0" prefWidth="256.0" style="-fx-background-color: #fff;">
                                        <children>
-                                          <Circle fx:id="profileAvatar" fill="#1f93ff" radius="74.0" stroke="BLACK" strokeType="INSIDE" />
-                                          <Label fx:id="profileFullName" text="Jan Kowalski">
+                                          <Hyperlink fx:id="pickAvatar" focusTraversable="false">
+                                             <graphic>
+                                                <Circle fx:id="profileDataAvatar" accessibleRole="HYPERLINK" fill="#1f93ff" radius="74.0" stroke="BLACK" strokeType="INSIDE">
+                                                   <cursor>
+                                                      <Cursor fx:constant="HAND" />
+                                                   </cursor>
+                                                </Circle>
+                                             </graphic>
+                                          </Hyperlink>
+                                          <Label fx:id="profileDataFullName" text="Jan Kowalski">
                                              <font>
                                                 <Font name="System Bold" size="17.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="profileEmail" text="jankowlski@gmail.com">
+                                          <Label fx:id="profileDataEmail" text="jankowlski@gmail.com">
                                              <font>
                                                 <Font size="16.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="profileRanga" alignment="CENTER" prefHeight="39.0" prefWidth="118.0" style="-fx-background-color: #d69700;" text="Administrator" textFill="WHITE">
+                                          <Label fx:id="profileDataRanga" alignment="CENTER" prefHeight="39.0" prefWidth="118.0" style="-fx-background-color: #d69700;" text="Administrator" textFill="WHITE">
                                              <font>
                                                 <Font name="System Bold" size="16.0" />
                                              </font>
@@ -80,9 +90,27 @@
                         </VBox>
                         <StackPane GridPane.columnIndex="1">
                            <children>
-                              <Pane prefHeight="365.0" prefWidth="637.0">
+                              <Pane fx:id="profileEdit" layoutX="10.0" layoutY="10.0" prefHeight="365.0" prefWidth="637.0" visible="false">
                                  <children>
-                                    <AnchorPane fx:id="profileCard" layoutX="9.0" prefHeight="163.0" prefWidth="327.0" style="-fx-background-color: #fff;">
+                                    <AnchorPane layoutX="9.0" prefHeight="163.0" prefWidth="327.0">
+                                       <children>
+                                          <fx:include source="form/edituserdata.fxml" />
+                                       </children>
+                                    </AnchorPane>
+                                 </children>
+                              </Pane>
+                              <Pane fx:id="newPasswordForm" layoutX="10.0" layoutY="10.0" prefHeight="365.0" prefWidth="637.0" visible="false">
+                                 <children>
+                                    <AnchorPane layoutX="9.0" prefHeight="203.0" prefWidth="523.0">
+                                       <children>
+                                          <fx:include source="form/newpassword.fxml" />
+                                       </children>
+                                    </AnchorPane>
+                                 </children>
+                              </Pane>
+                              <Pane fx:id="profileCard" prefHeight="365.0" prefWidth="637.0">
+                                 <children>
+                                    <AnchorPane layoutX="9.0" prefHeight="312.0" prefWidth="327.0" style="-fx-background-color: #fff;">
                                        <children>
                                           <Label prefHeight="31.0" prefWidth="135.0" style="-fx-border-width: 5; -fx-border-color: transparent transparent transparent #01a4a4;" text="Pełne dane">
                                              <padding>
@@ -92,43 +120,35 @@
                                                 <Font name="System Bold" size="15.0" />
                                              </font>
                                           </Label>
-                                          <Label layoutX="14.0" layoutY="40.0" text="Imię: " />
-                                          <Label layoutX="9.0" layoutY="62.0" text="Nazwisko: " />
-                                          <Label layoutX="160.0" layoutY="45.0" text="Data urodzenia: " />
-                                          <Label layoutX="160.0" layoutY="70.0" text="PESEL: " />
-                                          <Label layoutX="11.0" layoutY="90.0" text="Telefon: " />
-                                          <Label layoutX="13.0" layoutY="114.0" text="Miasto: " />
-                                          <Label layoutX="13.0" layoutY="139.0" text="Ulica: " />
-                                          <Label layoutX="160.0" layoutY="90.0" text="Kod pocztowy: " />
-                                          <Text fx:id="profileDataName" layoutX="43.0" layoutY="53.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Jan" />
-                                          <Text fx:id="profileDataSurname" layoutX="66.0" layoutY="75.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Kowalski" />
-                                          <Text fx:id="profileDataPesel" layoutX="204.0" layoutY="83.0" strokeType="OUTSIDE" strokeWidth="0.0" text="76021112572" />
-                                          <Text fx:id="profileDataBirthday" layoutX="247.0" layoutY="58.0" strokeType="OUTSIDE" strokeWidth="0.0" text="09.12.1993" />
-                                          <Text fx:id="profileDataTel" layoutX="66.0" layoutY="103.0" strokeType="OUTSIDE" strokeWidth="0.0" text="+48605473814" />
-                                          <Text fx:id="profileDataCity" layoutX="67.0" layoutY="127.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Rzeszów" />
-                                          <Text fx:id="profileDataStreet" layoutX="67.0" layoutY="152.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Rejtana 16" />
-                                          <Text fx:id="profileDataZip" layoutX="247.0" layoutY="103.0" strokeType="OUTSIDE" strokeWidth="0.0" text="38-112" />
-                                       </children>
-                                    </AnchorPane>
-                                 </children>
-                              </Pane>
-                              <Pane layoutX="10.0" layoutY="10.0" prefHeight="365.0" prefWidth="637.0">
-                                 <children>
-                                    <AnchorPane fx:id="profileEdit" layoutX="9.0" prefHeight="163.0" prefWidth="327.0" style="-fx-background-color: #fff;" visible="false">
-                                       <children>
-                                          <Label prefHeight="31.0" prefWidth="135.0" style="-fx-border-width: 5; -fx-border-color: transparent transparent transparent #01a4a4;" text="Edytuj dane">
-                                             <padding>
-                                                <Insets left="5.0" />
-                                             </padding>
+                                          <Label layoutX="15.0" layoutY="40.0" text="Imię: ">
                                              <font>
-                                                <Font name="System Bold" size="15.0" />
+                                                <Font name="System Bold" size="12.0" />
                                              </font>
                                           </Label>
-                                          <fx:include source="form/edituserdata.fxml" />
+                                          <Label layoutX="15.0" layoutY="63.0" text="Nazwisko: ">
+                                             <font>
+                                                <Font name="System Bold" size="12.0" />
+                                             </font>
+                                          </Label>
+                                          <Label layoutX="12.0" layoutY="195.0" text="Data urodzenia: " />
+                                          <Label layoutX="13.0" layoutY="222.0" text="PESEL: " />
+                                          <Label layoutX="13.0" layoutY="90.0" text="Telefon: " />
+                                          <Label layoutX="14.0" layoutY="122.0" text="Miasto: " />
+                                          <Label layoutX="12.0" layoutY="148.0" text="Ulica: " />
+                                          <Label layoutX="14.0" layoutY="171.0" text="Kod pocztowy: " />
+                                          <Text fx:id="profileDataName" layoutX="63.0" layoutY="53.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Jan" />
+                                          <Text fx:id="profileDataSurname" layoutX="94.0" layoutY="76.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Kowalski" />
+                                          <Text fx:id="profileDataPesel" layoutX="77.0" layoutY="235.0" strokeType="OUTSIDE" strokeWidth="0.0" text="76021112572" />
+                                          <Text fx:id="profileDataBirthday" layoutX="130.0" layoutY="208.0" strokeType="OUTSIDE" strokeWidth="0.0" text="09.12.1993" />
+                                          <Text fx:id="profileDataTel" layoutX="78.0" layoutY="103.0" strokeType="OUTSIDE" strokeWidth="0.0" text="+48605473814" />
+                                          <Text fx:id="profileDataCity" layoutX="73.0" layoutY="135.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Rzeszów" />
+                                          <Text fx:id="profileDataStreet" layoutX="66.0" layoutY="161.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Rejtana 16" />
+                                          <Text fx:id="profileDataZip" layoutX="130.0" layoutY="184.0" strokeType="OUTSIDE" strokeWidth="0.0" text="38-112" />
                                        </children>
                                     </AnchorPane>
                                  </children>
                               </Pane>
+
                            </children>
                         </StackPane>
                      </children>

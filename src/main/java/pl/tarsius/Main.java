@@ -6,6 +6,7 @@ package pl.tarsius;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import org.datafx.controller.context.ApplicationContext;
 import org.datafx.controller.flow.Flow;
@@ -33,6 +34,8 @@ public class Main extends Application {
 
         ApplicationContext.getInstance().register("userSesion", null);
 
+        //Font.loadFont(getClass().getResourceAsStream("assets/font/RobotoCondensed-Regular.ttf"), 14);
+        //Font.loadFont(getClass().getResourceAsStream("assets/font/RobotoCondensed-Light.ttf"), 14);
 
         new Flow(StartupController.class).startInStage(primaryStage);
         primaryStage.setWidth(1170.0);

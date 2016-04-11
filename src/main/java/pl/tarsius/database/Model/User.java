@@ -1,13 +1,17 @@
 package pl.tarsius.database.Model;
 
+import pl.tarsius.util.ImageCloudinaryUpload;
+import pl.tarsius.util.validator.PeselValidator;
+
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 
 /**
  * Created by Ireneusz Kuliga on 05.04.16.
  */
 public class User {
-
+    private long uzytkownikId;
     private String email;
     private String nazwisko;
     private String imie;
@@ -22,8 +26,15 @@ public class User {
     private String pesel;
     private int nieudaneLogowania;
     private Timestamp blokada;
-
     private String haslo;
+
+    public long getUzytkownikId() {
+        return uzytkownikId;
+    }
+
+    public void setUzytkownikId(long uzytkownikId) {
+        this.uzytkownikId = uzytkownikId;
+    }
 
     public String getHaslo() {
         return haslo;
@@ -119,6 +130,8 @@ public class User {
 
     public void setPesel(String pesel) {
         this.pesel = pesel;
+        PeselValidator p = new PeselValidator(pesel);
+        this.setDataUrodzenia(Date.valueOf(LocalDate.of(p.getBirthYear(),p.getBirthMonth(),p.getBirthDay())));
     }
 
     public String getTelefon() {
@@ -146,8 +159,11 @@ public class User {
     }
 
     public String getAvatarUrl() {
-        return  (this.getAvatarId() !=null)?""+this.getAvatarId():"assets/img/avatar.png";
+        return (this.getAvatarId() !=null)?""+new ImageCloudinaryUpload().getUrl(this.getAvatarId()):"assets/img/avatar.png";
     }
 
+    public String getImieNazwisko() {
+        return this.getImie()+" "+this.getNazwisko();
+    }
 
 }

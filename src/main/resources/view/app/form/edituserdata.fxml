@@ -3,20 +3,17 @@
 <?import impl.org.controlsfx.skin.DecorationPane?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<DecorationPane fx:id="registrationForm" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="399.0" prefWidth="589.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+<DecorationPane fx:id="registrationForm" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="316.0" prefWidth="589.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <VBox alignment="CENTER" layoutX="38.0" layoutY="12.0" prefHeight="466.0" prefWidth="352.0" spacing="10.0">
          <children>
             <TextField fx:id="regEmail" promptText="E-mail" />
             <TextField fx:id="regName" promptText="Imię" />
             <TextField fx:id="regSurname" promptText="Nazwisko" />
-            <PasswordField fx:id="regPassword" promptText="Hasło" />
-            <PasswordField fx:id="regPassword2" promptText="Powtórz hasło" />
             <TextField fx:id="regTel" promptText="Numer telefonu" />
             <TextField fx:id="regPESEL" promptText="PESEL" />
             <TextField fx:id="regCity" promptText="Miasto" />
@@ -32,8 +29,8 @@
             </HBox>
             <HBox alignment="TOP_RIGHT" spacing="20.0">
                <children>
-                  <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Anuluj" />
-                  <Button fx:id="regSend" mnemonicParsing="false" prefHeight="26.0" prefWidth="100.0" text="Zapisz" />
+                  <Button fx:id="profilecardCancel" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" styleClass="redButton" text="Anuluj" />
+                  <Button fx:id="userDataSend" mnemonicParsing="false" prefHeight="26.0" prefWidth="100.0" styleClass="greenButton" text="Zapisz" />
                </children>
             </HBox>
          </children>

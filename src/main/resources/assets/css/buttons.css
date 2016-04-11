@@ -28,8 +28,40 @@
     -fx-background-color: #f8f8f8;
 }
 
+.squareButton:disabled
+{
+   -fx-opacity: 1.0 ;
+   -fx-background-color: #e54028;
+   -fx-text-fill: #fff;
+}
 .squareButton:pressed
 {
    -fx-background-color: #e54028;
    -fx-text-fill: #fff;
 }
+
+.redButton {
+    -fx-background-color: #E54028;
+    -fx-text-fill: #fff;
+    -fx-background-radius: 0;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(three-pass-box, rgb(0,0,0,0.1), 4, 0, 1, 1);
+}
+
+.greenButton {
+        -fx-background-color: #61AE24;
+        -fx-text-fill: #fff;
+        -fx-background-radius: 0;
+        -fx-font-weight: bold;
+        -fx-effect: dropshadow(three-pass-box, rgb(0,0,0,0.1), 4, 0, 1, 1);
+}
+
+
+
+.redButton:pressed,.greenButton:pressed
+{ -fx-opacity: 0.5 ;}
+
+
+
+
+

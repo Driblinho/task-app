@@ -13,7 +13,7 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
 <children>
-   <GridPane visible="false" fx:id="topMsgContent" prefHeight="23.0" prefWidth="1170.0" style="-fx-background-color: rgba(153, 0, 0, 0.7);">
+   <GridPane fx:id="topMsgContent" prefHeight="23.0" prefWidth="1170.0" style="-fx-background-color: rgba(153, 0, 0, 0.7);" visible="false">
       <columnConstraints>
          <ColumnConstraints hgrow="ALWAYS" maxWidth="725.0" minWidth="10.0" percentWidth="50.0" prefWidth="484.0" />
          <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="686.0" minWidth="10.0" percentWidth="50.0" prefWidth="686.0" />
@@ -31,7 +31,7 @@
                </ImageView>
             </graphic>
          </Hyperlink>
-         <Label fx:id="topMsg" text="Komunikat">
+         <Label fx:id="topMsg" text="Komunikat" textFill="WHITE">
             <font>
                <Font name="System Bold" size="15.0" />
             </font>

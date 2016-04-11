@@ -1,20 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Hyperlink?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
 <StackPane alignment="TOP_CENTER" prefHeight="800.0" prefWidth="1170.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
    <children>
@@ -32,7 +26,7 @@
             </StackPane>
          </top>
          <center>
-            <TabPane prefHeight="306.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+            <TabPane focusTraversable="false" prefHeight="306.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
               <tabs>
                 <Tab fx:id="logInTab" text="Logowanie">
                      <content>
@@ -62,4 +56,8 @@
 
 
    </children>
+   <stylesheets>
+      <URL value="@../../assets/css/main.css" />
+      <URL value="@../../assets/css/buttons.css" />
+   </stylesheets>
 </StackPane>

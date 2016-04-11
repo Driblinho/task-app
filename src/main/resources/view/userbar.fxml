@@ -33,7 +33,7 @@
             </ImageView>
             <AnchorPane prefHeight="23.0" prefWidth="70.0">
                <children>
-                  <TextField fx:id="userBarSearch" focusTraversable="false" layoutY="8.0" prefHeight="25.0" prefWidth="183.0" />
+                  <TextField fx:id="userBarSearch" focusTraversable="false" layoutY="8.0" prefHeight="25.0" prefWidth="183.0" promptText="Szukaj ..." styleClass="searchInput" />
                </children>
             </AnchorPane>
          </children>
