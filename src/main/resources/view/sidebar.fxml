@@ -2,7 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
@@ -14,7 +13,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.controlsfx.glyphfont.Glyph?>
 
-<Pane prefHeight="545.0" prefWidth="200.0" style="-fx-background-color: #1c1c1c;" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+<Pane nodeOrientation="LEFT_TO_RIGHT" prefHeight="545.0" prefWidth="200.0" style="-fx-background-color: #1c1c1c;" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <AnchorPane prefHeight="150.0" prefWidth="200.0">
          <children>
@@ -33,11 +32,7 @@
             <Insets left="15.0" />
          </padding>
       </Label>
-      <VBox alignment="TOP_CENTER" layoutX="6.0" layoutY="200.0" prefHeight="117.0" prefWidth="193.0">
-         <children>
-            <Button mnemonicParsing="false" prefHeight="17.0" prefWidth="140.0" styleClass="stock-button" text="Button" />
-         </children>
-      </VBox>
+      <VBox fx:id="operationButtons" alignment="TOP_CENTER" layoutX="6.0" layoutY="200.0" prefHeight="117.0" prefWidth="193.0" spacing="5.0" />
       <Label layoutX="3.0" layoutY="328.0" prefHeight="37.0" prefWidth="197.0" style="-fx-border-color: transparent transparent #313131 transparent;" text="Zarzaądzaj" textFill="#616161">
          <font>
             <Font size="18.0" />

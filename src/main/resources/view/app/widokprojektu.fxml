@@ -17,23 +17,23 @@
 <?import javafx.scene.text.Text?>
 <?import org.controlsfx.control.BreadCrumbBar?>
 
-<StackPane alignment="TOP_CENTER" prefHeight="800.0" prefWidth="1170.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <BorderPane fx:id="body" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1170.0">
          <left>
             <fx:include source="../sidebar.fxml" />
          </left>
          <center>
-            <VBox prefHeight="784.0" prefWidth="962.0" spacing="10.0">
+            <VBox prefHeight="784.0" prefWidth="800.0" spacing="10.0">
                <padding>
-                  <Insets left="10.0" top="10.0" />
+                  <Insets left="10.0" right="30.0" top="10.0" />
                </padding>
                <children>
                   <fx:include source="../userbar.fxml" />
                   <BreadCrumbBar fx:id="breadCrumb" />
-                  <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #fff;">
+                  <AnchorPane prefHeight="200.0" style="-fx-background-color: #fff;">
                      <children>
-                        <Label fx:id="InprojectTitle" layoutX="47.0" layoutY="14.0" text="Tytuł projektu">
+                        <Label fx:id="inprojectTitle" layoutX="47.0" layoutY="14.0" text="Tytuł projektu">
                            <font>
                               <Font name="System Bold" size="22.0" />
                            </font>
@@ -44,10 +44,10 @@
                            </font>
                         </Text>
                         <Hyperlink fx:id="inprojectAuthor" layoutX="47.0" layoutY="154.0" text="Jan Kowalski" />
-                        <Label layoutX="578.0" layoutY="157.0" text="Data startu: " />
-                        <Label layoutX="771.0" layoutY="157.0" text="Data końcowa:" />
-                        <Text fx:id="inprojectDataStart" layoutX="650.0" layoutY="170.0" strokeType="OUTSIDE" strokeWidth="0.0" text="11.04.2016" />
-                        <Text fx:id="inprojectDataStop" layoutX="859.0" layoutY="170.0" strokeType="OUTSIDE" strokeWidth="0.0" text="30.05.2016" />
+                        <Label layoutX="496.0" layoutY="158.0" text="Data startu: " />
+                        <Label fx:id="inprojectDataStopLabel" layoutX="721.0" layoutY="157.0" text="Data końcowa:" />
+                        <Text fx:id="inprojectDataStart" layoutX="579.0" layoutY="171.0" strokeType="OUTSIDE" strokeWidth="0.0" text="11.04.2016" />
+                        <Text fx:id="inprojectDataStop" layoutX="833.0" layoutY="171.0" strokeType="OUTSIDE" strokeWidth="0.0" text="30.05.2016" />
                      </children>
                   </AnchorPane>
                   <AnchorPane layoutX="20.0" layoutY="80.0" prefHeight="200.0" prefWidth="200.0">
@@ -67,9 +67,9 @@
                                                    </font>
                                                 </Hyperlink>
                                                 <Label layoutX="71.0" layoutY="38.0" text="Zadania:" />
-                                                <Text fx:id="InProjectMemberTask" layoutX="118.0" layoutY="51.0" strokeType="OUTSIDE" strokeWidth="0.0" text="5" />
+                                                <Text fx:id="InProjectMemberTask" layoutX="129.0" layoutY="51.0" strokeType="OUTSIDE" strokeWidth="0.0" text="5" />
                                                 <Label layoutX="138.0" layoutY="38.0" text="Ukończone:" />
-                                                <Text fx:id="InProjectMemberTaskFinish" layoutX="207.0" layoutY="51.0" strokeType="OUTSIDE" strokeWidth="0.0" text="5" />
+                                                <Text fx:id="InProjectMemberTaskFinish" layoutX="216.0" layoutY="51.0" strokeType="OUTSIDE" strokeWidth="0.0" text="5" />
                                                 <Label layoutX="232.0" layoutY="38.0" text="Problemy:" />
                                                 <Text fx:id="InProjectMemberIssues" layoutX="308.0" layoutY="51.0" strokeType="OUTSIDE" strokeWidth="0.0" text="5" />
                                              </children>
@@ -85,24 +85,24 @@
                                        <children>
                                           <AnchorPane layoutX="6.0" layoutY="14.0" prefHeight="60.0" prefWidth="950.0" style="-fx-background-color: #fff;">
                                              <children>
-                                                <Label fx:id="InProjectIssueTitle" layoutX="14.0" layoutY="14.0" text="Temat problemu">
+                                                <Label fx:id="inProjectIssueTitle" layoutX="14.0" layoutY="14.0" text="Temat problemu">
                                                    <font>
                                                       <Font name="System Bold" size="14.0" />
                                                    </font>
                                                 </Label>
                                                 <Label layoutX="141.0" layoutY="16.0" text="| Zadanie:" />
-                                                <Hyperlink fx:id="InProjectIssueTaskName" layoutX="200.0" layoutY="13.0" text="Temat zadania" />
+                                                <Hyperlink fx:id="inProjectIssueTaskName" layoutX="200.0" layoutY="13.0" text="Temat zadania" />
                                                 <Label layoutX="14.0" layoutY="38.0" text="Zgłosił:" />
-                                                <Hyperlink fx:id="InProjectIssueAuthor" layoutX="53.0" layoutY="35.0" text="Jan Kowalski" />
+                                                <Hyperlink fx:id="inProjectIssueAuthor" layoutX="53.0" layoutY="35.0" text="Jan Kowalski" />
                                                 <Label layoutX="162.0" layoutY="38.0" text="Odpowiedzi:" />
-                                                <Text fx:id="InProjectIssueAnswers" layoutX="236.0" layoutY="51.0" strokeType="OUTSIDE" strokeWidth="0.0" text="10" />
+                                                <Text fx:id="inProjectIssueAnswers" layoutX="236.0" layoutY="51.0" strokeType="OUTSIDE" strokeWidth="0.0" text="10" />
                                                 <Label layoutX="275.0" layoutY="38.0" text="Dodano:" />
-                                                <Text fx:id="InProjectIssueDateAdd" layoutX="328.0" layoutY="51.0" strokeType="OUTSIDE" strokeWidth="0.0" text="10.10.2012" />
-                                                <ImageView fx:id="InProjectIssueStatusImage" fitHeight="35.0" fitWidth="35.0" layoutX="879.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true" />
-                                                <Label fx:id="InProjectIssueStatusDesc" layoutX="879.0" layoutY="38.0" text="Status" />
+                                                <Text fx:id="inProjectIssueDateAdd" layoutX="328.0" layoutY="51.0" strokeType="OUTSIDE" strokeWidth="0.0" text="10.10.2012" />
+                                                <ImageView fx:id="inProjectIssueStatusImage" fitHeight="35.0" fitWidth="35.0" layoutX="879.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true" />
+                                                <Label fx:id="inProjectIssueStatusDesc" layoutX="879.0" layoutY="38.0" text="Status" />
                                              </children>
                                           </AnchorPane>
-                                          <Pagination fx:id="InProjectIssuePagination" layoutY="108.0" prefHeight="58.0" prefWidth="960.0" />
+                                          <Pagination fx:id="inProjectIssuePagination" layoutY="108.0" prefHeight="58.0" prefWidth="960.0" />
                                        </children>
                                     </AnchorPane>
                               </content>
@@ -111,17 +111,18 @@
                         </TabPane>
                      </children>
                   </AnchorPane>
-
+      
                </children>
+               <BorderPane.margin>
+                  <Insets left="20.0" />
+               </BorderPane.margin>
             </VBox>
          </center>
+         <stylesheets>
+            <URL value="@../../assets/css/main.css" />
+            <URL value="@../../assets/css/buttons.css" />
+         </stylesheets>
       </BorderPane>
       <fx:include source="../loading.fxml" />
-
-
    </children>
-   <stylesheets>
-      <URL value="@../../assets/css/buttons.css" />
-      <URL value="@../../assets/css/main.css" />
-   </stylesheets>
 </StackPane>
