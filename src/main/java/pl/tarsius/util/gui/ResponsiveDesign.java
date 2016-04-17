@@ -61,7 +61,6 @@ public class ResponsiveDesign {
         }
         if(topMsgContent != null) {
             topMsgContent.setPrefWidth(width);
-            System.out.println("WORK");
         }
     }
 
