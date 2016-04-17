@@ -1,5 +1,6 @@
 package pl.tarsius.controller;
 
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -29,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.User;
 import pl.tarsius.util.UserAuth;
+import pl.tarsius.util.gui.StockButtons;
 import pl.tarsius.util.validator.PeselValidator;
 import pl.tarsius.util.validator.form.UserFormValidator;
 
@@ -122,8 +124,9 @@ public class MyProfileController extends BaseController {
         loger = LoggerFactory.getLogger(getClass());
 
 
+        new StockButtons(operationButtons,flowActionHandler).homeAction();
+
         User user = (User) applicationContext.getRegisteredObject("userSession");
-        setUserBar(user);
         setProfileCard(user);
 
         validationSupportNewPassword = new ValidationSupport();
@@ -208,6 +211,9 @@ public class MyProfileController extends BaseController {
 
     @ActionMethod("changeAvatar")
     public void changeAvatar() throws VetoException, FlowException {
+
+
+        new StockButtons(operationButtons, flowActionHandler).homeAction();
         User user = (User) applicationContext.getRegisteredObject("userSession");
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
@@ -217,13 +223,20 @@ public class MyProfileController extends BaseController {
         );
         File file = fileChooser.showOpenDialog(profileDataAvatar.getScene().getWindow());
         if(file != null) {
-             Object[] userAuth= UserAuth.setAvatar(file.getAbsolutePath(), user.getUzytkownikId());
-            if((boolean)userAuth[0]) {
-                new Alert(Alert.AlertType.INFORMATION,(String)userAuth[1]).show();
-                flowActionHandler.navigate(MyProfileController.class);
-            } else {
-                new Alert(Alert.AlertType.ERROR,(String)userAuth[1]).show();
-            }
+
+            final String[] msg = new String[1];
+            Task<Boolean> task = new Task<Boolean>() {
+                @Override
+                protected Boolean call() {
+                    Object[] userAuth = UserAuth.setAvatar(file.getAbsolutePath(), user.getUzytkownikId());
+                    msg[0] = (String) userAuth[1];
+                    return (boolean) userAuth[0];
+                }
+            };
+            task.setOnRunning(event -> loading.setVisible(true));
+            task.setOnFailed(event -> new Alert(Alert.AlertType.ERROR,msg[0]));
+            task.setOnSucceeded(event -> loading.setVisible(false));
+            new Thread(task).start();
         }
     }
 

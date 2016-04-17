@@ -209,7 +209,7 @@ public class UserAuth {
     public static Object[] changePassword(String email, String token, String password) {
         Object[] value = new Object[2];
         value[0]=false;
-        String sql = "select count(*),u.uzytkownik_id FROM Uzytkownicy u,HasloResetToken ht where u.uzytkownik_id=ht.uzytkownik_id and token=? and email=?";
+        String sql = "select count(*),u.uzytkownik_id FROM Uzytkownicy u,HasloResetToken ht where u.uzytkownik_id=ht.uzytkownik_id and token=? and email=? and waznosc>NOW()";
 
         try {
             Connection connection = new InitializeConnection().connect();
@@ -236,7 +236,7 @@ public class UserAuth {
                 value[0] = true;
                 value[1] = "Hasło zostało zmienione";
             } else {
-                value[1] = "Brak użytkownika powiązanego z tokenem";
+                value[1] = "Brak użytkownika powiązanego z tokenem lub token wygasł";
             }
 
         } catch (SQLException e) {

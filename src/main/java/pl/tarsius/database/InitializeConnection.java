@@ -1,6 +1,7 @@
 package pl.tarsius.database;
 
 
+import com.mysql.jdbc.Connection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,7 +9,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
@@ -47,8 +47,19 @@ public class InitializeConnection {
 
     public Connection connect() throws SQLException {
         loger.info("Connect to Database");
-        return connection = DriverManager.getConnection(jdbcUrl, username, password);
+        return connection = (Connection) DriverManager.getConnection(jdbcUrl, username, password);
 
     }
 
+    public String getJdbcUrl() {
+        return jdbcUrl;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getUsername() {
+        return username;
+    }
 }

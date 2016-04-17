@@ -20,7 +20,8 @@
 <?import javafx.scene.text.Text?>
 <?import org.controlsfx.control.BreadCrumbBar?>
 
-<StackPane alignment="TOP_CENTER" prefHeight="800.0" prefWidth="1170.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+
+<StackPane xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <BorderPane fx:id="body" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1170.0">
          <left>
@@ -148,7 +149,7 @@
                                     </AnchorPane>
                                  </children>
                               </Pane>
-
+      
                            </children>
                         </StackPane>
                      </children>
@@ -156,13 +157,11 @@
                </children>
             </VBox>
          </center>
+         <stylesheets>
+            <URL value="@../../assets/css/main.css" />
+            <URL value="@../../assets/css/buttons.css" />
+         </stylesheets>
       </BorderPane>
       <fx:include source="../loading.fxml" />
-
-
    </children>
-   <stylesheets>
-      <URL value="@../../assets/css/buttons.css" />
-      <URL value="@../../assets/css/main.css" />
-   </stylesheets>
 </StackPane>

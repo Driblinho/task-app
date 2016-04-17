@@ -60,6 +60,11 @@
         </dependency>
         <dependency>
             <groupId>org.javafxdata</groupId>
+            <artifactId>datafx-datareader</artifactId>
+            <version>8.0b5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.javafxdata</groupId>
             <artifactId>datafx-flow</artifactId>
             <version>8.0b5</version>
         </dependency>
