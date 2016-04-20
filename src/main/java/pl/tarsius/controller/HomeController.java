@@ -33,6 +33,9 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by Ireneusz Kuliga on 02.04.16.
@@ -82,6 +85,16 @@ public class HomeController extends BaseController{
             desc.setText(project.getOpis());
             title.setText(project.getNazwa());
             title.setUserData(project.getProjekt_id());
+
+            if(project.getData_zakonczenia()==null) {
+                end.setVisible(false);
+                endL.setVisible(false);
+            } else {
+
+
+                end.setText(project.getData_zakonczenia().toString());
+            }
+            status.setText("Dane na podstawie zadań");
             title.setOnAction(event -> {
                 long id = (long) ((Hyperlink)event.getSource()).getUserData();
                 ApplicationContext.getInstance().register("projectId",id);

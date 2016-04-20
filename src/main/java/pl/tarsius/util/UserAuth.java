@@ -351,5 +351,83 @@ public class UserAuth {
         }
     }
 
+    public static Object[] updateTyp(int typ,long userId) {
+        try {
+            Connection connection = new InitializeConnection().connect();
+            PreparedStatement ps = (PreparedStatement) connection.prepareStatement("update Uzytkownicy set typ=? where uzytkownik_id=?");
+            ps.setInt(1, typ);
+            ps.setLong(2, userId);
+            ps.executeUpdate();
+            return new Object[]{true, "Ranga zmieniona"};
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new Object[] {false, "Problemy z bazą danych"};
+        }
+    }
+
+    public static Object[] updateStatus(int status,long userId) {
+        try {
+            Connection connection = new InitializeConnection().connect();
+            PreparedStatement ps = (PreparedStatement) connection.prepareStatement("update Uzytkownicy set aktywny=? where uzytkownik_id=?");
+            ps.setBoolean(1, (status != 0));
+            ps.setLong(2, userId);
+            ps.executeUpdate();
+            return new Object[]{true, "Status zmieniony"};
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new Object[] {false, "Problemy z bazą danych"};
+        }
+    }
+
+    public static User userByID(long userId) {
+        try {
+            Connection connection = new InitializeConnection().connect();
+            PreparedStatement ps = (PreparedStatement) connection.prepareStatement("select * from Uzytkownicy where uzytkownik_id=?");
+            ps.setLong(1,userId);
+            ResultSet resultSet = ps.executeQuery();
+            resultSet.next();
+            return setUserModel(resultSet);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new User();
+        }
+
+    }
+
+
+    public static Object[] deleteUser(long userId,long newOwner) {
+        String sql = "";
+        Connection connection = null;
+        try {
+            connection = new InitializeConnection().connect();
+            connection.setAutoCommit(false);
+            PreparedStatement ps = (PreparedStatement) connection.prepareStatement("delete from Uzytkownicy where uzytkownik_id=?;");
+            ps.setLong(1,userId);
+            ps.executeUpdate();
+
+            ps = (PreparedStatement) connection.prepareStatement("update Projekty set lider=? where lider=?;");
+            ps.setLong(1,newOwner);
+            ps.setLong(2,userId);
+            ps.executeUpdate();
+
+            ps = (PreparedStatement) connection.prepareStatement("update ProjektyUzytkownicy set uzytkownik_id=? where uzytkownik_id=? and lider=1;");
+            ps.setLong(1,newOwner);
+            ps.setLong(2,userId);
+            ps.executeUpdate();
+
+            ps = (PreparedStatement) connection.prepareStatement("delete from ProjektyUzytkownicy where uzytkownik_id=? and lider=0;");
+            ps.setLong(1,userId);
+            ps.executeUpdate();
+
+            connection.commit();
+            return new Object[]{true,"Użytkownik Usunięty"};
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new Object[]{false,"Błąd bazy danych"};
+        }
+
+    }
+
+
 
 }

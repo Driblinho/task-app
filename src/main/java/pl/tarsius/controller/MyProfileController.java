@@ -107,7 +107,8 @@ public class MyProfileController extends BaseController {
 
     private ValidationSupport validationSupportNewData;
     private ValidationSupport validationSupportNewPassword;
-
+    private Long showId;
+    private User user;
 
     @PostConstruct
     public void init() {
@@ -115,12 +116,16 @@ public class MyProfileController extends BaseController {
 
 
         new StockButtons(operationButtons,flowActionHandler).homeAction();
-
-        User user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
+        //User user;
+        showId = (Long) ApplicationContext.getInstance().getRegisteredObject("showUserID");
+        if(showId!=null) {
+            user = UserAuth.userByID(showId);
+        } else user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
         setProfileCard(user);
 
         validationSupportNewPassword = new ValidationSupport();
-        validationSupportNewPassword.registerValidator(oldPassword,true, UserFormValidator.getPassword());
+        if(showId!=null) oldPassword.setVisible(false); else
+            validationSupportNewPassword.registerValidator(oldPassword,true, UserFormValidator.getPassword());
         validationSupportNewPassword.registerValidator(newPassword,true, UserFormValidator.getPassword());
 
 
@@ -245,15 +250,16 @@ public class MyProfileController extends BaseController {
         if(validationSupportNewPassword.isInvalid()) {
             validationSupportNewPassword.initInitialDecoration();
         } else {
-
-            User user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
-            if(BCrypt.checkpw(oldPassword.getText().trim(), user.getHaslo())) {
+            if(showId==null)
+                user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
+            if(showId!=null || BCrypt.checkpw(oldPassword.getText().trim(), user.getHaslo())) {
                 Object[] userAuth= UserAuth.updatePassword(newPassword.getText().trim(),user.getUzytkownikId());
 
                 if((boolean)userAuth[0]) {
                     new Alert(Alert.AlertType.INFORMATION,(String) userAuth[1],ButtonType.OK).show();
                     user.setHaslo((String) userAuth[2]);
-                    ApplicationContext.getInstance().register("userSession", user);
+                    if(showId==null)
+                        ApplicationContext.getInstance().register("userSession", user);
                     flowActionHandler.navigate(MyProfileController.class);
                 } else {
                     new Alert(Alert.AlertType.ERROR,(String) userAuth[1],ButtonType.OK).show();
@@ -269,7 +275,8 @@ public class MyProfileController extends BaseController {
         if(validationSupportNewData.isInvalid()) {
             validationSupportNewData.initInitialDecoration();
         } else {
-            User user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
+            if(showId==null)
+            user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
             user.setImie(regName.getText().trim());
             user.setNazwisko(regSurname.getText().trim());
             user.setEmail(regEmail.getText().trim().toLowerCase());
@@ -280,7 +287,8 @@ public class MyProfileController extends BaseController {
             user.setTelefon(regTel.getText().trim());
             Object[] userAuth = UserAuth.updateUser(user);
             if((boolean) userAuth[0]) {
-                ApplicationContext.getInstance().register("userSession", user);
+                if(showId==null)
+                    ApplicationContext.getInstance().register("userSession", user);
                 new Alert(Alert.AlertType.INFORMATION, (String) userAuth[1]);
                 flowActionHandler.navigate(MyProfileController.class);
             } else {

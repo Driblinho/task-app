@@ -2,9 +2,13 @@ package pl.tarsius.controller;
 
 
 import io.datafx.controller.context.ApplicationContext;
+import io.datafx.controller.flow.FlowException;
+import io.datafx.controller.flow.action.ActionMethod;
+import io.datafx.controller.flow.action.ActionTrigger;
 import io.datafx.controller.flow.action.LinkAction;
 import io.datafx.controller.flow.context.ActionHandler;
 import io.datafx.controller.flow.context.FlowActionHandler;
+import io.datafx.controller.util.VetoException;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Hyperlink;
@@ -16,14 +20,17 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.ObjectUtils;
 import org.controlsfx.control.BreadCrumbBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.tarsius.controller.invite.InvitesController;
+import pl.tarsius.controller.users.UsersListController;
 import pl.tarsius.database.Model.User;
 import pl.tarsius.util.gui.ResponsiveDesign;
 
 import javax.annotation.PostConstruct;
+import javax.lang.model.type.NullType;
 
 /**
  * Created by Jarek on 2016-04-09.
@@ -38,7 +45,8 @@ public abstract class BaseController {
     @FXML public Circle userBarAvatar;
 
     @FXML
-    @LinkAction(MyProfileController.class)
+    //@LinkAction(MyProfileController.class)
+    @ActionTrigger("OpenProfile")
     public Hyperlink userBarFullName;
 
     @FXML public Label userBarNotification;
@@ -64,6 +72,9 @@ public abstract class BaseController {
     @FXML
     @LinkAction(InvitesController.class)
     public Hyperlink sideBarInv;
+    @FXML
+    @LinkAction(UsersListController.class)
+    public Hyperlink sideBarUsers;
 
 
 
@@ -75,8 +86,10 @@ public abstract class BaseController {
 
     @PostConstruct
     public void start() {
-
         User user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
+        if(user.isAdmin()) {
+            sideBarUsers.setVisible(true);
+        }
         setUserBar(user);
         Platform.runLater(() -> {
             new ResponsiveDesign((Stage) operationButtons.getParent().getScene().getWindow()).resizeBodyWidth(operationButtons.getParent().getScene().getWindow().getWidth());
@@ -88,6 +101,12 @@ public abstract class BaseController {
 
     }
 
+    @ActionMethod("OpenProfile")
+    public void OpenProfile() throws VetoException, FlowException {
+        Long l = null;
+        ApplicationContext.getInstance().register("showUserID", l);
+        flowActionHandler.navigate(MyProfileController.class);
+    }
 
 
 }

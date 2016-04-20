@@ -1,5 +1,6 @@
 package pl.tarsius.util.gui;
 
+import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
@@ -27,10 +28,7 @@ public class ResponsiveDesign {
         this.userBar = (GridPane) stage.getScene().lookup(userBarName);
         this.topMsgContent = (GridPane) stage.getScene().lookup(alertTopMsg);
     }
-
-
-
-
+    
     public void resizeBodyWidth(Double width) {
         stage.getScene().getRoot().prefWidth(width);
         resizeStartUpLogoWidth(width);
@@ -43,6 +41,7 @@ public class ResponsiveDesign {
         if(userBar != null ) {
             userBar.setPrefWidth(width-220.0);
         }
+
     }
 
     public void resizeBodyHeight(Double height) {

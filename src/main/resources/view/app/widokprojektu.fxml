@@ -24,14 +24,14 @@
             <fx:include source="../sidebar.fxml" />
          </left>
          <center>
-            <VBox prefHeight="784.0" prefWidth="800.0" spacing="10.0">
+            <VBox prefHeight="784.0" prefWidth="800.0" spacing="10.0" BorderPane.alignment="CENTER">
                <padding>
                   <Insets left="10.0" right="30.0" top="10.0" />
                </padding>
                <children>
                   <fx:include source="../userbar.fxml" />
                   <BreadCrumbBar fx:id="breadCrumb" />
-                  <AnchorPane prefHeight="200.0" style="-fx-background-color: #fff;">
+                  <AnchorPane style="-fx-background-color: #fff;" styleClass="rwdW">
                      <children>
                         <Label fx:id="inprojectTitle" layoutX="47.0" layoutY="14.0" text="Tytuł projektu">
                            <font>
@@ -45,12 +45,12 @@
                         </Text>
                         <Hyperlink fx:id="inprojectAuthor" layoutX="47.0" layoutY="154.0" text="Jan Kowalski" />
                         <Label layoutX="496.0" layoutY="158.0" text="Data startu: " />
-                        <Label fx:id="inprojectDataStopLabel" layoutX="721.0" layoutY="157.0" text="Data końcowa:" />
+                        <Label fx:id="inprojectDataStopLabel" layoutX="762.0" layoutY="156.0" text="Data końcowa:" />
                         <Text fx:id="inprojectDataStart" layoutX="579.0" layoutY="171.0" strokeType="OUTSIDE" strokeWidth="0.0" text="11.04.2016" />
-                        <Text fx:id="inprojectDataStop" layoutX="833.0" layoutY="171.0" strokeType="OUTSIDE" strokeWidth="0.0" text="30.05.2016" />
+                        <Text fx:id="inprojectDataStop" layoutX="869.0" layoutY="170.0" strokeType="OUTSIDE" strokeWidth="0.0" text="30.05.2016" />
                      </children>
                   </AnchorPane>
-                  <AnchorPane layoutX="20.0" layoutY="80.0" prefHeight="200.0" prefWidth="200.0">
+                  <AnchorPane layoutX="20.0" layoutY="80.0" prefHeight="200.0" prefWidth="918.0" styleClass="rwdW">
                      <children>
                         <TabPane prefHeight="200.0" prefWidth="961.0" tabClosingPolicy="UNAVAILABLE">
                           <tabs>

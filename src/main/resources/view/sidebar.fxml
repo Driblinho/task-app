@@ -13,7 +13,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.controlsfx.glyphfont.Glyph?>
 
-<Pane nodeOrientation="LEFT_TO_RIGHT" prefHeight="545.0" prefWidth="200.0" style="-fx-background-color: #1c1c1c;" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+<Pane nodeOrientation="LEFT_TO_RIGHT" prefHeight="597.0" prefWidth="200.0" style="-fx-background-color: #1c1c1c;" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <AnchorPane prefHeight="150.0" prefWidth="200.0">
          <children>
@@ -139,6 +139,25 @@
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Label>
+               </children>
+               <padding>
+                  <Insets left="5.0" right="10.0" top="10.0" />
+               </padding>
+               <cursor>
+                  <Cursor fx:constant="DEFAULT" />
+               </cursor>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="121.0" styleClass="manageOptions">
+               <children>
+                  <Hyperlink visible="false" fx:id="sideBarUsers" focusTraversable="false" prefHeight="27.0" prefWidth="163.0" text="Użytkownicy" textFill="WHITE">
+                     <graphic>
+                        <Glyph fontFamily="FontAwesome" icon="PAPERCLIP" prefHeight="17.0" prefWidth="15.0" />
+                     </graphic>
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Hyperlink>
+
                </children>
                <padding>
                   <Insets left="5.0" right="10.0" top="10.0" />

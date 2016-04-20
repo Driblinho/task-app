@@ -1,13 +1,11 @@
 package pl.tarsius.database.Model;
 
 import io.datafx.io.converter.JdbcConverter;
+import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.util.ImageCloudinaryUpload;
 import pl.tarsius.util.validator.PeselValidator;
 
-import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.time.LocalDate;
 
 /**
