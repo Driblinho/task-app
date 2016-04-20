@@ -22,7 +22,7 @@
                <children>
                   <fx:include source="../userbar.fxml" />
                   <BreadCrumbBar fx:id="breadCrumb" />
-                  <FlowPane fx:id="contentFlow" prefHeight="112.0" prefWidth="960.0" />
+                  <fx:include source="form/selectuser.fxml" />
                </children>
             </VBox>
          </center>

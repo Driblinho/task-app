@@ -2,6 +2,7 @@ package pl.tarsius.database.Model;
 
 import com.mysql.jdbc.PreparedStatement;
 import com.mysql.jdbc.Statement;
+import io.datafx.io.converter.JdbcConverter;
 import org.apache.commons.dbutils.DbUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,33 +61,58 @@ public class Project {
     public Object[] save() {
         String sql = "INSERT INTO `Projekty` " +
                 "(`nazwa`, `opis`,`data_zakonczenia`, `lider`, `status`) " +
-                "VALUES (?, ?, ?, ?, ?)";
+                "VALUES (?, ?, ?, ?, ?);";
         try {
             Connection connection = new InitializeConnection().connect();
+            connection.setAutoCommit(false);
 
-            PreparedStatement preparedStatement = (PreparedStatement) connection.prepareStatement(
-                    sql, Statement.RETURN_GENERATED_KEYS);
-            int i = 1;
-            preparedStatement.setString(i++, this.nazwa);
-            preparedStatement.setString(i++, this.opis);
+            PreparedStatement preparedStatement;
 
-            if(this.data_zakonczenia!=null) preparedStatement.setTimestamp(i++, data_zakonczenia);
-            else preparedStatement.setNull(i++, Types.TIMESTAMP);
-            preparedStatement.setLong(i++, this.lider);
-            preparedStatement.setInt(i++, 1);
+            preparedStatement = (PreparedStatement) connection.prepareStatement(
+                        sql, Statement.RETURN_GENERATED_KEYS);
+                int i = 1;
+                preparedStatement.setString(i++, this.nazwa);
+                preparedStatement.setString(i++, this.opis);
+                if(this.data_zakonczenia!=null) preparedStatement.setTimestamp(i++, data_zakonczenia);
+                else preparedStatement.setNull(i++, Types.TIMESTAMP);
+                preparedStatement.setLong(i++, this.lider);
+                preparedStatement.setInt(i++, 1);
+                preparedStatement.executeUpdate();
+                ResultSet resultSet = preparedStatement.getGeneratedKeys();
+                resultSet.next();
+                long lastId = resultSet.getLong(1);
+
+            sql = "insert into ProjektyUzytkownicy (uzytkownik_id,projekt_id,lider) values( ?, ?, ?);";
+            preparedStatement = (PreparedStatement) connection.prepareStatement(sql);
+            preparedStatement.setLong(1, this.lider);
+            preparedStatement.setLong(2,lastId);
+            preparedStatement.setInt(3,1);
             preparedStatement.executeUpdate();
-            ResultSet resultSet = preparedStatement.getGeneratedKeys();
-            resultSet.next();
-            long lastId = resultSet.getLong(1);
-            return new Object[] {true,lastId,"Nowy projekt został dodany"};
+
+
+            connection.commit();
+            return new Object[] {true, lastId, "Nowy projekt został dodany"};
         } catch (SQLException e) {
             loger.debug("Dodawanie nowego projektu", e);
             return new Object[] {false,null,"Błąd bazy danych"};
         }
     }
 
-    public void update() {
-        String sql = "";
+    public static Object[] addUserToProject(long userId,long projectId) {
+        try {
+            Connection connection = new InitializeConnection().connect();
+            String sql = "insert into ProjektyUzytkownicy (uzytkownik_id,projekt_id) values (?,?)";
+            PreparedStatement preparedStatement = (PreparedStatement) connection.prepareStatement(sql);
+            preparedStatement.setLong(1, userId);
+            preparedStatement.setLong(2, projectId);
+            int i = preparedStatement.executeUpdate();
+            //sql = "";
+            //if(i>0)
+            return new Object[] {true,"Użytkownik dodany"};
+        } catch (SQLException e) {
+            loger.debug("dodawnaie do projektu uzytkownika", e);
+            return new Object[] {false,"Błąd bazy danych"};
+        }
     }
 
     public static Project getProject(long projekt_id) {
@@ -103,6 +129,7 @@ public class Project {
 
             project = new Project(resultSet.getString("nazwa"),resultSet.getString("opis"),resultSet.getLong("lider"),resultSet.getTimestamp("data_zakonczenia"));
             project.setData_dodania(resultSet.getTimestamp("data_dodania"));
+            project.setProjekt_id(resultSet.getLong("projekt_id"));
 
             DbUtils.closeQuietly(null,preparedStatement,resultSet);
 
@@ -117,6 +144,30 @@ public class Project {
             DbUtils.closeQuietly(connection);
             return project;
         }
+    }
+
+    public static JdbcConverter<Project> jdbcConverter() {
+        return new JdbcConverter<Project>() {
+            @Override
+            public Project convertOneRow(ResultSet resultSet) {
+
+                try {
+                    Project p = new Project(
+                            resultSet.getLong("projekt_id"),
+                            resultSet.getString("nazwa"),
+                            resultSet.getString("opis"),
+                            resultSet.getLong("l_id"),
+                            resultSet.getTimestamp("data_dodania"),
+                            resultSet.getTimestamp("data_zakonczenia"));
+                    p.setLiderImieNazwisko(resultSet.getString("l_imie"),resultSet.getString("l_nazwisko"));
+                    return p;
+                } catch (SQLException e) {
+                    loger.debug("JDBC CONVERTER: ",e);
+                    return null;
+                }
+                //return null;
+            }
+        };
     }
 
     public Timestamp getData_dodania() {

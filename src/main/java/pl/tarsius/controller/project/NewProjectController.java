@@ -1,50 +1,50 @@
 package pl.tarsius.controller.project;
 
 
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+
+import io.datafx.controller.FXMLController;
+import io.datafx.controller.FxmlLoadException;
+import io.datafx.controller.context.ApplicationContext;
+import io.datafx.controller.context.FXMLApplicationContext;
+import io.datafx.controller.flow.FlowException;
+import io.datafx.controller.flow.action.ActionMethod;
+import io.datafx.controller.flow.action.ActionTrigger;
+import io.datafx.controller.flow.action.LinkAction;
+import io.datafx.controller.flow.context.ActionHandler;
+import io.datafx.controller.flow.context.FXMLViewFlowContext;
+import io.datafx.controller.flow.context.FlowActionHandler;
+import io.datafx.controller.flow.context.ViewFlowContext;
+import io.datafx.controller.util.VetoException;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextField;
 import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
-import org.datafx.controller.FXMLController;
-import org.datafx.controller.FxmlLoadException;
-import org.datafx.controller.context.ApplicationContext;
-import org.datafx.controller.context.FXMLApplicationContext;
-import org.datafx.controller.flow.FlowException;
-import org.datafx.controller.flow.action.ActionMethod;
-import org.datafx.controller.flow.action.ActionTrigger;
-import org.datafx.controller.flow.action.LinkAction;
-import org.datafx.controller.flow.context.ActionHandler;
-import org.datafx.controller.flow.context.FXMLViewFlowContext;
-import org.datafx.controller.flow.context.FlowActionHandler;
-import org.datafx.controller.flow.context.ViewFlowContext;
-import org.datafx.controller.util.VetoException;
 import pl.tarsius.controller.BaseController;
 import pl.tarsius.controller.HomeController;
 import pl.tarsius.database.Model.Project;
 import pl.tarsius.database.Model.User;
-import pl.tarsius.util.gui.ResponsiveDesign;
 import pl.tarsius.util.gui.StockButtons;
 import pl.tarsius.util.validator.CustomValidator;
 
 import javax.annotation.PostConstruct;
-import java.sql.*;
+import java.sql.Timestamp;
 
 /**
  * Created by Jarosław Kuliga on 14.04.16.
  */
 @FXMLController(value = "/view/app/newproject.fxml", title = "TaskApp")
-public class NewProjectController extends BaseController{
+public class NewProjectController extends BaseController {
     @FXML private TextField newProjectTitleField;
     @FXML private TextField newProjectDescField;
-    @FXML private DatePicker newProjectDatePicker;
+    @FXML
+    private DatePicker newProjectDatePicker;
 
-    @ActionHandler private FlowActionHandler flowActionHandler;
+    @ActionHandler
+    private FlowActionHandler flowActionHandler;
 
     @FXML
     @ActionTrigger("cleanDate") private Button newProjectDatePickerClean;
@@ -53,9 +53,7 @@ public class NewProjectController extends BaseController{
     @ActionTrigger("saveProject")
     private Button newProjectSave;
     @FXML @LinkAction(HomeController.class) private Button newProjectCancel;
-    @FXMLApplicationContext private ApplicationContext applicationContext;
 
-    @FXMLViewFlowContext private ViewFlowContext viewContext;
     ValidationSupport validationSupport;
 
 
@@ -85,7 +83,7 @@ public class NewProjectController extends BaseController{
            if(newProjectDatePicker.getValue()!=null) {
                dz = Timestamp.valueOf(newProjectDatePicker.getValue().atStartOfDay());
            }
-           User user = (User) applicationContext.getRegisteredObject("userSession");
+           User user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
            Project project = new Project(
                    newProjectTitleField.getText(),
                    newProjectDescField.getText(),user.getUzytkownikId(),
@@ -109,7 +107,7 @@ public class NewProjectController extends BaseController{
                if((boolean)task.getValue()[0]) {
                    try {
                        new Alert(Alert.AlertType.INFORMATION, (String) task.getValue()[2]).show();
-                       applicationContext.register("projectId", task.getValue()[1]);
+                       ApplicationContext.getInstance().register("projectId", task.getValue()[1]);
                        flowActionHandler.navigate(ShowProject.class);
                    } catch (VetoException e) {
                        e.printStackTrace();

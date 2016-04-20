@@ -1,30 +1,25 @@
 package pl.tarsius.controller.project;
 
-import com.mysql.jdbc.Connection;
-import com.mysql.jdbc.ResultSetRow;
+
+import io.datafx.controller.FXMLController;
+import io.datafx.controller.context.ApplicationContext;
+import io.datafx.controller.context.FXMLApplicationContext;
+import io.datafx.controller.flow.FlowException;
+import io.datafx.controller.flow.action.ActionMethod;
+import io.datafx.controller.flow.action.ActionTrigger;
+import io.datafx.controller.flow.context.ActionHandler;
+import io.datafx.controller.flow.context.FlowActionHandler;
+import io.datafx.controller.util.VetoException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.text.Text;
-import org.datafx.controller.FXMLController;
-import org.datafx.controller.context.ApplicationContext;
-import org.datafx.controller.context.FXMLApplicationContext;
-import org.datafx.controller.flow.FlowException;
-import org.datafx.controller.flow.action.ActionMethod;
-import org.datafx.controller.flow.action.ActionTrigger;
-import org.datafx.controller.flow.context.ActionHandler;
-import org.datafx.controller.flow.context.FlowActionHandler;
-import org.datafx.controller.util.VetoException;
 import pl.tarsius.controller.BaseController;
 import pl.tarsius.controller.ProfileController;
-import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.Project;
 import pl.tarsius.util.gui.StockButtons;
 
 import javax.annotation.PostConstruct;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 
 /**
@@ -32,7 +27,6 @@ import java.sql.Timestamp;
  */
 @FXMLController(value = "/view/app/widokprojektu.fxml", title = "TaskApp")
 public class ShowProject extends BaseController{
-    @FXMLApplicationContext private ApplicationContext applicationContext;
 
     @FXML private Label inprojectTitle;
     @FXML private Text inprojectDesc;
@@ -50,9 +44,10 @@ public class ShowProject extends BaseController{
 
     @PostConstruct
     public void init(){
-        new StockButtons(operationButtons, flowActionHandler).homeAction();
-
-       project = Project.getProject((long)applicationContext.getRegisteredObject("projectId"));
+        project = Project.getProject((long)ApplicationContext.getInstance().getRegisteredObject("projectId"));
+        ApplicationContext.getInstance().register("projectModel", project);
+        new StockButtons(operationButtons, flowActionHandler).inProjectButton();
+       ApplicationContext.getInstance().register("projectLider", project.getLider());
             inprojectTitle.setText(project.getNazwa());
             inprojectDesc.setText(project.getOpis());
             inprojectDataStart.setText(project.getData_dodania().toString());
