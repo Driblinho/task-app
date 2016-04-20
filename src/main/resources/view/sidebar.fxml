@@ -32,8 +32,8 @@
             <Insets left="15.0" />
          </padding>
       </Label>
-      <VBox fx:id="operationButtons" alignment="TOP_CENTER" layoutX="6.0" layoutY="200.0" prefHeight="117.0" prefWidth="193.0" spacing="5.0" />
-      <Label layoutX="3.0" layoutY="328.0" prefHeight="37.0" prefWidth="197.0" style="-fx-border-color: transparent transparent #313131 transparent;" text="Zarzaądzaj" textFill="#616161">
+      <VBox fx:id="operationButtons" alignment="TOP_CENTER" layoutX="6.0" layoutY="200.0" prefHeight="164.0" prefWidth="193.0" spacing="5.0" />
+      <Label layoutX="5.0" layoutY="358.0" prefHeight="37.0" prefWidth="197.0" style="-fx-border-color: transparent transparent #313131 transparent;" text="Zarzaądzaj" textFill="#616161">
          <font>
             <Font size="18.0" />
          </font>
@@ -41,7 +41,7 @@
             <Insets left="15.0" />
          </padding>
       </Label>
-      <VBox layoutY="365.0" prefHeight="200.0" prefWidth="200.0">
+      <VBox layoutX="3.0" layoutY="395.0" prefHeight="150.0" prefWidth="200.0">
          <children>
             <HBox alignment="CENTER_LEFT" styleClass="manageOptions">
                <children>

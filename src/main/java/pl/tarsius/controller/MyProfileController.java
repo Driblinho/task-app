@@ -1,44 +1,36 @@
 package pl.tarsius.controller;
 
+
+import io.datafx.controller.FXMLController;
+import io.datafx.controller.context.ApplicationContext;
+import io.datafx.controller.context.FXMLApplicationContext;
+import io.datafx.controller.flow.FlowException;
+import io.datafx.controller.flow.action.ActionMethod;
+import io.datafx.controller.flow.action.ActionTrigger;
+import io.datafx.controller.flow.context.ActionHandler;
+import io.datafx.controller.flow.context.FlowActionHandler;
+import io.datafx.controller.util.VetoException;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
-import org.controlsfx.tools.Platform;
-import org.controlsfx.validation.ValidationMessage;
-import org.controlsfx.validation.ValidationResult;
 import org.controlsfx.validation.ValidationSupport;
-import org.controlsfx.validation.Validator;
-import org.datafx.controller.FXMLController;
-import org.datafx.controller.context.ApplicationContext;
-import org.datafx.controller.context.FXMLApplicationContext;
-import org.datafx.controller.flow.FlowException;
-import org.datafx.controller.flow.action.ActionMethod;
-import org.datafx.controller.flow.action.ActionTrigger;
-import org.datafx.controller.flow.context.ActionHandler;
-import org.datafx.controller.flow.context.FlowActionHandler;
-import org.datafx.controller.util.VetoException;
 import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.User;
 import pl.tarsius.util.UserAuth;
 import pl.tarsius.util.gui.StockButtons;
-import pl.tarsius.util.validator.PeselValidator;
 import pl.tarsius.util.validator.form.UserFormValidator;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
-import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.function.Predicate;
 
 /**
  * Created by Ireneusz Kuliga on 02.04.16.
@@ -48,8 +40,6 @@ public class MyProfileController extends BaseController {
 
     private Logger loger;
 
-    @FXMLApplicationContext
-    private ApplicationContext applicationContext;
 
     @ActionHandler
     private FlowActionHandler flowActionHandler;
@@ -126,7 +116,7 @@ public class MyProfileController extends BaseController {
 
         new StockButtons(operationButtons,flowActionHandler).homeAction();
 
-        User user = (User) applicationContext.getRegisteredObject("userSession");
+        User user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
         setProfileCard(user);
 
         validationSupportNewPassword = new ValidationSupport();
@@ -214,7 +204,7 @@ public class MyProfileController extends BaseController {
 
 
         new StockButtons(operationButtons, flowActionHandler).homeAction();
-        User user = (User) applicationContext.getRegisteredObject("userSession");
+        User user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
         fileChooser.getExtensionFilters().addAll(
@@ -256,14 +246,14 @@ public class MyProfileController extends BaseController {
             validationSupportNewPassword.initInitialDecoration();
         } else {
 
-            User user = (User) applicationContext.getRegisteredObject("userSession");
+            User user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
             if(BCrypt.checkpw(oldPassword.getText().trim(), user.getHaslo())) {
                 Object[] userAuth= UserAuth.updatePassword(newPassword.getText().trim(),user.getUzytkownikId());
 
                 if((boolean)userAuth[0]) {
                     new Alert(Alert.AlertType.INFORMATION,(String) userAuth[1],ButtonType.OK).show();
                     user.setHaslo((String) userAuth[2]);
-                    applicationContext.register("userSession", user);
+                    ApplicationContext.getInstance().register("userSession", user);
                     flowActionHandler.navigate(MyProfileController.class);
                 } else {
                     new Alert(Alert.AlertType.ERROR,(String) userAuth[1],ButtonType.OK).show();
@@ -279,7 +269,7 @@ public class MyProfileController extends BaseController {
         if(validationSupportNewData.isInvalid()) {
             validationSupportNewData.initInitialDecoration();
         } else {
-            User user = (User) applicationContext.getRegisteredObject("userSession");
+            User user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
             user.setImie(regName.getText().trim());
             user.setNazwisko(regSurname.getText().trim());
             user.setEmail(regEmail.getText().trim().toLowerCase());
@@ -290,7 +280,7 @@ public class MyProfileController extends BaseController {
             user.setTelefon(regTel.getText().trim());
             Object[] userAuth = UserAuth.updateUser(user);
             if((boolean) userAuth[0]) {
-                applicationContext.register("userSession", user);
+                ApplicationContext.getInstance().register("userSession", user);
                 new Alert(Alert.AlertType.INFORMATION, (String) userAuth[1]);
                 flowActionHandler.navigate(MyProfileController.class);
             } else {

@@ -1,28 +1,27 @@
 package pl.tarsius.controller;
 
+
+import io.datafx.controller.context.ApplicationContext;
+import io.datafx.controller.flow.action.LinkAction;
+import io.datafx.controller.flow.context.ActionHandler;
+import io.datafx.controller.flow.context.FlowActionHandler;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import org.controlsfx.control.BreadCrumbBar;
-import org.datafx.controller.context.ApplicationContext;
-import org.datafx.controller.context.FXMLApplicationContext;
-import org.datafx.controller.flow.action.LinkAction;
-import org.datafx.controller.flow.context.ActionHandler;
-import org.datafx.controller.flow.context.FlowActionHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import pl.tarsius.controller.invite.InvitesController;
 import pl.tarsius.database.Model.User;
 import pl.tarsius.util.gui.ResponsiveDesign;
-import pl.tarsius.util.gui.StockButtons;
 
 import javax.annotation.PostConstruct;
 
@@ -50,23 +49,23 @@ public abstract class BaseController {
     @FXML public StackPane loading;
     @FXML public VBox operationButtons;
 
-    @FXMLApplicationContext
-    private ApplicationContext applicationContext;
-
     @ActionHandler
-    private FlowActionHandler flowActionHandler;
+    public FlowActionHandler flowActionHandler;
 
     //SideBar
     @FXML
     @LinkAction(HomeController.class)
-    private Hyperlink sideBarProject;
+    public Hyperlink sideBarProject;
 
     @FXML
-    private Hyperlink sideBarTaks;
+    public Hyperlink sideBarTaks;
     @FXML
-    private Hyperlink sideBarProblems;
+    public Hyperlink sideBarProblems;
     @FXML
-    private Hyperlink sideBarInv;
+    @LinkAction(InvitesController.class)
+    public Hyperlink sideBarInv;
+
+
 
     public void setUserBar(User user) {
         userBarFullName.setText(user.getImie()+" "+user.getNazwisko());
@@ -76,9 +75,9 @@ public abstract class BaseController {
 
     @PostConstruct
     public void start() {
-        User user = (User) applicationContext.getRegisteredObject("userSession");
-        setUserBar(user);
 
+        User user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
+        setUserBar(user);
         Platform.runLater(() -> {
             new ResponsiveDesign((Stage) operationButtons.getParent().getScene().getWindow()).resizeBodyWidth(operationButtons.getParent().getScene().getWindow().getWidth());
             //-3.48% HACK

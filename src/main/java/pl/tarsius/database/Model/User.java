@@ -1,9 +1,12 @@
 package pl.tarsius.database.Model;
 
+import io.datafx.io.converter.JdbcConverter;
 import pl.tarsius.util.ImageCloudinaryUpload;
 import pl.tarsius.util.validator.PeselValidator;
 
 import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 
@@ -164,6 +167,33 @@ public class User {
 
     public String getImieNazwisko() {
         return this.getImie()+" "+this.getNazwisko();
+    }
+
+    public boolean isAdmin() {
+        return (this.typ==3);
+    }
+
+    @Override
+    public String toString() {
+        return getImieNazwisko();
+    }
+
+    public static JdbcConverter<User> jdbcConverter() {
+        return new JdbcConverter<User>() {
+            @Override
+            public User convertOneRow(ResultSet resultSet) {
+                User user = new User();
+                try {
+                    user.setUzytkownikId(resultSet.getLong("uzytkownik_id"));
+                    user.setImie(resultSet.getString("imie"));
+                    user.setNazwisko(resultSet.getString("nazwisko"));
+                    return user;
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    return new User();
+                }
+            }
+        };
     }
 
 }

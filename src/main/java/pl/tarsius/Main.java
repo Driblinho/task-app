@@ -3,23 +3,17 @@ package pl.tarsius;
  * Created by Ireneusz Kuliga on 03.03.16.
  */
 
+
+import io.datafx.controller.context.ApplicationContext;
+import io.datafx.controller.context.FXMLApplicationContext;
+import io.datafx.controller.flow.Flow;
+import io.datafx.controller.flow.FlowException;
 import javafx.application.Application;
-import javafx.beans.property.Property;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import org.datafx.controller.context.ApplicationContext;
-import org.datafx.controller.flow.*;
-import org.datafx.controller.flow.container.DefaultFlowContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.tarsius.controller.HomeController;
 import pl.tarsius.controller.StartupController;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.util.gui.ResponsiveDesign;
@@ -29,6 +23,7 @@ import java.sql.SQLException;
 public class Main extends Application {
 
     @FXML private StackPane stackPane;
+    @FXMLApplicationContext private ApplicationContext applicationContext;
     private Logger loger;
     @Override
     public void start(Stage primaryStage) throws FlowException, SQLException {
@@ -38,12 +33,13 @@ public class Main extends Application {
 
         ApplicationContext.getInstance().register("connection", new InitializeConnection().connect());
 
-        ApplicationContext.getInstance().register("userSesion", null);
+        ApplicationContext.getInstance().register("userSession",new Object());
 
         //Font.loadFont(getClass().getResourceAsStream("assets/font/RobotoCondensed-Regular.ttf"), 14);
         //Font.loadFont(getClass().getResourceAsStream("assets/font/RobotoCondensed-Light.ttf"), 14);
 
         Flow flow = new Flow(StartupController.class);
+
 
         flow.startInStage(primaryStage);
 

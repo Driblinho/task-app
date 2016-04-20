@@ -1,6 +1,7 @@
 package pl.tarsius.controller;
 
-import org.datafx.controller.FXMLController;
+
+import io.datafx.controller.FXMLController;
 
 /**
  * Created by Ireneusz Kuliga on 16.04.16.

@@ -53,21 +53,41 @@
             <artifactId>controlsfx</artifactId>
             <version>8.40.10</version>
         </dependency>
+
         <dependency>
-            <groupId>org.javafxdata</groupId>
-            <artifactId>datafx-core</artifactId>
-            <version>8.0b5</version>
+            <groupId>io.datafx</groupId>
+            <artifactId>datafx</artifactId>
+            <version>8.0.7</version>
         </dependency>
+
         <dependency>
-            <groupId>org.javafxdata</groupId>
-            <artifactId>datafx-datareader</artifactId>
-            <version>8.0b5</version>
+            <groupId>io.datafx</groupId>
+            <artifactId>core</artifactId>
+            <version>8.0.7</version>
         </dependency>
+
         <dependency>
-            <groupId>org.javafxdata</groupId>
-            <artifactId>datafx-flow</artifactId>
-            <version>8.0b5</version>
+            <groupId>io.datafx</groupId>
+            <artifactId>flow</artifactId>
+            <version>8.0b9</version>
         </dependency>
+
+
+
+
+        <dependency>
+            <groupId>io.datafx</groupId>
+            <artifactId>datasources</artifactId>
+            <version>8.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.datafx</groupId>
+            <artifactId>injection</artifactId>
+            <version>8.0.1</version>
+        </dependency>
+
+
         <dependency>
             <groupId>de.svenkubiak</groupId>
             <artifactId>jBCrypt</artifactId>

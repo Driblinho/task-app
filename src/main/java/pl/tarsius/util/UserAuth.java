@@ -2,8 +2,9 @@ package pl.tarsius.util;
 
 import com.mysql.jdbc.PreparedStatement;
 import com.sun.jersey.api.client.ClientResponse;
+import io.datafx.controller.context.ApplicationContext;
+import io.datafx.controller.context.FXMLApplicationContext;
 import org.apache.commons.dbutils.DbUtils;
-import org.datafx.controller.context.ApplicationContext;
 import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,26 +12,24 @@ import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.User;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.sql.*;
 import java.time.LocalDateTime;
-import java.util.*;
 import java.util.Date;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Created by Ireneusz Kuliga on 29.03.16.
  */
 public class UserAuth {
 
-    private static Logger loger = LoggerFactory.getLogger(UserAuth.class);;
+    private static Logger loger = LoggerFactory.getLogger(UserAuth.class);
     private static Connection connection;
+
 
     public static String genHash(String password) {
         return BCrypt.hashpw(password, BCrypt.gensalt(12));
