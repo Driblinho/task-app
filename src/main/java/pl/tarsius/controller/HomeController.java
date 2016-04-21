@@ -18,6 +18,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
@@ -62,7 +63,15 @@ public class HomeController extends BaseController{
         new StockButtons(operationButtons,flowActionHandler).homeAction();
         InitializeConnection initializeConnection = new InitializeConnection();
         try {
-            new Thread(renderProject(null,initializeConnection.connect())).start();
+            Connection conn = initializeConnection.connect();
+            new Thread(renderProject(null,conn)).start();
+
+            userBarSearch.setOnKeyPressed(event -> {
+                if(event.getCode().equals(KeyCode.ENTER)) {
+                    contentFlow.getChildren().clear();
+                    new Thread(renderProject(userBarSearch.getText().trim(),conn)).start();
+                }
+            });
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -110,6 +119,7 @@ public class HomeController extends BaseController{
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         contentFlow.getChildren().add(parent);
     }
 
@@ -119,8 +129,11 @@ public class HomeController extends BaseController{
         User u = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
 
         String sql = "select * from ProjektyUzytkownicy pu,Projekty p,Uzytkownicy u,(select imie as l_imie,nazwisko as l_nazwisko,uzytkownik_id l_id from Uzytkownicy)au where pu.uzytkownik_id=u.uzytkownik_id \n" +
-                "and pu.projekt_id=p.projekt_id and au.l_id=p.lider and pu.uzytkownik_id="+u.getUzytkownikId()+" order by pu.lider limit 6;\n";
+                "and pu.projekt_id=p.projekt_id and au.l_id=p.lider and pu.uzytkownik_id="+u.getUzytkownikId();
+        if(search!=null) sql+=" and (nazwa like '%"+search+"%' or opis like '%"+search+"%')";
+        sql+=" order by pu.lider limit 6";
 
+        System.out.println(sql);
         DataReader<Project> dataReader = new JdbcSource<>(connection, sql, Project.jdbcConverter());
 
         Task<ObservableList<Project>> task = new Task<ObservableList<Project>>() {
