@@ -187,7 +187,7 @@ public class User {
                     user.setNazwisko(resultSet.getString("nazwisko"));
                     return user;
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    // TODO: 21.04.16 LOG
                     return new User();
                 }
             }

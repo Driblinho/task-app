@@ -3,6 +3,7 @@ package pl.tarsius.database.Model;
 import com.mysql.jdbc.PreparedStatement;
 import com.mysql.jdbc.Statement;
 import io.datafx.io.converter.JdbcConverter;
+import javafx.collections.ObservableList;
 import org.apache.commons.dbutils.DbUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +57,37 @@ public class Project {
         this.projekt_id = projekt_id;
     }
 
+    public static Object[] updateProject(Project project, ObservableList<User> users){
+        try {
+            Connection connection = new InitializeConnection().connect();
+            connection.setAutoCommit(false);
+            PreparedStatement ps = (PreparedStatement) connection.prepareStatement("UPDATE Projekty SET nazwa=?, opis =?, data_zakonczenia =? WHERE projekt_id =?");
+            ps.setString(1,project.getNazwa());
+            ps.setString(2,project.getOpis());
+            ps.setTimestamp(3,project.data_zakonczenia);
+            ps.setLong(4,project.getProjekt_id());
+            ps.executeUpdate();
+            ps = (PreparedStatement) connection.prepareStatement("delete from ProjektyUzytkownicy where projekt_id=? and lider!=1;");
+            ps.setLong(1,project.getProjekt_id());
+            ps.executeUpdate();
 
+            for (User user : users) {
+                ps = (PreparedStatement) connection.prepareStatement("insert into ProjektyUzytkownicy (uzytkownik_id,projekt_id) values (?,?)");
+                ps.setLong(1, user.getUzytkownikId());
+                ps.setLong(2, project.getProjekt_id());
+                ps.addBatch();
+            }
+            ps.executeBatch();
+
+            connection.commit();
+
+
+            return new Object[]{true,"Zaktualizowano projekt"};
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new Object[]{false,"Błąd bazy danych"};
+        }
+    }
 
     public Object[] save() {
         String sql = "INSERT INTO `Projekty` " +
