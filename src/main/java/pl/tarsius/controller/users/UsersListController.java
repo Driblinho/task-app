@@ -16,6 +16,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import pl.tarsius.controller.BaseController;
@@ -68,15 +69,21 @@ public class UsersListController extends BaseController {
 
         akcjaCol.setCellValueFactory(
                 new PropertyValueFactory<>("action"));
-
-
         userTable.setItems(data);
 
 
         InitializeConnection ic = new InitializeConnection();
 
         try {
-            updateTable(ic.connect(),data);
+            Connection conn = ic.connect();
+            updateTable(null,conn,data);
+
+            userBarSearch.setOnKeyPressed(event -> {
+                if(event.getCode().equals(KeyCode.ENTER)) {
+                    updateTable(userBarSearch.getText().trim(),conn,data);
+                }
+            });
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -84,11 +91,16 @@ public class UsersListController extends BaseController {
 
     }
 
-    public void updateTable(Connection c, ObservableList<Person> data) throws SQLException {
+    public void updateTable(String search, Connection c, ObservableList<Person> data) {
 
             Connection connection = c;
-            ResultSet rs = connection.prepareStatement("select * from Uzytkownicy").executeQuery();
 
+        try {
+            String sql = "select * from Uzytkownicy";
+            if(search!=null)
+                sql+=" where imie like '%"+search+"%' or nazwisko like '%"+search+"%' or email like '%"+search+"%'";
+            System.out.println(sql);
+            ResultSet rs =  connection.prepareStatement(sql).executeQuery();
             Task<Void> task = new Task<Void>() {
                 @Override
                 protected Void call() throws Exception {
@@ -97,11 +109,15 @@ public class UsersListController extends BaseController {
                         data.add(new Person(rs.getLong("uzytkownik_id"),rs.getString("imie"),rs.getString("nazwisko"),rs.getString("email"),rs.getInt("typ"),rs.getInt("aktywny"),flowActionHandler,loading));
                         Thread.sleep(500);
                     }
-
                     return null;
                 }
             };
             new Thread(task).start();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public static class Person {
