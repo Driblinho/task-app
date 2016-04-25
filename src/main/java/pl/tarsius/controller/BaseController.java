@@ -76,6 +76,9 @@ public abstract class BaseController {
     @LinkAction(UsersListController.class)
     public Hyperlink sideBarUsers;
 
+    public String search;
+    public String sort="";
+
 
 
     public void setUserBar(User user) {

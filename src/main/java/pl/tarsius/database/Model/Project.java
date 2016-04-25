@@ -194,9 +194,8 @@ public class Project {
                     return p;
                 } catch (SQLException e) {
                     loger.debug("JDBC CONVERTER: ",e);
-                    return null;
                 }
-                //return null;
+                return null;
             }
         };
     }

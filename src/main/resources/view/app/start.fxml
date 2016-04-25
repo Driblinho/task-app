@@ -2,13 +2,16 @@
 
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Pagination?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import org.controlsfx.control.BreadCrumbBar?>
+<?import org.controlsfx.control.SegmentedButton?>
 
-<StackPane alignment="TOP_CENTER" prefHeight="800.0" prefWidth="1170.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane alignment="TOP_CENTER" prefHeight="800.0" prefWidth="1170.0" xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <BorderPane fx:id="body" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1170.0">
          <left>
@@ -22,7 +25,17 @@
                <children>
                   <fx:include source="../userbar.fxml" />
                   <BreadCrumbBar fx:id="breadCrumb" />
-                  <FlowPane fx:id="contentFlow" prefHeight="112.0" prefWidth="960.0" />
+                  <HBox alignment="TOP_RIGHT" prefHeight="46.0" prefWidth="960.0" spacing="5.0">
+                     <children>
+                        <SegmentedButton fx:id="filtrButtons" />
+                        <SegmentedButton fx:id="sortButtons" />
+                     </children>
+                     <padding>
+                        <Insets right="20.0" top="5.0" />
+                     </padding>
+                  </HBox>
+                  <FlowPane fx:id="contentFlow" prefHeight="526.0" prefWidth="960.0" />
+                  <Pagination fx:id="pagination" prefHeight="52.0" prefWidth="960.0" />
                </children>
             </VBox>
          </center>
