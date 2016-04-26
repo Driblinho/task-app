@@ -19,6 +19,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
@@ -79,20 +80,20 @@ public class InvitesController extends BaseController {
 
     }
 
-    private AnchorPane invRow(Invite invite) {
-        AnchorPane anchorPane = new AnchorPane();
+    private GridPane invRow(Invite invite) {
+        GridPane gridPane = new GridPane();
         try {
-            anchorPane.setPrefWidth(350);
-            anchorPane = FXMLLoader.load(getClass().getClassLoader().getResource("view/app/invitationUserTPL.fxml"));
-            Label projectName = (Label) anchorPane.lookup(".invProjectName");
-            Hyperlink author = (Hyperlink) anchorPane.lookup(".invAuthor");
-            Label endDL = (Label) anchorPane.lookup(".invDescDateEnd");
-            Label endD = (Label) anchorPane.lookup(".invDateEnd");
-            Button cancel = (Button) anchorPane.lookup(".invCancel");
+            gridPane = FXMLLoader.load(getClass().getClassLoader().getResource("view/app/invitationUserTPL.fxml"));
+            gridPane.setPrefWidth(invContent.getScene().widthProperty().getValue()-230.0);
+            Label projectName = (Label) gridPane.lookup(".invProjectName");
+            Hyperlink author = (Hyperlink) gridPane.lookup(".invAuthor");
+            Label endDL = (Label) gridPane.lookup(".invDescDateEnd");
+            Label endD = (Label) gridPane.lookup(".invDateEnd");
+            Button cancel = (Button) gridPane.lookup(".invCancel");
 
-            Button acept = (Button) anchorPane.lookup(".invAccept");
-            Label dateSendL = (Label) anchorPane.lookup(".invDescDateSendLabel");
-            Label dateSend = (Label) anchorPane.lookup(".invDateSend");
+            Button acept = (Button) gridPane.lookup(".invAccept");
+            Label dateSendL = (Label) gridPane.lookup(".invDescDateSendLabel");
+            Label dateSend = (Label) gridPane.lookup(".invDateSend");
 
 
             cancel.setOnAction(event -> {
@@ -167,7 +168,7 @@ public class InvitesController extends BaseController {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            return anchorPane;
+            return gridPane;
         }
 
     }

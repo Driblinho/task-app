@@ -56,7 +56,7 @@ public class Main extends Application {
 
         primaryStage.getScene().widthProperty().addListener((observable, oldValue, newValue) -> {
             new ResponsiveDesign(primaryStage).resizeBodyWidth(newValue.doubleValue());
-            loger.info("H"+newValue);
+            loger.info("W"+newValue);
 
         });
 

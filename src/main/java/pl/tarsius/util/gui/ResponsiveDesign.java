@@ -20,6 +20,7 @@ public class ResponsiveDesign {
     private BorderPane bodyBorderPane;
     private ImageView logoImageView;
     private GridPane userBar;
+    private GridPane inviteItem;
     public ResponsiveDesign(Stage stage) {
         this.stage = stage;
         this.bodyBorderPane = (BorderPane) stage.getScene().lookup(bodyBorderPaneName);
@@ -27,6 +28,7 @@ public class ResponsiveDesign {
         this.loadingStackPane = (StackPane) stage.getScene().lookup(loadingName);
         this.userBar = (GridPane) stage.getScene().lookup(userBarName);
         this.topMsgContent = (GridPane) stage.getScene().lookup(alertTopMsg);
+        this.inviteItem = (GridPane) stage.getScene().lookup(".inviteItem");
     }
     
     public void resizeBodyWidth(Double width) {
@@ -41,6 +43,11 @@ public class ResponsiveDesign {
         if(userBar != null ) {
             userBar.setPrefWidth(width-220.0);
         }
+        if(inviteItem != null ) {
+            inviteItem.setPrefWidth(width-240.0);
+        }
+
+
 
     }
 
