@@ -1,6 +1,7 @@
 package pl.tarsius.database.Model;
 
 import com.mysql.jdbc.PreparedStatement;
+import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
 import io.datafx.controller.context.ApplicationContext;
 import io.datafx.io.converter.JdbcConverter;
 import javafx.collections.ObservableList;
@@ -9,10 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.tarsius.database.InitializeConnection;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.List;
 
 /**
@@ -66,6 +64,8 @@ public class Invite {
     }
 
     public static Object[] saveList(List<Invite> lu) {
+        int[] x=new int[1];
+        String msg = "Użytkownicy zaproszeni do projektu";
         try {
             Connection connection = new InitializeConnection().connect();
             PreparedStatement preparedStatement= (PreparedStatement) connection.prepareStatement("insert into Zaproszenia (projekt_id,uzytkownik_id,stan) values (?,?,?);");
@@ -79,16 +79,14 @@ public class Invite {
                     loger.debug("InvSaveListLoop: ", e);
                 }
             });
-            int[] x = preparedStatement.executeBatch();
-            String msg = "";
-            for (int i=0;i<x.length;i++) {
-                if(x[i]==0) msg+=lu.get(x[i]).getUzytkownikImieNazwisko()+" nie został zaproszony\n";
-            }
-            if(msg.length()>0) return new Object[]{true, "Nie wszyscy użytkownicy zostali zaproszeni:\n"+msg};
-            return new Object[]{true, "Zaproszenie dodane"};
+            x = preparedStatement.executeBatch();
+            return new Object[]{true, msg};
         } catch (SQLException e) {
+            if (e.getSQLState().contains("23000")) {
+                if(x.length>0) return new Object[]{true, msg};
+            }
             loger.debug("svaeInvList:", e);
-            return new Object[]{false,"Błąd bazy danych"};
+            return new Object[]{false, "Błąd bazy danych"};
         }
     }
 

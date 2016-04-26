@@ -133,7 +133,7 @@ public class InvitesController extends BaseController {
                             Object[] resp = Project.addUserToProject(invite.getUzytkownikId(),invite.getProjektId());
                             if((boolean)resp[0]) {
                                 Object[] ir = Invite.remove(invite.getZaproszeniId());
-                                if ((boolean)ir[0]) resp = ir;
+                                if (!(boolean)ir[0]) resp = ir;
                             }
                             return resp;
                         }
@@ -144,7 +144,7 @@ public class InvitesController extends BaseController {
                                 flowActionHandler.navigate(ShowProject.class);
                             }
                             loading.setVisible(false);
-                            new Alert(Alert.AlertType.ERROR,(String) task.getValue()[1]).show();
+                            new Alert(Alert.AlertType.INFORMATION,(String) task.getValue()[1]).show();
                         } catch (VetoException e) {
                             e.printStackTrace();
                         } catch (FlowException e) {
