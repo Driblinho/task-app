@@ -18,6 +18,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -36,6 +37,7 @@ import pl.tarsius.util.gui.StockButtons;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 
@@ -52,14 +54,19 @@ public class InvitesController extends BaseController {
     @FXML
     private VBox invContent;
 
+    @FXML private Pagination invPagination;
+
     @ActionHandler
     private FlowActionHandler flowActionHandler;
     private Logger loger;
 
-    //private ObservableList<Invite> inviteObservableList;
+    private boolean isBoss;
+
 
     @PostConstruct
     public void init() {
+        sort="DESC";
+        invPagination.setPageCount(1);
         loger = LoggerFactory.getLogger(getClass());
         User user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
         new StockButtons(operationButtons, flowActionHandler).homeAction();
@@ -75,20 +82,64 @@ public class InvitesController extends BaseController {
         desc.setUserData("DESC");
         invSort.getButtons().addAll(asc,desc);
 
-        //invFiltrSort.setItems(FXCollections.observableArrayList("Sortowanie", "Najnowsze", "Najstarsze"));
-        //invFiltrSort.getSelectionModel().selectFirst();
-
-
-
-
 
         InitializeConnection initializeConnection = new InitializeConnection();
         try {
-            Task<ObservableList<Invite>> task = inviteTask(null,initializeConnection.connect(),user.getUzytkownikId());
+            Connection conn = initializeConnection.connect();
+            Task<ObservableList<Invite>> task = inviteTask(conn,user.getUzytkownikId(),0);
             new Thread(task).start();
+
+            invPagination.currentPageIndexProperty().addListener((observable, oldValue, newValue) -> {
+                new Thread(inviteTask(conn, user.getUzytkownikId(), newValue.intValue())).start();
+            });
+
+
+            asc.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                if(newValue) {
+                    sort=(String) asc.getUserData();
+                    new Thread(inviteTask(conn, user.getUzytkownikId(), 0)).start();
+                } else desc.setSelected(true);
+            });
+
+            desc.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                if(newValue) {
+                    sort = (String) desc.getUserData();
+                    new Thread(inviteTask(conn, user.getUzytkownikId(), 0)).start();
+                } else asc.setSelected(true);
+            });
+
+            userBarSearch.setOnKeyPressed(event -> {
+                if(event.getCode().equals(KeyCode.ENTER)) {
+                    search = userBarSearch.getText().trim();
+                    new Thread(inviteTask(conn, user.getUzytkownikId(), 0)).start();
+                }
+            });
+
+            boss.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                if(newValue) {
+                    isBoss = true;
+                    new Thread(inviteTask(conn, user.getUzytkownikId(), 0)).start();
+                } else
+                    isBoss = false;
+
+            });
+
+            all.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                if(newValue) {
+                    isBoss=false;
+                    new Thread(inviteTask(conn, user.getUzytkownikId(), 0)).start();
+                } else {
+                    isBoss = true;
+                }
+
+
+            });
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+
 
 
     }
@@ -186,15 +237,23 @@ public class InvitesController extends BaseController {
 
     }
 
-    public Task<ObservableList<Invite>> inviteTask(String search, Connection connection, long userId) {
+    public Task<ObservableList<Invite>> inviteTask(Connection connection, long userId,int page) {
 
-        String sql = "select z.uzytkownik_id,z.zaproszenie_id,p.projekt_id,p.nazwa,p.data_zakonczenia,lider,u.imie,u.nazwisko,z.data_dodania " +
+        String sql = "select {tpl} " +
                 "from Zaproszenia z,Projekty p,Uzytkownicy u " +
                 "where p.projekt_id=z.projekt_id " +
                 "and p.lider=u.uzytkownik_id " +
-                "and z.uzytkownik_id="+userId+" and stan=1;";
-
+                "and z.uzytkownik_id="+userId+" and stan=1";
+        if(search!=null && search.length()>0) sql+=" and p.nazwa like '%"+search+"%'";
+        if(isBoss)
+            sql+=" and p.lider in (select uzytkownik_id from Uzytkownicy WHERE typ in (2,3))";
+        String sqlCount = sql.replace("{tpl}", "count(*)");
+        loger.debug("SQL count:"+sqlCount);
+        sql=sql.replace("{tpl}", "z.uzytkownik_id,z.zaproszenie_id,p.projekt_id,p.nazwa,p.data_zakonczenia,lider,u.imie,u.nazwisko,z.data_dodania");
+        if (sort.length()>0) sql+= " order by z.data_dodania "+sort;
         //if(search!=null) sql+= " and u.imie like '%"+search+"%'";
+        int perPage = 1;
+        sql+= " limit "+page*perPage+","+perPage+"";
 
         DataReader<Invite> dataReader = new JdbcSource<>(connection, sql, Invite.jdbcConverter());
 
@@ -202,6 +261,15 @@ public class InvitesController extends BaseController {
             @Override
             protected ObservableList<Invite> call() throws InterruptedException, IOException {
                 ObservableList<Invite> observableList = FXCollections.observableArrayList();
+
+                try {
+                    ResultSet rs = connection.prepareStatement(sqlCount).executeQuery();
+                    rs.next();
+                    long count = rs.getLong(1);
+                    Platform.runLater(() -> invPagination.setPageCount((int) Math.ceil((float)count/perPage)));
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
 
                 do {
                     Invite i = dataReader.get();
@@ -212,6 +280,7 @@ public class InvitesController extends BaseController {
             }
         };
         task.setOnSucceeded(event -> {
+            invContent.getChildren().clear();
             if(task.getValue().get(0)!=null)
                 task.getValue().forEach(invite -> invContent.getChildren().add(invRow(invite)));
         });
