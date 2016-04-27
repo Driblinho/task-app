@@ -232,6 +232,8 @@ public class HomeController extends BaseController{
         String sql = "select * from ProjektyUzytkownicy pu,Projekty p,Uzytkownicy u,(select imie as l_imie,nazwisko as l_nazwisko,uzytkownik_id l_id from Uzytkownicy)au where pu.uzytkownik_id=u.uzytkownik_id \n" +
                 "and pu.projekt_id=p.projekt_id and au.l_id=p.lider and pu.uzytkownik_id="+u.getUzytkownikId();
 
+        sql+=" and p.status=1";
+
         if(search!=null && search.length()>0) sql+=" and (nazwa like '%"+search+"%' or opis like '%"+search+"%')";
 
 
