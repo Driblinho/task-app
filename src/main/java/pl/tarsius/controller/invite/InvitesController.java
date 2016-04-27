@@ -22,6 +22,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import org.controlsfx.control.SegmentedButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.tarsius.controller.BaseController;
@@ -44,8 +45,9 @@ import java.util.Collection;
 @FXMLController(value = "/view/app/myInv.fxml", title = "TaskApp - Moje Zaproszenia")
 public class InvitesController extends BaseController {
 
-    @FXML
-    private ChoiceBox invFiltrSort;
+    @FXML private SegmentedButton invFiltr;
+    @FXML private SegmentedButton invSort;
+
 
     @FXML
     private VBox invContent;
@@ -62,8 +64,19 @@ public class InvitesController extends BaseController {
         User user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
         new StockButtons(operationButtons, flowActionHandler).homeAction();
 
-        invFiltrSort.setItems(FXCollections.observableArrayList("Sortowanie", "Najnowsze", "Najstarsze"));
-        invFiltrSort.getSelectionModel().selectFirst();
+        ToggleButton boss = new ToggleButton("Kierownicze");
+        ToggleButton all = new ToggleButton("Wszystkie");
+        invFiltr.getButtons().addAll(boss,all);
+
+        ToggleButton asc = new ToggleButton("Rosnąco");
+        asc.setSelected(true);
+        asc.setUserData("ASC");
+        ToggleButton desc = new ToggleButton("Malejąco");
+        desc.setUserData("DESC");
+        invSort.getButtons().addAll(asc,desc);
+
+        //invFiltrSort.setItems(FXCollections.observableArrayList("Sortowanie", "Najnowsze", "Najstarsze"));
+        //invFiltrSort.getSelectionModel().selectFirst();
 
 
 

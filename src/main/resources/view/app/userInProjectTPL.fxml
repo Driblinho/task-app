@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="60.0" prefWidth="960.0" style="-fx-background-color: #fff;" xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Circle fx:id="InProjectMemberAvatar" fill="DODGERBLUE" layoutX="34.0" layoutY="33.0" radius="20.0" stroke="BLACK" strokeType="INSIDE" styleClass="userInProjectAvatar" />
+      <Hyperlink fx:id="InProjectMemberName" layoutX="63.0" layoutY="10.0" styleClass="userInProjectName" text="Jan Kowalski">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Hyperlink>
+      <Label layoutX="71.0" layoutY="38.0" text="Zadania:" />
+      <Text fx:id="InProjectMemberTask" layoutX="129.0" layoutY="51.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="userInProjectTaskCount" text="5" />
+      <Label layoutX="138.0" layoutY="38.0" text="Ukończone:" />
+      <Text fx:id="InProjectMemberTaskFinish" layoutX="216.0" layoutY="51.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="userInProjectTaskEndCount" text="5" />
+   </children>
+   <styleClass>
+      <String fx:value="shadowBox" />
+      <String fx:value="userInProjectItem" />
+   </styleClass>
+</AnchorPane>

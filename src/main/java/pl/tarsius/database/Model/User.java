@@ -188,6 +188,7 @@ public class User {
                     return user;
                 } catch (SQLException e) {
                     // TODO: 21.04.16 LOG
+                    e.printStackTrace();
                     return new User();
                 }
             }
