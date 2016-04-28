@@ -1,6 +1,7 @@
 package pl.tarsius.controller;
 
 
+import com.sun.jersey.api.client.ClientResponse;
 import io.datafx.controller.FXMLController;
 import io.datafx.controller.context.ApplicationContext;
 import io.datafx.controller.context.FXMLApplicationContext;
@@ -24,13 +25,17 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.tarsius.database.Model.User;
+import pl.tarsius.util.Mail;
 import pl.tarsius.util.UserAuth;
 import pl.tarsius.util.gui.StockButtons;
 import pl.tarsius.util.validator.form.UserFormValidator;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Properties;
 
 /**
  * Created by Ireneusz Kuliga on 02.04.16.
@@ -260,6 +265,7 @@ public class MyProfileController extends BaseController {
                     user.setHaslo((String) userAuth[2]);
                     if(showId==null)
                         ApplicationContext.getInstance().register("userSession", user);
+                    infoEmail(profileDataEmail.getText().trim());
                     flowActionHandler.navigate(MyProfileController.class);
                 } else {
                     new Alert(Alert.AlertType.ERROR,(String) userAuth[1],ButtonType.OK).show();
@@ -290,11 +296,35 @@ public class MyProfileController extends BaseController {
                 if(showId==null)
                     ApplicationContext.getInstance().register("userSession", user);
                 new Alert(Alert.AlertType.INFORMATION, (String) userAuth[1]);
+                infoEmail(regEmail.getText().trim());
                 flowActionHandler.navigate(MyProfileController.class);
             } else {
                 new Alert(Alert.AlertType.WARNING,(String) userAuth[1]);
             }
         }
     }
+
+    private void infoEmail(String email) {
+        Properties properties = new Properties();
+        try {
+            InputStream cfgFile = new FileInputStream(UserAuth.class.getClassLoader().getResource("properties/mail.properties").getFile());
+            properties.load(cfgFile);
+            Mail mail = new Mail(properties.getProperty("apiKey"),UserAuth.class.getClassLoader().getResource("assets/emailtempleate.html").getPath());
+            mail.setToken("Pozdrowienia");
+            mail.setApDomain("mail@taskapp.com");
+            mail.setSubject("Zmiana danych profilowych");
+            mail.setDesc("Dane profilowe zostały zmienione");
+            mail.setEmailUser(email.trim().toLowerCase());
+            mail.setMessage("Dane profilowe zostały zmodyfikowane");
+            mail.setNameApp("TaskApp");
+            mail.setNameUser("");
+            mail.setNameUser("");
+            ClientResponse clientResponse = mail.send();
+            loger.debug("Mail Status:" + clientResponse.getStatus());
+        } catch (java.io.IOException e) {
+            loger.debug("Mail: ",e);
+        }
+    }
+
 
 }
