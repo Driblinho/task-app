@@ -29,18 +29,14 @@ public class InitializeConnection {
     public InitializeConnection() {
         loger = LoggerFactory.getLogger(InitializeConnection.class);
         databseConfig = new Properties();
+        InputStream cfgFile = getClass().getResourceAsStream("/properties/database.properties");
         try {
-            InputStream cfgFile = new FileInputStream(getClass().getClassLoader().getResource("properties/database.properties").getFile());
-            try {
-                databseConfig.load(cfgFile);
-                jdbcUrl  = databseConfig.getProperty("database.jdbcUrl");
-                username = databseConfig.getProperty("database.user");
-                password = databseConfig.getProperty("database.password");
+            databseConfig.load(cfgFile);
+            jdbcUrl  = databseConfig.getProperty("database.jdbcUrl");
+            username = databseConfig.getProperty("database.user");
+            password = databseConfig.getProperty("database.password");
 
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

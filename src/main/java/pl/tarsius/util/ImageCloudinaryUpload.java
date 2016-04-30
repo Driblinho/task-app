@@ -17,7 +17,7 @@ public class ImageCloudinaryUpload {
     public ImageCloudinaryUpload() {
         Properties properties = new Properties();
         try {
-            InputStream cfgFile = new FileInputStream(getClass().getClassLoader().getResource("properties/cloudinary.properties").getFile());
+            InputStream cfgFile = getClass().getResourceAsStream("/properties/cloudinary.properties");
             properties.load(cfgFile);
             cloudinary = new Cloudinary(ObjectUtils.asMap(
                     "cloud_name", properties.getProperty("cloudinary.cloudNam"),

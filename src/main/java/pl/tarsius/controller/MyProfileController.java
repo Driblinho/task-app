@@ -309,7 +309,7 @@ public class MyProfileController extends BaseController {
         try {
             InputStream cfgFile = new FileInputStream(UserAuth.class.getClassLoader().getResource("properties/mail.properties").getFile());
             properties.load(cfgFile);
-            Mail mail = new Mail(properties.getProperty("apiKey"),UserAuth.class.getClassLoader().getResource("assets/emailtempleate.html").getPath());
+            Mail mail = new Mail(properties.getProperty("apiKey"),UserAuth.class.getResourceAsStream("/assets/emailtempleate.html"));
             mail.setToken("Pozdrowienia");
             mail.setApDomain("mail@taskapp.com");
             mail.setSubject("Zmiana danych profilowych");

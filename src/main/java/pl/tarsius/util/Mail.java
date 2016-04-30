@@ -7,10 +7,7 @@ import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 import com.sun.jersey.multipart.FormDataMultiPart;
 
 import javax.ws.rs.core.MediaType;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Created by Jarek on 2016-04-05.
@@ -25,13 +22,13 @@ public class Mail {
     private String apDomain;
     private String nameUser;
     private String emailUser;
-    private String pathEmailTemplate;
+    private InputStream emailTemplate;
     private String apiKey;
 
-    public Mail(String apiKey, String pathEmailTemplate) {
+    public Mail(String apiKey, InputStream emailTemplate) {
 
         this.apiKey = apiKey;
-        this.pathEmailTemplate = pathEmailTemplate;
+        this.emailTemplate = emailTemplate;
 
 
 
@@ -114,8 +111,8 @@ public class Mail {
         form.field("to", getNameUser()+" <"+ getEmailUser()+">");
         form.field("subject", getSubject());
 
-        FileReader txtFile = new FileReader(pathEmailTemplate);
-        BufferedReader bf = new BufferedReader(txtFile);
+
+        BufferedReader bf = new BufferedReader(new InputStreamReader(emailTemplate));
         String s;
         String temp="";
 
