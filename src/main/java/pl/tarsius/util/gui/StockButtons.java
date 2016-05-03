@@ -15,6 +15,7 @@ import pl.tarsius.controller.HomeController;
 import pl.tarsius.controller.project.AddToProjectController;
 import pl.tarsius.controller.project.EditProject;
 import pl.tarsius.controller.project.NewProjectController;
+import pl.tarsius.controller.task.NewTaskController;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.Project;
 import pl.tarsius.database.Model.User;
@@ -68,9 +69,10 @@ public class StockButtons {
             container.getChildren().addAll(user, task, edit, end);
             flowActionHandler.attachLinkEventHandler(edit, EditProject.class);
             flowActionHandler.attachLinkEventHandler(user, AddToProjectController.class);
+            flowActionHandler.attachLinkEventHandler(task, NewTaskController.class);
             end.setOnAction(
                     event ->  {
-                        // TODO: 28.04.16 Task
+                        // TODO: 28.04.16 TaskDb
                         Optional<ButtonType> x = new Alert(Alert.AlertType.CONFIRMATION, "Zakończ Projekt").showAndWait();
                         if(x.get() == ButtonType.OK){
                             try {
@@ -97,6 +99,21 @@ public class StockButtons {
 
     }
 
+    public void inTask() {
+        Button edit = this.stockButton("Edytuj");
+        Button remove = this.stockButton("Usuń");
+        Button status = this.stockButton("Zmień status");
+        Button end = this.stockButton("Zatwierdź");
+        flowActionHandler.attachEventHandler(end, "taskEnd");
+        flowActionHandler.attachEventHandler(status, "taskStatus");
+        flowActionHandler.attachEventHandler(remove, "taskRemove");
+        container.getChildren().addAll(edit, status,end,remove);
+    }
+
+    public void inCloseTask() {
+        this.inTask();
+        container.getChildren().remove(2);
+    }
 
 
 

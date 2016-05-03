@@ -176,9 +176,9 @@ public class InvitesController extends BaseController {
                         try {
                             flowActionHandler.navigate(InvitesController.class);
                         } catch (VetoException e) {
-                            loger.debug("Cancdel Inv Task", e);
+                            loger.debug("Cancdel Inv TaskDb", e);
                         } catch (FlowException e) {
-                            loger.debug("Cancdel Inv Task", e);
+                            loger.debug("Cancdel Inv TaskDb", e);
                         }
                     } else {
                         new Alert(Alert.AlertType.INFORMATION,""+task.getValue()[1]).show();

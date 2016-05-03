@@ -185,6 +185,7 @@ public class User {
                     user.setUzytkownikId(resultSet.getLong("uzytkownik_id"));
                     user.setImie(resultSet.getString("imie"));
                     user.setNazwisko(resultSet.getString("nazwisko"));
+                    user.setAvatarId(resultSet.getString("avatar_id"));
                     return user;
                 } catch (SQLException e) {
                     // TODO: 21.04.16 LOG

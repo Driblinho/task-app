@@ -12,25 +12,29 @@ import io.datafx.controller.flow.context.FlowActionHandler;
 import io.datafx.controller.util.VetoException;
 import io.datafx.io.DataReader;
 import io.datafx.io.JdbcSource;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
-import javafx.scene.control.Pagination;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import org.controlsfx.control.SegmentedButton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pl.tarsius.controller.BaseController;
 import pl.tarsius.controller.ProfileController;
+import pl.tarsius.controller.task.ShowTaskController;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.Invite;
 import pl.tarsius.database.Model.Project;
+import pl.tarsius.database.Model.TaskDb;
 import pl.tarsius.database.Model.User;
 import pl.tarsius.util.gui.StockButtons;
 
@@ -67,18 +71,37 @@ public class ShowProject extends BaseController{
     private Project project;
 
     @FXML private SegmentedButton sortProjectUsers;
+    @FXML private SegmentedButton sortProjectTask;
+    @FXML private VBox taskInProject;
+    @FXML private Pagination inProjectTaskPg;
+
+    @FXML private Tab userTab;
+    @FXML private Tab taskTab;
+
+    @FXML private CheckBox filtrNew;
+    @FXML private CheckBox filtrForTest;
+    @FXML private CheckBox filtrEnd;
+    @FXML private CheckBox filtrInProgres;
+
+    private static Logger loger = LoggerFactory.getLogger(ShowProject.class);
 
     @PostConstruct
     public void init(){
         sort="DESC";
         ToggleButton asc = new ToggleButton("Rosnąco");
-        asc.setSelected(true);
         asc.setUserData("ASC");
         ToggleButton desc = new ToggleButton("Malejąco");
         desc.setUserData("DESC");
+        desc.setSelected(true);
+
+        ToggleButton ascTask = new ToggleButton("Rosnąco");
+        ascTask.setUserData("ASC");
+        ToggleButton descTask = new ToggleButton("Malejąco");
+        descTask.setUserData("DESC");
+        descTask.setSelected(true);
+
         sortProjectUsers.getButtons().addAll(asc,desc);
-
-
+        sortProjectTask.getButtons().addAll(ascTask,descTask);
 
         project = Project.getProject((long)ApplicationContext.getInstance().getRegisteredObject("projectId"));
         ApplicationContext.getInstance().register("projectModel", project);
@@ -102,29 +125,51 @@ public class ShowProject extends BaseController{
             Task<ObservableList<User>> task = renderUser(connection,0);
             new Thread(task).start();
 
+            new Thread(renderTasks(connection,0)).start();
+
 
             asc.selectedProperty().addListener((observable, oldValue, newValue) -> {
                 if(newValue) {
                     sort=(String) asc.getUserData();
-
-                    Task<ObservableList<User>> t = renderUser(connection,0);
-                    new Thread(t).start();
+                    new Thread(renderUser(connection,0)).start();
                 } else desc.setSelected(true);
             });
 
             desc.selectedProperty().addListener((observable, oldValue, newValue) -> {
                 if(newValue) {
                     sort = (String) desc.getUserData();
-
                     new Thread(renderUser(connection,0)).start();
                 } else asc.setSelected(true);
             });
+
+
+            ascTask.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                if(newValue) {
+                    sort=(String) ascTask.getUserData();
+                    new Thread(renderTasks(connection,0)).start();
+                } else descTask.setSelected(true);
+            });
+
+            descTask.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                if(newValue) {
+                    sort = (String) descTask.getUserData();
+                    new Thread(renderTasks(connection,0)).start();
+                } else ascTask.setSelected(true);
+            });
+
 
             InProjectMemberPagination.currentPageIndexProperty().addListener((observable, oldValue, newValue) -> {
                 new Thread(renderUser(connection,newValue.intValue())).start();
             });
 
+            inProjectTaskPg.currentPageIndexProperty().addListener((observable, oldValue, newValue) -> {
+                new Thread(renderTasks(connection,newValue.intValue())).start();
+            });
 
+            filtrNew.setOnMouseClicked(event -> new Thread(renderTasks(connection,0)).start());
+            filtrForTest.setOnMouseClicked(event -> new Thread(renderTasks(connection,0)).start());
+            filtrEnd.setOnMouseClicked(event -> new Thread(renderTasks(connection,0)).start());
+            filtrInProgres.setOnMouseClicked(event -> new Thread(renderTasks(connection,0)).start());
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -146,11 +191,11 @@ public class ShowProject extends BaseController{
     private AnchorPane inProjectUser(User user){
         try {
             AnchorPane anchorPane  = FXMLLoader.load(getClass().getClassLoader().getResource("view/app/userInProjectTPL.fxml"));
-            Circle circle = (Circle) anchorPane.lookup(".userInProjectAvatar");
+            Circle avatar = (Circle) anchorPane.lookup(".userInProjectAvatar");
             Hyperlink name = (Hyperlink) anchorPane.lookup(".userInProjectName");
             Text task = (Text) anchorPane.lookup(".userInProjectTaskCount");
             Text endTask = (Text) anchorPane.lookup(".userInProjectTaskEndCount");
-
+            avatar.setFill(new ImagePattern(new Image(user.getAvatarUrl())));
             name.setText(user.getImieNazwisko());
             task.setText(""+0);
             endTask.setText("0");
@@ -163,6 +208,130 @@ public class ShowProject extends BaseController{
 
     }
 
+    private AnchorPane inProjectTask(TaskDb taskDb) {
+        try {
+            AnchorPane anchorPane  = FXMLLoader.load(getClass().getClassLoader().getResource("view/app/taskInProjectTPL.fxml"));
+            Hyperlink taskName = (Hyperlink) anchorPane.lookup(".taskName");
+            Hyperlink taskUser = (Hyperlink) anchorPane.lookup(".taskUser");
+            Label taskUserL = (Label) anchorPane.lookup(".taskUserL");
+            Label taskdateLable = (Label) anchorPane.lookup(".taskdateLable");
+            Text taskDate = (Text) anchorPane.lookup(".taskDate");
+            Label taskStatus = (Label) anchorPane.lookup(".taskStatus");
+
+            String status = "Zakończone";
+            switch (taskDb.getStatus()) {
+                case 1: status="nowe";break;
+                case 2: status = "W trakcie";break;
+                case 3: status="Do sprawdzenia";break;
+            }
+            taskStatus.setText(status);
+
+            taskName.setText(taskDb.getName());
+            taskName.setOnAction(event -> {
+                try {
+                    ApplicationContext.getInstance().register("taskId", taskDb.getId());
+                    flowActionHandler.navigate(ShowTaskController.class);
+                } catch (VetoException e) {
+                    e.printStackTrace();
+                } catch (FlowException e) {
+                    e.printStackTrace();
+                }
+            });
+
+
+            if(!taskDb.getUserName().isEmpty()) {
+                taskUser.setText(taskDb.getUserName());
+            } else {
+                taskUser.setVisible(false);
+                taskUserL.setVisible(false);
+            }
+
+
+            if(taskDb.getEndDate()==null) {
+                taskdateLable.setVisible(false);
+                taskDate.setVisible(false);
+            } else taskDate.setText(taskDb.getEndDate().toString());
+            return anchorPane;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+    private Task<ObservableList<TaskDb>> renderTasks(Connection connection,int page){
+        String sql = "select {tpl} from (select z.*,u.imie,u.nazwisko from Zadania z,Uzytkownicy u where z.uzytkownik_id=u.uzytkownik_id and z.projekt_id="+project.getProjekt_id()+"\n" +
+                "union \n" +
+                "select *,null,null from Zadania where uzytkownik_id is null and projekt_id="+project.getProjekt_id()+") Z";
+
+
+        int perPage=1;
+
+
+
+        String stan="";
+        if(filtrEnd.isSelected())
+            stan+=","+TaskDb.Status.END.getValue();
+
+        if(filtrNew.isSelected())
+            stan+=","+TaskDb.Status.NEW.getValue();
+
+        if(filtrForTest.isSelected())
+            stan+=","+TaskDb.Status.FORTEST.getValue();
+
+        if(filtrInProgres.isSelected())
+            stan+=","+TaskDb.Status.INPROGRES.getValue();
+
+        stan = stan.replaceFirst(",","");
+
+        if(!stan.isEmpty()) {
+            sql+=" where stan in ("+stan+")";
+        }
+
+        String countSql = sql.replace("{tpl}", "count(*)");
+
+        loger.debug("IN TEST: "+ stan);
+        if (!sort.isEmpty()) sql+= " order by data_dodania "+sort;
+        sql+= " limit "+page*perPage+","+perPage+"";
+        sql=sql.replace("{tpl}", "*");
+        loger.debug("SQL (RenderTask): "+sql);
+        loger.debug("SQL (RenderTask) count: "+countSql);
+        DataReader<TaskDb> dr = new JdbcSource<>(connection, sql, TaskDb.jdbcConverter());
+        Task<ObservableList<TaskDb>> task = new Task<ObservableList<TaskDb>>() {
+            @Override
+            protected ObservableList<TaskDb> call() throws Exception {
+                ObservableList<TaskDb> observableList = FXCollections.observableArrayList();
+                try {
+                    ResultSet rs = connection.prepareStatement(countSql).executeQuery();
+                    rs.next();
+                    long count = rs.getLong(1);
+                    int pageCount = (int) Math.ceil(count/perPage);
+                    if(pageCount==0) {
+                        Platform.runLater(() -> inProjectTaskPg.setVisible(false));
+                        return observableList;
+                    }
+                    else {
+                        Platform.runLater(() -> {
+                            inProjectTaskPg.setVisible(true);
+                            inProjectTaskPg.setPageCount(pageCount);
+                            inProjectTaskPg.setCurrentPageIndex(page);
+                        });
+                    }
+
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                dr.forEach(taskDb -> observableList.add(taskDb));
+                return observableList;
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            taskInProject.getChildren().clear();
+            task.getValue().forEach(taskDb -> taskInProject.getChildren().add(inProjectTask(taskDb)));
+        });
+        return task;
+    }
 
     private Task<ObservableList<User>> renderUser(Connection connection,int page) {
         String sql = "SELECT {tpl} FROM ProjektyUzytkownicy pu,Uzytkownicy u WHERE projekt_id="+project.getProjekt_id()+" and u.uzytkownik_id=pu.uzytkownik_id";
@@ -176,33 +345,25 @@ public class ShowProject extends BaseController{
         Task<ObservableList<User>> task = new Task<ObservableList<User>>() {
             @Override
             protected ObservableList<User> call() throws IOException {
-                //dataReader.forEach(user -> userInProject.getChildren().add(inProjectUser(user)));
+
+                try {
+                    ResultSet rs = connection.prepareStatement(countSql).executeQuery();
+                    rs.next();
+                    long count = rs.getLong(1);
+                    int pageCount = (int) Math.ceil(count/perPage);
+                    InProjectMemberPagination.setPageCount(pageCount);
+                    InProjectMemberPagination.setCurrentPageIndex(page);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
                 ObservableList<User> osb = FXCollections.observableArrayList();
-                do {
-                    osb.add(dataReader.get());
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }while (dataReader.next());
+                dataReader.forEach(user -> osb.add(user));
                 return osb;
             }
         };
         task.setOnRunning(event -> {
-            try {
 
-                ResultSet rs = connection.prepareStatement(countSql).executeQuery();
-                System.out.println("COUNT"+countSql);
-                System.out.println(exc);
-                rs.next();
-                long count = rs.getLong(1);
-                int pageCount = (int) Math.ceil(count/perPage);
-                InProjectMemberPagination.setPageCount(pageCount);
-                InProjectMemberPagination.setCurrentPageIndex(page);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
 
         });
 

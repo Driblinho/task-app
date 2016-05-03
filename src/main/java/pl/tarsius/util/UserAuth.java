@@ -388,7 +388,7 @@ public class UserAuth {
             resultSet.next();
             return setUserModel(resultSet);
         } catch (SQLException e) {
-            e.printStackTrace();
+            loger.debug("userByID", e);
             return new User();
         }
 
