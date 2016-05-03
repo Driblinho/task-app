@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="60.0" prefWidth="960.0" style="-fx-background-color: #fff;" xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1">
+   <styleClass>
+      <String fx:value="shadowBox" />
+      <String fx:value="userInProjectItem" />
+   </styleClass>
+   <children>
+      <Text layoutX="8.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="taskCommentDesc" text="ALALALALALAAL" wrappingWidth="943.7294921875" />
+      <Label layoutX="8.0" layoutY="6.0" text="Data dodania: " />
+      <Text layoutX="104.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="taskCommentDate" text="Text" wrappingWidth="258.7294921875" />
+   </children>
+</AnchorPane>

@@ -2,15 +2,16 @@
 
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Pagination?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -60,7 +61,7 @@
                   </FlowPane>
                   <TabPane prefHeight="497.0" prefWidth="961.0" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
-                      <Tab text="Uczestnicy">
+                      <Tab fx:id="userTab" text="Uczestnicy">
                         <content>
                               <VBox alignment="TOP_RIGHT">
                                  <children>
@@ -78,33 +79,30 @@
                               </VBox>
                         </content>
                       </Tab>
-                      <Tab text="Zadania">
-                        <content>
-                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                      <Tab fx:id="taskTab" text="Zadania">
+                           <content>
+                              <VBox alignment="TOP_RIGHT">
                                  <children>
-                                    <AnchorPane layoutX="6.0" layoutY="14.0" prefHeight="60.0" prefWidth="950.0" style="-fx-background-color: #fff;">
+                                    <HBox alignment="CENTER_RIGHT" spacing="5.0">
                                        <children>
-                                          <Label fx:id="inProjectIssueTitle" layoutX="14.0" layoutY="14.0" text="Temat problemu">
-                                             <font>
-                                                <Font name="System Bold" size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label layoutX="141.0" layoutY="16.0" text="| Zadanie:" />
-                                          <Hyperlink fx:id="inProjectIssueTaskName" layoutX="200.0" layoutY="13.0" text="Temat zadania" />
-                                          <Label layoutX="14.0" layoutY="38.0" text="Zgłosił:" />
-                                          <Hyperlink fx:id="inProjectIssueAuthor" layoutX="53.0" layoutY="35.0" text="Jan Kowalski" />
-                                          <Label layoutX="162.0" layoutY="38.0" text="Odpowiedzi:" />
-                                          <Text fx:id="inProjectIssueAnswers" layoutX="236.0" layoutY="51.0" strokeType="OUTSIDE" strokeWidth="0.0" text="10" />
-                                          <Label layoutX="275.0" layoutY="38.0" text="Dodano:" />
-                                          <Text fx:id="inProjectIssueDateAdd" layoutX="328.0" layoutY="51.0" strokeType="OUTSIDE" strokeWidth="0.0" text="10.10.2012" />
-                                          <ImageView fx:id="inProjectIssueStatusImage" fitHeight="35.0" fitWidth="35.0" layoutX="879.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true" />
-                                          <Label fx:id="inProjectIssueStatusDesc" layoutX="879.0" layoutY="38.0" text="Status" />
+                                          <CheckBox fx:id="filtrNew" mnemonicParsing="false" text="Nowe" />
+                                          <CheckBox fx:id="filtrForTest" layoutX="728.0" layoutY="10.0" mnemonicParsing="false" text="Do sprawdzenia" />
+                                          <CheckBox fx:id="filtrInProgres" layoutX="686.0" layoutY="14.0" mnemonicParsing="false" text="W trakcie" />
+                                          <CheckBox fx:id="filtrEnd" layoutX="661.0" layoutY="10.0" mnemonicParsing="false" text="Zakończone" />
+                                          <SegmentedButton fx:id="sortProjectTask" prefHeight="26.0" prefWidth="180.0" />
                                        </children>
-                                    </AnchorPane>
-                                    <Pagination fx:id="inProjectIssuePagination" layoutY="108.0" prefHeight="58.0" prefWidth="960.0" />
+                                       <VBox.margin>
+                                          <Insets bottom="10.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <VBox fx:id="taskInProject" spacing="10.0" />
+                                    <Pagination fx:id="inProjectTaskPg" prefHeight="51.0" prefWidth="961.0" />
                                  </children>
-                              </AnchorPane>
-                        </content>
+                                 <padding>
+                                    <Insets top="10.0" />
+                                 </padding>
+                              </VBox>
+                           </content>
                       </Tab>
                     </tabs>
                   </TabPane>

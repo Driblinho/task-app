@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Circle?>
+
+
+<AnchorPane prefHeight="217.0" prefWidth="225.0" xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <StackPane layoutX="12.0" layoutY="9.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #fff;">
+         <children>
+            <AnchorPane prefHeight="112.0" prefWidth="89.0">
+               <children>
+                  <Circle fill="DODGERBLUE" layoutX="96.0" layoutY="94.0" radius="67.0" stroke="BLACK" strokeType="INSIDE" styleClass="userAv" />
+                  <Label alignment="CENTER" layoutX="1.0" layoutY="163.0" prefHeight="29.0" prefWidth="200.0" styleClass="userName" text="Label" />
+                  <RadioButton layoutX="14.0" layoutY="14.0" mnemonicParsing="false" styleClass="userRadio">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="users" />
+                     </toggleGroup>
+                  </RadioButton>
+               </children>
+            </AnchorPane>
+         </children>
+      </StackPane>
+   </children>
+</AnchorPane>

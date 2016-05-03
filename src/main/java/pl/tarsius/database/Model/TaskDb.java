@@ -13,16 +13,16 @@ import java.sql.SQLException;
 /**
  * Created by ireq on 28.04.16.
  */
-public class Task {
+public class TaskDb {
     private Long id;
     private String name;
     private  String desc;
     private int status;
     private Long projectId;
 
-    private static Logger loger = LoggerFactory.getLogger(Task.class);
+    private static Logger loger = LoggerFactory.getLogger(TaskDb.class);
 
-    public Task(Long id, String name, String desc, int status, Long projectId) {
+    public TaskDb(Long id, String name, String desc, int status, Long projectId) {
         this.id = id;
         this.name = name;
         this.desc = desc;
@@ -30,7 +30,7 @@ public class Task {
         this.projectId = projectId;
     }
 
-    public Task(String name, String desc, int status, Long projectId) {
+    public TaskDb(String name, String desc, int status, Long projectId) {
         this(null,name,desc,status,projectId);
     }
 
@@ -45,19 +45,19 @@ public class Task {
         }
     }
 
-    public static Object[] insert(Task task) {
-        return insertWithUser(task,null);
+    public static Object[] insert(TaskDb taskDb) {
+        return insertWithUser(taskDb,null);
     }
 
-    public static Object[] insertWithUser(Task task, Long userId) {
+    public static Object[] insertWithUser(TaskDb taskDb, Long userId) {
         try {
             Connection connection = new InitializeConnection().connect();
             connection.setAutoCommit(false);
             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO Zadania (nazwa, opis, data_zakonczenia, stan, projekt_id) VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.setString(1,task.getName());//Nazwa
-            preparedStatement.setString(2,task.getDesc());//Opis
+            preparedStatement.setString(1, taskDb.getName());//Nazwa
+            preparedStatement.setString(2, taskDb.getDesc());//Opis
             preparedStatement.setDate(3,null);//Data zakonczenia
-            preparedStatement.setInt(4,task.getStatus());//Stan
+            preparedStatement.setInt(4, taskDb.getStatus());//Stan
             preparedStatement.setLong(5,11);//Projekt id
             preparedStatement.executeUpdate();
             loger.debug("SQL (Insert Zadanie):"+preparedStatement.toString());
@@ -105,7 +105,7 @@ public class Task {
         }
     }
 
-    public static Object[] updateStatus(Long id,Task.Status status) {
+    public static Object[] updateStatus(Long id,TaskDb.Status status) {
         try {
             Connection connection = new InitializeConnection().connect();
             PreparedStatement preparedStatement = connection.prepareStatement("UPDATE Zadania SET stan = ? WHERE zadanie_id= ?");
@@ -120,7 +120,7 @@ public class Task {
         }
     }
 
-    public static Object[] updateStatus(Long id,Task.Status status, String comment) {
+    public static Object[] updateStatus(Long id, TaskDb.Status status, String comment) {
         try {
             Connection connection = new InitializeConnection().connect();
             connection.setAutoCommit(false);
