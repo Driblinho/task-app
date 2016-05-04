@@ -15,9 +15,11 @@ import pl.tarsius.controller.HomeController;
 import pl.tarsius.controller.project.AddToProjectController;
 import pl.tarsius.controller.project.EditProject;
 import pl.tarsius.controller.project.NewProjectController;
+import pl.tarsius.controller.task.EditTaskController;
 import pl.tarsius.controller.task.NewTaskController;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.Project;
+import pl.tarsius.database.Model.TaskDb;
 import pl.tarsius.database.Model.User;
 
 import java.sql.Connection;
@@ -104,10 +106,20 @@ public class StockButtons {
         Button remove = this.stockButton("Usuń");
         Button status = this.stockButton("Zmień status");
         Button end = this.stockButton("Zatwierdź");
+        flowActionHandler.attachLinkEventHandler(edit, EditTaskController.class);
         flowActionHandler.attachEventHandler(end, "taskEnd");
         flowActionHandler.attachEventHandler(status, "taskStatus");
         flowActionHandler.attachEventHandler(remove, "taskRemove");
-        container.getChildren().addAll(edit, status,end,remove);
+        User curUser = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
+        Project project = (Project) ApplicationContext.getInstance().getRegisteredObject("projectModel");
+        TaskDb taskDb = (TaskDb) ApplicationContext.getInstance().getRegisteredObject("taskModel");
+        if((taskDb.getUserId()==curUser.getUzytkownikId() && taskDb.getStatus()!=TaskDb.Status.END.getValue() && taskDb.getStatus()!=TaskDb.Status.FORTEST.getValue()) || curUser.isAdmin()) {
+            container.getChildren().add(status);
+        }
+        if(curUser.isAdmin() || project.getLider()==curUser.getUzytkownikId()) {
+            container.getChildren().addAll(edit, end,remove);
+        }
+
     }
 
     public void inCloseTask() {
