@@ -170,6 +170,9 @@ public class User {
     public boolean isAdmin() {
         return (this.typ==3);
     }
+    public boolean isManager() {
+        return (this.typ==2);
+    }
 
     @Override
     public String toString() {

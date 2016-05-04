@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import pl.tarsius.controller.project.ShowProject;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.Project;
+import pl.tarsius.database.Model.TaskDb;
 import pl.tarsius.database.Model.User;
 import pl.tarsius.util.gui.StockButtons;
 
@@ -44,6 +45,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Created by Ireneusz Kuliga on 02.04.16.
@@ -77,6 +79,9 @@ public class HomeController extends BaseController{
     private  boolean showMyproject;
 
     private int PER_PAGE = 6;
+
+    @FXML private CheckBox showAllProject;
+    @FXML private CheckBox showEndProject;
 
 
     @PostConstruct
@@ -162,6 +167,13 @@ public class HomeController extends BaseController{
             });
 
 
+            showAllProject.setOnMouseClicked(event -> {
+                new Thread(renderProject(search,0,conn)).start();
+            });
+            showEndProject.setOnMouseClicked(event -> {
+                new Thread(renderProject(search,0,conn)).start();
+            });
+
 
 
             pagination.currentPageIndexProperty().addListener((observable, oldValue, newValue) -> {
@@ -181,8 +193,13 @@ public class HomeController extends BaseController{
             Hyperlink author = (Hyperlink) parent.lookup(".smallProjectAuthor");
             Text end = (Text) parent.lookup(".smallProjectDateEnd");
             Label endL = (Label) parent.lookup(".smallProjectDateEndLabel");
-            Text status = (Text) parent.lookup(".smallProjectStatus");
+            //Text status = (Text) parent.lookup(".smallProjectStatus");
             Text desc = (Text) parent.lookup(".smallProjectDesc");
+
+            Text countNew = (Text) parent.lookup(".smallProjectNewCount");
+            Text countForTest = (Text) parent.lookup(".smallProjectForTestCount");
+            Text countInProgres = (Text) parent.lookup(".smallProjectInProgresCount");
+            Text countEnd = (Text) parent.lookup(".smallProjectEndCount");
 
 
             author.setText(project.getLiderImieNazwisko());
@@ -198,7 +215,7 @@ public class HomeController extends BaseController{
 
                 end.setText(project.getData_zakonczenia().toString());
             }
-            status.setText("Dane na podstawie zadań");
+            //status.setText("Dane na podstawie zadań");
             title.setOnAction(event -> {
                 long id = (long) ((Hyperlink)event.getSource()).getUserData();
                 ApplicationContext.getInstance().register("projectId",id);
@@ -211,6 +228,24 @@ public class HomeController extends BaseController{
                     e.printStackTrace();
                 }
             });
+
+
+            Task<Map<TaskDb.Status,Long>> countTask = new Task<Map<TaskDb.Status, Long>>() {
+                @Override
+                protected Map<TaskDb.Status, Long> call() throws Exception {
+                    return Project.getStatistic(project.getProjekt_id());
+                }
+            };
+            countTask.setOnSucceeded(event -> {
+                if(countTask.getValue().containsKey(TaskDb.Status.NEW)) countNew.setText(""+countTask.getValue().get(TaskDb.Status.NEW));
+                if(countTask.getValue().containsKey(TaskDb.Status.INPROGRES)) countInProgres.setText(""+countTask.getValue().get(TaskDb.Status.INPROGRES));
+                if(countTask.getValue().containsKey(TaskDb.Status.FORTEST)) countForTest.setText(""+countTask.getValue().get(TaskDb.Status.FORTEST));
+                if(countTask.getValue().containsKey(TaskDb.Status.END)) countEnd.setText(""+countTask.getValue().get(TaskDb.Status.END));
+            });
+
+            new Thread(countTask).start();
+
+
 
             contentFlow.getChildren().add(parent);
 
@@ -230,9 +265,12 @@ public class HomeController extends BaseController{
         //int page = 1;
 
         String sql = "select * from ProjektyUzytkownicy pu,Projekty p,Uzytkownicy u,(select imie as l_imie,nazwisko as l_nazwisko,uzytkownik_id l_id from Uzytkownicy)au where pu.uzytkownik_id=u.uzytkownik_id \n" +
-                "and pu.projekt_id=p.projekt_id and au.l_id=p.lider and pu.uzytkownik_id="+u.getUzytkownikId();
+                "and pu.projekt_id=p.projekt_id and au.l_id=p.lider";
 
-        sql+=" and p.status=1";
+        if(!showAllProject.isSelected())
+            sql+=" and pu.uzytkownik_id="+u.getUzytkownikId();
+        if(!showEndProject.isSelected())
+            sql+=" and p.status=1";
 
         if(search!=null && search.length()>0) sql+=" and (nazwa like '%"+search+"%' or opis like '%"+search+"%')";
 
