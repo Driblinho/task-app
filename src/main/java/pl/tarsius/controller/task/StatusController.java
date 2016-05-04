@@ -40,6 +40,10 @@ public class StatusController extends BaseController{
     private boolean statusTyp;
     @PostConstruct
     public void init() {
+
+        breadCrumb.setSelectedCrumb(changeTaskStatus);
+        breadCrumb.setOnCrumbAction(crumbActionEventEventHandler());
+
         taskDb = (TaskDb) ApplicationContext.getInstance().getRegisteredObject("taskModel");
         if(taskDb.getStatus()==TaskDb.Status.END.getValue())
             new StockButtons(operationButtons,flowActionHandler).inCloseTask();

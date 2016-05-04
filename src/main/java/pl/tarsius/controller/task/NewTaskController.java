@@ -82,6 +82,10 @@ public class NewTaskController extends BaseController{
     @PostConstruct
     public void init() {
         new StockButtons(operationButtons, flowActionHandler).inProjectButton();
+
+        breadCrumb.setSelectedCrumb(noweTask);
+        breadCrumb.setOnCrumbAction(crumbActionEventEventHandler());
+
         toggleGroup = new ToggleGroup();
         long projectId = (long) ApplicationContext.getInstance().getRegisteredObject("projectId");
         new Thread(renderUsers(projectId, 0)).start();

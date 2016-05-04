@@ -11,6 +11,8 @@ import pl.tarsius.database.InitializeConnection;
 
 import java.sql.*;
 import java.sql.Connection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Ireneusz Kuliga on 16.04.16.
@@ -82,7 +84,7 @@ public class Project {
             connection.commit();
 
 
-            return new Object[]{true,"Zaktualizowano projekt"};
+            return new Object[]{true,"Zaktualizowano signalProject"};
         } catch (SQLException e) {
             e.printStackTrace();
             return new Object[]{false,"Błąd bazy danych"};
@@ -198,6 +200,23 @@ public class Project {
                 return null;
             }
         };
+    }
+
+
+    public static Map<TaskDb.Status,Long> getStatistic(Long projectId) {
+        Map<TaskDb.Status,Long> stat = new HashMap<>();
+        try {
+            Connection connection = new InitializeConnection().connect();
+            PreparedStatement ps = (PreparedStatement) connection.prepareStatement("select stan,count(*) from Zadania where projekt_id=? group by stan;");
+            ps.setLong(1,projectId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next())
+                stat.put(TaskDb.Status.valueOf(rs.getInt(1)),rs.getLong(2));
+        } catch (SQLException e) {
+            loger.debug("PROJECT STAT", e);
+        } finally {
+            return stat;
+        }
     }
 
     public Timestamp getData_dodania() {

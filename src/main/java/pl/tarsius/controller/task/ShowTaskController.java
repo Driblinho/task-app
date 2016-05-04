@@ -7,6 +7,7 @@ import io.datafx.controller.flow.action.ActionMethod;
 import io.datafx.controller.util.VetoException;
 import io.datafx.io.DataReader;
 import io.datafx.io.JdbcSource;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -15,7 +16,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,8 +24,6 @@ import pl.tarsius.controller.project.ShowProject;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.TaskComment;
 import pl.tarsius.database.Model.TaskDb;
-import pl.tarsius.database.Model.User;
-import pl.tarsius.util.UserAuth;
 import pl.tarsius.util.gui.StockButtons;
 
 import javax.annotation.PostConstruct;
@@ -55,9 +53,13 @@ public class ShowTaskController extends BaseController {
 
     @PostConstruct
     public void init() {
+        breadCrumb.setSelectedCrumb(task);
+        breadCrumb.setOnCrumbAction(crumbActionEventEventHandler());
+
         sort="DESC";
         long taskId = (long) ApplicationContext.getInstance().getRegisteredObject("taskId");
         taskDb = TaskDb.getById(taskId);
+        ApplicationContext.getInstance().register("taskModel", taskDb);
 
         if(taskDb.getStatus()==TaskDb.Status.END.getValue())
             new StockButtons(operationButtons,flowActionHandler).inCloseTask();
@@ -127,8 +129,10 @@ public class ShowTaskController extends BaseController {
                     rs.next();
                     long count = rs.getLong(1);
                     int pageCount = (int) Math.ceil(count/perPage);
-                    taskCommentPg.setPageCount(pageCount);
-                    taskCommentPg.setCurrentPageIndex(page);
+                    Platform.runLater(() -> {
+                        taskCommentPg.setPageCount(pageCount);
+                        taskCommentPg.setCurrentPageIndex(page);
+                    });
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -152,9 +156,9 @@ public class ShowTaskController extends BaseController {
     @ActionMethod("taskRemove")
     public void taskRemove() throws VetoException, FlowException {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Usuń zadanie");
+        alert.setTitle("Usuń task");
         alert.setHeaderText("Zadanie zostanie usunięte");
-        alert.setContentText("Jesteś pewien że chcesz usunąć zadanie?");
+        alert.setContentText("Jesteś pewien że chcesz usunąć task?");
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK){
@@ -171,9 +175,9 @@ public class ShowTaskController extends BaseController {
 
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Zatwierdź zadanie");
+        alert.setTitle("Zatwierdź task");
         alert.setHeaderText("Zadanie zostanie zatwierdzone");
-        alert.setContentText("Jesteś pewien że chcesz zatwierdzić zadanie?");
+        alert.setContentText("Jesteś pewien że chcesz zatwierdzić task?");
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK){

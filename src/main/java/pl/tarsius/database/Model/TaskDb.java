@@ -96,18 +96,30 @@ public class TaskDb {
             loger.debug("SQL (Insert Zadanie):"+preparedStatement.toString());
             ResultSet rs = preparedStatement.getGeneratedKeys();
             rs.next();
-//            if(userId!=null) {
-//                preparedStatement = connection.prepareStatement("INSERT INTO ZadaniaUzytkownicy (uzytkownik_id, zadanie_id) VALUES (?, ?)");
-//                preparedStatement.setLong(1,userId);
-//                preparedStatement.setLong(2,rs.getLong(1));
-//                preparedStatement.executeUpdate();
-//                loger.debug("SQL(Dodanie użytkownika do zadania):"+preparedStatement.toString());
-//            }
             connection.commit();
             return new Object[]{true,"Zadanie zostało dodane", rs.getLong(1)};
         } catch (SQLException e) {
             loger.debug("insertWithUser", e);
             return new Object[]{false,"Zadanie nie zostało dodane"};
+        }
+    }
+
+    public static Object[] updateTask(TaskDb taskDb,Long userId, Long taskId) {
+        try {
+            Connection connection = new InitializeConnection().connect();
+            PreparedStatement preparedStatement = connection.prepareStatement("update Zadania set nazwa=?,opis=?,data_zakonczenia=?,uzytkownik_id=? where zadanie_id=?");
+            preparedStatement.setString(1, taskDb.getName());//Nazwa
+            preparedStatement.setString(2, taskDb.getDesc());//Opis
+            if(taskDb.endDate!=null) preparedStatement.setDate(3,taskDb.getEndDate());//Data zakonczenia
+            else preparedStatement.setNull(3, Types.DATE); //Date Null
+            if(userId!=null) preparedStatement.setLong(4, userId);
+            else preparedStatement.setNull(4, Types.BIGINT);
+            preparedStatement.setLong(5, taskId);
+            preparedStatement.executeUpdate();
+            return new Object[] {true, "Zadanie zostało zaktualizowane"};
+        } catch (SQLException e) {
+            loger.debug("Update Task", e);
+            return new Object[] {false, "Aktualizacja zadania nie powiodła się"};
         }
     }
 
@@ -182,6 +194,9 @@ public class TaskDb {
             public TaskDb convertOneRow(ResultSet resultSet) {
 
                 try {
+                    String un="";
+                    if(resultSet.getString("imie")!=null)
+                        un=resultSet.getString("imie")+" "+resultSet.getString("nazwisko");
                     return new TaskDb(
                             resultSet.getLong("zadanie_id"),
                             resultSet.getString("nazwa"),
@@ -189,7 +204,7 @@ public class TaskDb {
                             Status.valueOf(resultSet.getInt("stan")),
                             resultSet.getLong("projekt_id"),
                             resultSet.getDate("data_zakonczenia"),
-                            resultSet.getString("imie")+" "+resultSet.getString("nazwisko"),
+                            un,
                             resultSet.getLong("uzytkownik_id")
                     );
                 } catch (SQLException e) {

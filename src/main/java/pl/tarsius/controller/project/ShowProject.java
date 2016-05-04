@@ -3,7 +3,6 @@ package pl.tarsius.controller.project;
 
 import io.datafx.controller.FXMLController;
 import io.datafx.controller.context.ApplicationContext;
-import io.datafx.controller.context.FXMLApplicationContext;
 import io.datafx.controller.flow.FlowException;
 import io.datafx.controller.flow.action.ActionMethod;
 import io.datafx.controller.flow.action.ActionTrigger;
@@ -32,7 +31,6 @@ import pl.tarsius.controller.BaseController;
 import pl.tarsius.controller.ProfileController;
 import pl.tarsius.controller.task.ShowTaskController;
 import pl.tarsius.database.InitializeConnection;
-import pl.tarsius.database.Model.Invite;
 import pl.tarsius.database.Model.Project;
 import pl.tarsius.database.Model.TaskDb;
 import pl.tarsius.database.Model.User;
@@ -44,7 +42,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.concurrent.Executor;
+import java.util.Map;
 
 /**
  * Created by Ireneusz Kuliga on 15.04.16.
@@ -83,10 +81,19 @@ public class ShowProject extends BaseController{
     @FXML private CheckBox filtrEnd;
     @FXML private CheckBox filtrInProgres;
 
+    @FXML Text taskCountNew;
+    @FXML Text taskCountInProgress;
+    @FXML Text taskCountForTest;
+    @FXML Text taskCountEnd;
+
     private static Logger loger = LoggerFactory.getLogger(ShowProject.class);
 
     @PostConstruct
     public void init(){
+
+        breadCrumb.setSelectedCrumb(signalProject);
+        breadCrumb.setOnCrumbAction(crumbActionEventEventHandler());
+
         sort="DESC";
         ToggleButton asc = new ToggleButton("Rosnąco");
         asc.setUserData("ASC");
@@ -171,8 +178,24 @@ public class ShowProject extends BaseController{
             filtrEnd.setOnMouseClicked(event -> new Thread(renderTasks(connection,0)).start());
             filtrInProgres.setOnMouseClicked(event -> new Thread(renderTasks(connection,0)).start());
 
+
+            Task<Map<TaskDb.Status,Long>> countTask = new Task<Map<TaskDb.Status, Long>>() {
+                @Override
+                protected Map<TaskDb.Status, Long> call() throws Exception {
+                    return Project.getStatistic(project.getProjekt_id());
+                }
+            };
+            countTask.setOnSucceeded(event -> {
+                if(countTask.getValue().containsKey(TaskDb.Status.NEW)) taskCountNew.setText(""+countTask.getValue().get(TaskDb.Status.NEW));
+                if(countTask.getValue().containsKey(TaskDb.Status.INPROGRES)) taskCountInProgress.setText(""+countTask.getValue().get(TaskDb.Status.INPROGRES));
+                if(countTask.getValue().containsKey(TaskDb.Status.FORTEST)) taskCountForTest.setText(""+countTask.getValue().get(TaskDb.Status.FORTEST));
+                if(countTask.getValue().containsKey(TaskDb.Status.END)) taskCountEnd.setText(""+countTask.getValue().get(TaskDb.Status.END));
+            });
+
+            new Thread(countTask).start();
+
         } catch (SQLException e) {
-            e.printStackTrace();
+            loger.debug("init()", e);
         }
 
 
@@ -199,7 +222,6 @@ public class ShowProject extends BaseController{
             name.setText(user.getImieNazwisko());
             task.setText(""+0);
             endTask.setText("0");
-
             return anchorPane;
         } catch (IOException e) {
             e.printStackTrace();
@@ -239,12 +261,11 @@ public class ShowProject extends BaseController{
             });
 
 
-            if(!taskDb.getUserName().isEmpty()) {
-                taskUser.setText(taskDb.getUserName());
-            } else {
+            if(taskDb.getUserName().isEmpty()) {
                 taskUser.setVisible(false);
                 taskUserL.setVisible(false);
-            }
+            } else taskUser.setText(taskDb.getUserName());
+
 
 
             if(taskDb.getEndDate()==null) {
