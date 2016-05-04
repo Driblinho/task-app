@@ -3,7 +3,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Hyperlink?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -15,7 +14,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<GridPane fx:id="userBar" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="950.0" style="-fx-background-color: #fff;" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+<GridPane fx:id="userBar" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="950.0" style="-fx-background-color: #fff;" xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1">
   <columnConstraints>
     <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
     <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
@@ -43,21 +42,7 @@
       </HBox>
       <HBox alignment="CENTER_RIGHT" prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="1">
          <children>
-            <Hyperlink>
-               <graphic>
-                  <Label fx:id="userBarNotification" accessibleRole="BUTTON" ellipsisString="9+" prefHeight="21.0" prefWidth="19.0" style="-fx-background-color: red; -fx-background-radius: 5px;" text="15" textFill="WHITE">
-                     <padding>
-                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                     </padding>
-                     <font>
-                        <Font name="System Bold" size="12.0" />
-                     </font>
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </Label>
-               </graphic>
-            </Hyperlink>
+            <Hyperlink />
             <Circle fx:id="userBarAvatar" fill="DODGERBLUE" radius="13.0" stroke="BLACK" strokeType="INSIDE" />
             <Hyperlink fx:id="userBarFullName" accessibleRole="BUTTON" focusTraversable="false" prefHeight="43.0" prefWidth="200.0" text="Jan Kowalski asdasdasdasdasd" textFill="#a19d9d">
                <font>
