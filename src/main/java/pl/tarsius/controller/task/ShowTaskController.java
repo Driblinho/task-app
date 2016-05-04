@@ -147,48 +147,5 @@ public class ShowTaskController extends BaseController {
         return task;
     }
 
-    @ActionMethod("taskStatus")
-    public void taskStatus() throws VetoException, FlowException {
-        ApplicationContext.getInstance().register("taskModel", taskDb);
-        flowActionHandler.navigate(StatusController.class);
-    }
-
-    @ActionMethod("taskRemove")
-    public void taskRemove() throws VetoException, FlowException {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Usuń task");
-        alert.setHeaderText("Zadanie zostanie usunięte");
-        alert.setContentText("Jesteś pewien że chcesz usunąć task?");
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK){
-            Object[] msg = TaskDb.remove(taskDb.getId());
-            if((boolean) msg[0]) {
-                new Alert(Alert.AlertType.INFORMATION,""+msg[1]).show();
-                flowActionHandler.navigate(ShowProject.class);
-            } else new Alert(Alert.AlertType.ERROR,""+msg[1]).show();
-        }
-    }
-
-    @ActionMethod("taskEnd")
-    public void taskEnd() throws VetoException, FlowException {
-
-
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Zatwierdź task");
-        alert.setHeaderText("Zadanie zostanie zatwierdzone");
-        alert.setContentText("Jesteś pewien że chcesz zatwierdzić task?");
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK){
-            Object[] msg = TaskDb.updateStatus(taskDb.getId(), TaskDb.Status.END);
-            if((boolean) msg[0]) {
-                new Alert(Alert.AlertType.INFORMATION,""+msg[1]).show();
-                flowActionHandler.navigate(ShowProject.class);
-            } else new Alert(Alert.AlertType.ERROR,""+msg[1]).show();
-        }
-
-    }
-
 
 }
