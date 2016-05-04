@@ -10,27 +10,31 @@ import io.datafx.controller.flow.context.ActionHandler;
 import io.datafx.controller.flow.context.FlowActionHandler;
 import io.datafx.controller.util.VetoException;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
-import org.apache.commons.lang3.ObjectUtils;
 import org.controlsfx.control.BreadCrumbBar;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import pl.tarsius.controller.invite.InvitesController;
+import pl.tarsius.controller.project.ShowProject;
+import pl.tarsius.controller.task.EditTaskController;
+import pl.tarsius.controller.task.NewTaskController;
+import pl.tarsius.controller.task.ShowTaskController;
+import pl.tarsius.controller.task.StatusController;
 import pl.tarsius.controller.users.UsersListController;
 import pl.tarsius.database.Model.User;
+import pl.tarsius.util.gui.MyBread;
 import pl.tarsius.util.gui.ResponsiveDesign;
 
 import javax.annotation.PostConstruct;
-import javax.lang.model.type.NullType;
 
 /**
  * Created by Jarek on 2016-04-09.
@@ -80,6 +84,14 @@ public abstract class BaseController {
     public String sort="";
 
 
+    public TreeItem<MyBread> root = new TreeItem<MyBread>(new MyBread("Home", HomeController.class));
+
+    public TreeItem<MyBread> signalProject = new TreeItem<MyBread>(new MyBread("Projekt",ShowProject.class));
+    public TreeItem<MyBread> task = new TreeItem<MyBread>(new MyBread("Zadanie", ShowTaskController.class));
+    public TreeItem<MyBread> noweTask = new TreeItem<>(new MyBread("Dodaj task", NewTaskController.class));
+    public TreeItem<MyBread> changeTaskStatus = new TreeItem<>(new MyBread("Zmień status", StatusController.class));
+    public TreeItem<MyBread> editTask = new TreeItem<>(new MyBread("Edytuj Zadanie", EditTaskController.class));
+
 
     public void setUserBar(User user) {
         userBarFullName.setText(user.getImie()+" "+user.getNazwisko());
@@ -94,6 +106,17 @@ public abstract class BaseController {
             sideBarUsers.setVisible(true);
         }
         setUserBar(user);
+
+
+
+        signalProject.getChildren().addAll(task, noweTask);
+        task.getChildren().addAll(changeTaskStatus, editTask);
+
+
+        root.getChildren().addAll(signalProject);
+        breadCrumb=new BreadCrumbBar(root);
+
+
         Platform.runLater(() -> {
             new ResponsiveDesign((Stage) operationButtons.getParent().getScene().getWindow()).resizeBodyWidth(operationButtons.getParent().getScene().getWindow().getWidth());
             //-3.48% HACK
@@ -109,6 +132,21 @@ public abstract class BaseController {
         Long l = null;
         ApplicationContext.getInstance().register("showUserID", l);
         flowActionHandler.navigate(MyProfileController.class);
+    }
+
+
+    public EventHandler<BreadCrumbBar.BreadCrumbActionEvent> crumbActionEventEventHandler() {
+        return event -> {
+            System.out.println(event.getSelectedCrumb().toString());
+            MyBread b = (MyBread) event.getSelectedCrumb().getValue();
+            try {
+                flowActionHandler.navigate(b.getLink());
+            } catch (VetoException e) {
+                e.printStackTrace();
+            } catch (FlowException e) {
+                e.printStackTrace();
+            }
+        };
     }
 
 
