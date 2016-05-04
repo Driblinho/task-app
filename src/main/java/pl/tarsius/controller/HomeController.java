@@ -82,6 +82,7 @@ public class HomeController extends BaseController{
 
     @FXML private CheckBox showAllProject;
     @FXML private CheckBox showEndProject;
+    @FXML private CheckBox showEndOnlyProject;
 
 
     @PostConstruct
@@ -171,6 +172,9 @@ public class HomeController extends BaseController{
                 new Thread(renderProject(search,0,conn)).start();
             });
             showEndProject.setOnMouseClicked(event -> {
+                new Thread(renderProject(search,0,conn)).start();
+            });
+            showEndOnlyProject.setOnMouseClicked(event -> {
                 new Thread(renderProject(search,0,conn)).start();
             });
 
@@ -269,8 +273,14 @@ public class HomeController extends BaseController{
 
         if(!showAllProject.isSelected())
             sql+=" and pu.uzytkownik_id="+u.getUzytkownikId();
-        if(!showEndProject.isSelected())
+
+        if(showEndOnlyProject.isSelected())
+            sql+=" and p.status=0";
+        else if(!showEndProject.isSelected())
             sql+=" and p.status=1";
+
+
+
 
         if(search!=null && search.length()>0) sql+=" and (nazwa like '%"+search+"%' or opis like '%"+search+"%')";
 
