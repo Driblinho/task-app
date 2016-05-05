@@ -214,15 +214,15 @@ public class EditTaskController extends BaseController {
             Task<Object[]> task = new Task<Object[]>() {
                 @Override
                 protected Object[] call() throws Exception {
-
-
-
+                    taskDb.setStatus(taskDbModel.getStatus());
                     if(toggleGroup.getSelectedToggle()!=null) {
                         User user = (User) toggleGroup.getSelectedToggle().getUserData();
                         // TODO: 03.05.16 FIX SETTER
                         taskDb.setStatus(TaskDb.Status.INPROGRES.getValue());
                         return TaskDb.updateTask(taskDb,user.getUzytkownikId(),taskDbModel.getId());
                     }
+
+                    if(taskRemoveUser.isSelected()) taskDb.setStatus(TaskDb.Status.NEW.getValue());
                     return TaskDb.updateTask(taskDb,null,taskDbModel.getId());
                 }
             };

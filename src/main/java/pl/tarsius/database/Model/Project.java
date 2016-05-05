@@ -27,6 +27,7 @@ public class Project {
     private Timestamp data_dodania;
     private Timestamp data_zakonczenia;
     private long projekt_id;
+    private int status;
 
     public Project() {
         this.data_dodania = null;
@@ -164,6 +165,7 @@ public class Project {
             project = new Project(resultSet.getString("nazwa"),resultSet.getString("opis"),resultSet.getLong("lider"),resultSet.getTimestamp("data_zakonczenia"));
             project.setData_dodania(resultSet.getTimestamp("data_dodania"));
             project.setProjekt_id(resultSet.getLong("projekt_id"));
+            project.setStatus(resultSet.getInt("status"));
 
             DbUtils.closeQuietly(null,preparedStatement,resultSet);
 
@@ -194,6 +196,7 @@ public class Project {
                             resultSet.getTimestamp("data_dodania"),
                             resultSet.getTimestamp("data_zakonczenia"));
                     p.setLiderImieNazwisko(resultSet.getString("l_imie"),resultSet.getString("l_nazwisko"));
+                    p.setStatus(resultSet.getInt("status"));
                     return p;
                 } catch (SQLException e) {
                     loger.debug("JDBC CONVERTER: ",e);
@@ -275,4 +278,17 @@ public class Project {
     public void setLiderImieNazwisko(String imie, String nazwisko) {
         this.liderImieNazwisko = imie+" "+nazwisko;
     }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public boolean isOpen() {
+        return this.status==1;
+    }
+    public boolean isClose() {return !isOpen();}
 }

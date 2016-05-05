@@ -107,14 +107,15 @@ public class TaskDb {
     public static Object[] updateTask(TaskDb taskDb,Long userId, Long taskId) {
         try {
             Connection connection = new InitializeConnection().connect();
-            PreparedStatement preparedStatement = connection.prepareStatement("update Zadania set nazwa=?,opis=?,data_zakonczenia=?,uzytkownik_id=? where zadanie_id=?");
+            PreparedStatement preparedStatement = connection.prepareStatement("update Zadania set nazwa=?,opis=?,data_zakonczenia=?,uzytkownik_id=?,stan=? where zadanie_id=?");
             preparedStatement.setString(1, taskDb.getName());//Nazwa
             preparedStatement.setString(2, taskDb.getDesc());//Opis
             if(taskDb.endDate!=null) preparedStatement.setDate(3,taskDb.getEndDate());//Data zakonczenia
             else preparedStatement.setNull(3, Types.DATE); //Date Null
             if(userId!=null) preparedStatement.setLong(4, userId);
             else preparedStatement.setNull(4, Types.BIGINT);
-            preparedStatement.setLong(5, taskId);
+            preparedStatement.setInt(5, taskDb.getStatus());
+            preparedStatement.setLong(6, taskId);
             preparedStatement.executeUpdate();
             return new Object[] {true, "Zadanie zostało zaktualizowane"};
         } catch (SQLException e) {

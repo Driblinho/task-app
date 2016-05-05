@@ -25,10 +25,7 @@ import javafx.stage.Stage;
 import org.controlsfx.control.BreadCrumbBar;
 import pl.tarsius.controller.invite.InvitesController;
 import pl.tarsius.controller.project.ShowProject;
-import pl.tarsius.controller.task.EditTaskController;
-import pl.tarsius.controller.task.NewTaskController;
-import pl.tarsius.controller.task.ShowTaskController;
-import pl.tarsius.controller.task.StatusController;
+import pl.tarsius.controller.task.*;
 import pl.tarsius.controller.users.UsersListController;
 import pl.tarsius.database.Model.User;
 import pl.tarsius.util.gui.MyBread;
@@ -69,10 +66,8 @@ public abstract class BaseController {
     @LinkAction(HomeController.class)
     public Hyperlink sideBarProject;
 
-    @FXML
+    @FXML @LinkAction(MyTasksController.class)
     public Hyperlink sideBarTaks;
-    @FXML
-    public Hyperlink sideBarProblems;
     @FXML
     @LinkAction(InvitesController.class)
     public Hyperlink sideBarInv;
