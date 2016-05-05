@@ -101,7 +101,7 @@ public class EditProject extends BaseController {
     private Task userListTask(@Nullable String search, Connection connection) {
 
         Project projectM = (Project) ApplicationContext.getInstance().getRegisteredObject("projectModel");
-        String sql = "select u.uzytkownik_id,u.imie,u.nazwisko from Uzytkownicy u \n" +
+        String sql = "select u.uzytkownik_id,u.imie,u.nazwisko,u.avatar_id from Uzytkownicy u \n" +
                 "where uzytkownik_id not in (select uzytkownik_id from ProjektyUzytkownicy where projekt_id="+projectM.getProjekt_id()+");";
 
         if(search!=null) sql+= " and u.imie like '%"+search+"%'";
