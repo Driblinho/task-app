@@ -105,13 +105,11 @@ public class NewTaskController extends BaseController{
         validationSupport = new ValidationSupport();
         validationSupport.registerValidator(taskName, Validator.combine(
                 Validator.createEmptyValidator("Pole jest wymagane"),
-                CustomValidator.createMinSizeValidator("Minimalnie 20 znaków", 20),
                 CustomValidator.createMaxSizeValidator("Maksymalnie 100 znaków", 100)
         ));
         validationSupport.registerValidator(taskDesc, Validator.combine(
                 Validator.createEmptyValidator("Opis jest wymagany"),
-                CustomValidator.createMinSizeValidator("Minimalnie 50 znaków", 50),
-                CustomValidator.createMaxSizeValidator("Maksymalnie 300 znaków", 300)
+                CustomValidator.createMaxSizeValidator("Maksymalnie 200 znaków", 200)
         ));
 
 
