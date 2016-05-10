@@ -372,8 +372,10 @@ public class ShowProject extends BaseController{
                     rs.next();
                     long count = rs.getLong(1);
                     int pageCount = (int) Math.ceil(count/perPage);
-                    InProjectMemberPagination.setPageCount(pageCount);
-                    InProjectMemberPagination.setCurrentPageIndex(page);
+                    Platform.runLater(() -> {
+                        InProjectMemberPagination.setPageCount(pageCount);
+                        InProjectMemberPagination.setCurrentPageIndex(page);
+                    });
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -383,14 +385,10 @@ public class ShowProject extends BaseController{
                 return osb;
             }
         };
-        task.setOnRunning(event -> {
-
-
-        });
 
         task.setOnSucceeded(event -> {
-            userInProject.getChildren().clear();
-            task.getValue().forEach(user -> userInProject.getChildren().add(inProjectUser(user)));
+            Platform.runLater(() -> userInProject.getChildren().clear());
+            task.getValue().forEach(user -> Platform.runLater(() -> userInProject.getChildren().add(inProjectUser(user))));
         });
         return task;
     }
