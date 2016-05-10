@@ -36,6 +36,7 @@ import pl.tarsius.database.Model.TaskDb;
 import pl.tarsius.database.Model.User;
 import pl.tarsius.util.gui.StockButtons;
 import pl.tarsius.util.validator.CustomValidator;
+import pl.tarsius.util.validator.form.TaskFormValidator;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -121,14 +122,8 @@ public class EditTaskController extends BaseController {
         });
 
         validationSupport = new ValidationSupport();
-        validationSupport.registerValidator(taskName, Validator.combine(
-                Validator.createEmptyValidator("Pole jest wymagane"),
-                CustomValidator.createMaxSizeValidator("Maksymalnie 100 znaków", 100)
-        ));
-        validationSupport.registerValidator(taskDesc, Validator.combine(
-                Validator.createEmptyValidator("Opis jest wymagany"),
-                CustomValidator.createMaxSizeValidator("Maksymalnie 200 znaków", 200)
-        ));
+        validationSupport.registerValidator(taskName, TaskFormValidator.getName());
+        validationSupport.registerValidator(taskDesc, TaskFormValidator.getDescription());
 
     }
 
