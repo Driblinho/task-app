@@ -25,6 +25,7 @@ import javafx.stage.Stage;
 import org.controlsfx.control.BreadCrumbBar;
 import pl.tarsius.controller.invite.InvitesController;
 import pl.tarsius.controller.project.ShowProject;
+import pl.tarsius.controller.raport.RaportController;
 import pl.tarsius.controller.task.*;
 import pl.tarsius.controller.users.UsersListController;
 import pl.tarsius.database.Model.User;
@@ -74,6 +75,10 @@ public abstract class BaseController {
     @FXML
     @LinkAction(UsersListController.class)
     public Hyperlink sideBarUsers;
+
+    @FXML
+    @LinkAction(RaportController.class)
+    public Hyperlink sideBarRaports;
 
     public String search;
     public String sort="";
