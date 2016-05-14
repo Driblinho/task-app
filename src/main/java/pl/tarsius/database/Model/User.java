@@ -132,7 +132,7 @@ public class User {
     public void setPesel(String pesel) {
         this.pesel = pesel;
         PeselValidator p = new PeselValidator(pesel);
-        this.setDataUrodzenia(Date.valueOf(LocalDate.of(p.getBirthYear(),p.getBirthMonth(),p.getBirthDay())));
+        this.setDataUrodzenia(Date.valueOf(LocalDate.of(p.getBirthYear(), p.getBirthMonth(), p.getBirthDay())));
     }
 
     public String getTelefon() {
@@ -160,18 +160,19 @@ public class User {
     }
 
     public String getAvatarUrl() {
-        return (this.getAvatarId() !=null)?""+new ImageCloudinaryUpload().getUrl(this.getAvatarId()):"assets/img/avatar.png";
+        return (this.getAvatarId() != null) ? "" + new ImageCloudinaryUpload().getUrl(this.getAvatarId()) : "assets/img/avatar.png";
     }
 
     public String getImieNazwisko() {
-        return this.getImie()+" "+this.getNazwisko();
+        return this.getImie() + " " + this.getNazwisko();
     }
 
     public boolean isAdmin() {
-        return (this.typ==3);
+        return (this.typ == 3);
     }
+
     public boolean isManager() {
-        return (this.typ==2);
+        return (this.typ == 2);
     }
 
     @Override

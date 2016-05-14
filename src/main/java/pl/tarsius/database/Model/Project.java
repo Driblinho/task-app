@@ -48,8 +48,8 @@ public class Project {
     }
 
     public Project(long projekt_id, String nazwa, String opis, long lider, Timestamp data_dodania, Timestamp data_zakonczenia) {
-       this(nazwa, opis, lider, data_dodania, data_zakonczenia);
-       this.projekt_id = projekt_id;
+        this(nazwa, opis, lider, data_dodania, data_zakonczenia);
+        this.projekt_id = projekt_id;
     }
 
     public Project(String nazwa, String opis, long lider, Timestamp data_zakonczenia) {
@@ -61,18 +61,20 @@ public class Project {
         this.projekt_id = projekt_id;
     }
 
-    public static Object[] updateProject(Project project, ObservableList<User> users){
+    public static Object[] updateProject(Project project, ObservableList<User> users) {
+        Connection connection = null;
+        PreparedStatement ps = null;
         try {
-            Connection connection = new InitializeConnection().connect();
+            connection = new InitializeConnection().connect();
             connection.setAutoCommit(false);
-            PreparedStatement ps = (PreparedStatement) connection.prepareStatement("UPDATE Projekty SET nazwa=?, opis =?, data_zakonczenia =? WHERE projekt_id =?");
-            ps.setString(1,project.getNazwa());
-            ps.setString(2,project.getOpis());
-            ps.setTimestamp(3,project.data_zakonczenia);
-            ps.setLong(4,project.getProjekt_id());
+            ps = (PreparedStatement) connection.prepareStatement("UPDATE Projekty SET nazwa=?, opis =?, data_zakonczenia =? WHERE projekt_id =?");
+            ps.setString(1, project.getNazwa());
+            ps.setString(2, project.getOpis());
+            ps.setTimestamp(3, project.data_zakonczenia);
+            ps.setLong(4, project.getProjekt_id());
             ps.executeUpdate();
             ps = (PreparedStatement) connection.prepareStatement("delete from ProjektyUzytkownicy where projekt_id=? and lider!=1;");
-            ps.setLong(1,project.getProjekt_id());
+            ps.setLong(1, project.getProjekt_id());
             ps.executeUpdate();
 
             for (User user : users) {
@@ -86,10 +88,12 @@ public class Project {
             connection.commit();
 
 
-            return new Object[]{true,"Zaktualizowano signalProject"};
+            return new Object[]{true, "Zaktualizowano signalProject"};
         } catch (SQLException e) {
             e.printStackTrace();
-            return new Object[]{false,"Błąd bazy danych"};
+            return new Object[]{false, "Błąd bazy danych"};
+        } finally {
+            DbUtils.closeQuietly(connection, ps, null);
         }
     }
 
@@ -97,61 +101,64 @@ public class Project {
         String sql = "INSERT INTO `Projekty` " +
                 "(`nazwa`, `opis`,`data_zakonczenia`, `lider`, `status`) " +
                 "VALUES (?, ?, ?, ?, ?);";
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
         try {
-            Connection connection = new InitializeConnection().connect();
+            connection = new InitializeConnection().connect();
             connection.setAutoCommit(false);
-
-            PreparedStatement preparedStatement;
-
             preparedStatement = (PreparedStatement) connection.prepareStatement(
-                        sql, Statement.RETURN_GENERATED_KEYS);
-                int i = 1;
-                preparedStatement.setString(i++, this.nazwa);
-                preparedStatement.setString(i++, this.opis);
-                if(this.data_zakonczenia!=null) preparedStatement.setTimestamp(i++, data_zakonczenia);
-                else preparedStatement.setNull(i++, Types.TIMESTAMP);
-                preparedStatement.setLong(i++, this.lider);
-                preparedStatement.setInt(i++, 1);
-                preparedStatement.executeUpdate();
-                ResultSet resultSet = preparedStatement.getGeneratedKeys();
-                resultSet.next();
-                long lastId = resultSet.getLong(1);
+                    sql, Statement.RETURN_GENERATED_KEYS);
+            int i = 1;
+            preparedStatement.setString(i++, this.nazwa);
+            preparedStatement.setString(i++, this.opis);
+            if (this.data_zakonczenia != null) preparedStatement.setTimestamp(i++, data_zakonczenia);
+            else preparedStatement.setNull(i++, Types.TIMESTAMP);
+            preparedStatement.setLong(i++, this.lider);
+            preparedStatement.setInt(i++, 1);
+            preparedStatement.executeUpdate();
+            resultSet = preparedStatement.getGeneratedKeys();
+            resultSet.next();
+            long lastId = resultSet.getLong(1);
 
             sql = "insert into ProjektyUzytkownicy (uzytkownik_id,projekt_id,lider) values( ?, ?, ?);";
             preparedStatement = (PreparedStatement) connection.prepareStatement(sql);
             preparedStatement.setLong(1, this.lider);
-            preparedStatement.setLong(2,lastId);
-            preparedStatement.setInt(3,1);
+            preparedStatement.setLong(2, lastId);
+            preparedStatement.setInt(3, 1);
             preparedStatement.executeUpdate();
 
 
             connection.commit();
-            return new Object[] {true, lastId, "Nowy projekt został dodany"};
+            return new Object[]{true, lastId, "Nowy projekt został dodany"};
         } catch (SQLException e) {
             loger.debug("Dodawanie nowego projektu", e);
-            return new Object[] {false,null,"Błąd bazy danych"};
+            return new Object[]{false, null, "Błąd bazy danych"};
+        } finally {
+            DbUtils.closeQuietly(connection, preparedStatement, resultSet);
         }
     }
 
-    public static Object[] addUserToProject(long userId,long projectId) {
+    public static Object[] addUserToProject(long userId, long projectId) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
         try {
-            Connection connection = new InitializeConnection().connect();
+            connection = new InitializeConnection().connect();
             String sql = "insert into ProjektyUzytkownicy (uzytkownik_id,projekt_id) values (?,?)";
-            PreparedStatement preparedStatement = (PreparedStatement) connection.prepareStatement(sql);
+            preparedStatement = (PreparedStatement) connection.prepareStatement(sql);
             preparedStatement.setLong(1, userId);
             preparedStatement.setLong(2, projectId);
-            int i = preparedStatement.executeUpdate();
-            //sql = "";
-            //if(i>0)
-            return new Object[] {true,"Użytkownik dodany"};
+            preparedStatement.executeUpdate();
+            return new Object[]{true, "Użytkownik dodany"};
         } catch (SQLException e) {
             loger.debug("dodawnaie do projektu uzytkownika", e);
-            return new Object[] {false,"Błąd bazy danych"};
+            return new Object[]{false, "Błąd bazy danych"};
+        } finally {
+            DbUtils.closeQuietly(connection, preparedStatement, null);
         }
     }
 
     public static Project getProject(long projekt_id) {
-
         Connection connection = null;
         Project project = null;
         try {
@@ -162,12 +169,12 @@ public class Project {
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
 
-            project = new Project(resultSet.getString("nazwa"),resultSet.getString("opis"),resultSet.getLong("lider"),resultSet.getTimestamp("data_zakonczenia"));
+            project = new Project(resultSet.getString("nazwa"), resultSet.getString("opis"), resultSet.getLong("lider"), resultSet.getTimestamp("data_zakonczenia"));
             project.setData_dodania(resultSet.getTimestamp("data_dodania"));
             project.setProjekt_id(resultSet.getLong("projekt_id"));
             project.setStatus(resultSet.getInt("status"));
 
-            DbUtils.closeQuietly(null,preparedStatement,resultSet);
+            DbUtils.closeQuietly(null, preparedStatement, resultSet);
 
             preparedStatement = (PreparedStatement) connection.prepareStatement("select imie,nazwisko from Uzytkownicy where uzytkownik_id=?");
             preparedStatement.setLong(1, project.getLider());
@@ -195,11 +202,11 @@ public class Project {
                             resultSet.getLong("l_id"),
                             resultSet.getTimestamp("data_dodania"),
                             resultSet.getTimestamp("data_zakonczenia"));
-                    p.setLiderImieNazwisko(resultSet.getString("l_imie"),resultSet.getString("l_nazwisko"));
+                    p.setLiderImieNazwisko(resultSet.getString("l_imie"), resultSet.getString("l_nazwisko"));
                     p.setStatus(resultSet.getInt("status"));
                     return p;
                 } catch (SQLException e) {
-                    loger.debug("JDBC CONVERTER: ",e);
+                    loger.debug("JDBC CONVERTER: ", e);
                 }
                 return null;
             }
@@ -207,18 +214,22 @@ public class Project {
     }
 
 
-    public static Map<TaskDb.Status,Long> getStatistic(Long projectId) {
-        Map<TaskDb.Status,Long> stat = new HashMap<>();
+    public static Map<TaskDb.Status, Long> getStatistic(Long projectId) {
+        Map<TaskDb.Status, Long> stat = new HashMap<>();
+        Connection connection = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
         try {
-            Connection connection = new InitializeConnection().connect();
-            PreparedStatement ps = (PreparedStatement) connection.prepareStatement("select stan,count(*) from Zadania where projekt_id=? group by stan;");
-            ps.setLong(1,projectId);
-            ResultSet rs = ps.executeQuery();
+            connection = new InitializeConnection().connect();
+            ps = (PreparedStatement) connection.prepareStatement("select stan,count(*) from Zadania where projekt_id=? group by stan;");
+            ps.setLong(1, projectId);
+            rs = ps.executeQuery();
             while (rs.next())
-                stat.put(TaskDb.Status.valueOf(rs.getInt(1)),rs.getLong(2));
+                stat.put(TaskDb.Status.valueOf(rs.getInt(1)), rs.getLong(2));
         } catch (SQLException e) {
             loger.debug("PROJECT STAT", e);
         } finally {
+            DbUtils.closeQuietly(connection, ps, rs);
             return stat;
         }
     }
@@ -276,7 +287,7 @@ public class Project {
     }
 
     public void setLiderImieNazwisko(String imie, String nazwisko) {
-        this.liderImieNazwisko = imie+" "+nazwisko;
+        this.liderImieNazwisko = imie + " " + nazwisko;
     }
 
     public int getStatus() {
@@ -288,7 +299,10 @@ public class Project {
     }
 
     public boolean isOpen() {
-        return this.status==1;
+        return this.status == 1;
     }
-    public boolean isClose() {return !isOpen();}
+
+    public boolean isClose() {
+        return !isOpen();
+    }
 }
