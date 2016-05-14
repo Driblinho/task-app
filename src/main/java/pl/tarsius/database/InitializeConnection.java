@@ -16,6 +16,7 @@ import java.util.Properties;
 
 /**
  * Created by Ireneusz Kuliga on 23.03.16.
+ * Klasa inicjalizująca połączenie z bazą danych
  */
 public class InitializeConnection {
 
@@ -26,13 +27,16 @@ public class InitializeConnection {
     private String username;
     private String password;
 
+    /**
+     * Konstruktor ładujący ustawienia z pliku
+     */
     public InitializeConnection() {
         loger = LoggerFactory.getLogger(InitializeConnection.class);
         databseConfig = new Properties();
         InputStream cfgFile = getClass().getResourceAsStream("/properties/database.properties");
         try {
             databseConfig.load(cfgFile);
-            jdbcUrl  = databseConfig.getProperty("database.jdbcUrl");
+            jdbcUrl = databseConfig.getProperty("database.jdbcUrl");
             username = databseConfig.getProperty("database.user");
             password = databseConfig.getProperty("database.password");
 
@@ -41,20 +45,37 @@ public class InitializeConnection {
         }
     }
 
+    /**
+     * Metoda zwracająca połączenie do bazy danych
+     * @return Connection
+     * @throws SQLException
+     */
     public Connection connect() throws SQLException {
         loger.info("Connect to Database");
         return connection = (Connection) DriverManager.getConnection(jdbcUrl, username, password);
 
     }
 
+    /**
+     * Getter zwracający url jdbc wraz z nazwą bazy danych
+     * @return String
+     */
     public String getJdbcUrl() {
         return jdbcUrl;
     }
 
+    /**
+     * Getter zwracający hasło do bazy danych
+     * @return
+     */
     public String getPassword() {
         return password;
     }
 
+    /**
+     * Getter zwracający nazwę użytkownika bazy
+     * @return
+     */
     public String getUsername() {
         return username;
     }
