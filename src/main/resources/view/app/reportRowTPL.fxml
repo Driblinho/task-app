@@ -23,7 +23,7 @@
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
    </rowConstraints>
    <children>
-      <Hyperlink style="-fx-text-fill: #050F44; -fx-underline: none;" text="Tytuł projektu">
+      <Hyperlink style="-fx-text-fill: #050F44; -fx-underline: none;" styleClass="reportName" text="Tytuł projektu">
          <GridPane.margin>
             <Insets />
          </GridPane.margin>
