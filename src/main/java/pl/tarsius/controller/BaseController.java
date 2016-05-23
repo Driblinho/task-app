@@ -24,6 +24,7 @@ import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import org.controlsfx.control.BreadCrumbBar;
 import pl.tarsius.controller.invite.InvitesController;
+import pl.tarsius.controller.project.NewProjectController;
 import pl.tarsius.controller.project.ShowProject;
 import pl.tarsius.controller.task.*;
 import pl.tarsius.controller.users.UsersListController;
@@ -85,7 +86,16 @@ public abstract class BaseController {
     public TreeItem<MyBread> task = new TreeItem<MyBread>(new MyBread("Zadanie", ShowTaskController.class));
     public TreeItem<MyBread> noweTask = new TreeItem<>(new MyBread("Dodaj task", NewTaskController.class));
     public TreeItem<MyBread> changeTaskStatus = new TreeItem<>(new MyBread("Zmień status", StatusController.class));
-    public TreeItem<MyBread> editTask = new TreeItem<>(new MyBread("Edytuj Zadanie", EditTaskController.class));
+    public TreeItem<MyBread> editTask = new TreeItem<>(new MyBread("Edytuj zadanie", EditTaskController.class));
+    public TreeItem<MyBread> newProject = new TreeItem<>(new MyBread("Nowy projekt", NewProjectController.class));
+    public TreeItem<MyBread> myTaskList = new TreeItem<>(new MyBread("Zadania", MyTasksController.class));
+    public TreeItem<MyBread> myInv = new TreeItem<>(new MyBread("Zaproszenia", InvitesController.class));
+    public TreeItem<MyBread> useresManagment = new TreeItem<>(new MyBread("Zarządzanie użytkownikami", UsersListController.class));
+    public TreeItem<MyBread> profilView = new TreeItem<>(new MyBread("Profil", MyProfileController.class));
+    public TreeItem<MyBread> bucketReport = new TreeItem<>(new MyBread("Profil", MyProfileController.class));
+
+
+
 
 
     public void setUserBar(User user) {
@@ -108,7 +118,7 @@ public abstract class BaseController {
         task.getChildren().addAll(changeTaskStatus, editTask);
 
 
-        root.getChildren().addAll(signalProject);
+        root.getChildren().addAll(signalProject, newProject, myTaskList, myInv, useresManagment, profilView, bucketReport);
         breadCrumb=new BreadCrumbBar(root);
 
 

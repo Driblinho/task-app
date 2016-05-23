@@ -62,6 +62,9 @@ public class NewProjectController extends BaseController {
 
         new StockButtons(operationButtons, flowActionHandler).homeAction();
 
+        breadCrumb.setSelectedCrumb(newProject);
+        breadCrumb.setOnCrumbAction(crumbActionEventEventHandler());
+
         validationSupport = new ValidationSupport();
         validationSupport.registerValidator(newProjectTitleField, Validator.combine(
                 Validator.createEmptyValidator("Tytuł jest wymagany"),

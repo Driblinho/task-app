@@ -51,6 +51,10 @@ public class MyTasksController extends BaseController {
 
     @PostConstruct
     public void init() {
+
+        breadCrumb.setSelectedCrumb(myTaskList);
+        breadCrumb.setOnCrumbAction(crumbActionEventEventHandler());
+
         user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
         try {
             Connection connection = new InitializeConnection().connect();

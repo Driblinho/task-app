@@ -65,6 +65,11 @@ public class InvitesController extends BaseController {
 
     @PostConstruct
     public void init() {
+
+        breadCrumb.setSelectedCrumb(myInv);
+        breadCrumb.setOnCrumbAction(crumbActionEventEventHandler());
+
+
         sort="DESC";
         invPagination.setPageCount(1);
         loger = LoggerFactory.getLogger(getClass());
