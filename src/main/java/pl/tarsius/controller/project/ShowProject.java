@@ -86,6 +86,8 @@ public class ShowProject extends BaseController{
     @FXML Text taskCountForTest;
     @FXML Text taskCountEnd;
 
+    @FXML @ActionTrigger("AddToBucket") private Button addToReportBucket;
+
     private static Logger loger = LoggerFactory.getLogger(ShowProject.class);
 
     @PostConstruct
@@ -113,7 +115,7 @@ public class ShowProject extends BaseController{
         project = Project.getProject((long)ApplicationContext.getInstance().getRegisteredObject("projectId"));
         ApplicationContext.getInstance().register("projectModel", project);
         new StockButtons(operationButtons, flowActionHandler).inProjectButton();
-       ApplicationContext.getInstance().register("projectLider", project.getLider());
+        ApplicationContext.getInstance().register("projectLider", project.getLider());
             inprojectTitle.setText(project.getNazwa());
             inprojectDesc.setText(project.getOpis());
             inprojectDataStart.setText(project.getData_dodania().toString());
