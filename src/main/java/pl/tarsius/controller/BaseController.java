@@ -98,8 +98,7 @@ public abstract class BaseController {
     public TreeItem<MyBread> myInv = new TreeItem<>(new MyBread("Zaproszenia", InvitesController.class));
     public TreeItem<MyBread> useresManagment = new TreeItem<>(new MyBread("Zarządzanie użytkownikami", UsersListController.class));
     public TreeItem<MyBread> profilView = new TreeItem<>(new MyBread("Profil", MyProfileController.class));
-    public TreeItem<MyBread> bucketReport = new TreeItem<>(new MyBread("Profil", MyProfileController.class));
-    public TreeItem<MyBread> editTask = new TreeItem<>(new MyBread("Edytuj Zadanie", EditTaskController.class));
+    public TreeItem<MyBread> bucketReport = new TreeItem<>(new MyBread("Raporty", ReportController.class));
     public User user;
 
 

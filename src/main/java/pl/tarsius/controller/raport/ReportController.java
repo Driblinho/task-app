@@ -55,7 +55,8 @@ public class ReportController extends BaseController {
     @PostConstruct
     public void  init() {
         new StockButtons(operationButtons, flowActionHandler).homeAction();
-
+        breadCrumb.setSelectedCrumb(bucketReport);
+        breadCrumb.setOnCrumbAction(crumbActionEventEventHandler());
         perPage = 2;
         projectBucket = (HashSet<Long>) ApplicationContext.getInstance().getRegisteredObject("reportBucket");
         Platform.runLater(() -> {
