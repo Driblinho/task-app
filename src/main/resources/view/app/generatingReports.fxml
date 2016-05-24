@@ -6,14 +6,12 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.Pagination?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import org.controlsfx.control.BreadCrumbBar?>
 
-<StackPane alignment="TOP_CENTER" prefHeight="800.0" prefWidth="1170.0" xmlns="http://javafx.com/javafx/8.0.92" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane alignment="TOP_CENTER" prefHeight="800.0" prefWidth="1170.0" xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <BorderPane fx:id="body" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1170.0">
          <left>
@@ -27,29 +25,39 @@
                <children>
                   <fx:include source="../userbar.fxml" />
                   <BreadCrumbBar fx:id="breadCrumb" />
-                  <VBox fx:id="reportList" spacing="10.0" />
-                  <HBox alignment="CENTER_RIGHT" prefHeight="46.0" prefWidth="960.0" spacing="5.0">
-                     <children>
-                        <RadioButton mnemonicParsing="false" selected="true" text="Wariant 1" />
-                        <RadioButton mnemonicParsing="false" text="Wariant 2" />
-                        <RadioButton mnemonicParsing="false" text="Wariant 3" />
-                     </children>
+                  <VBox fx:id="reportList" spacing="10.0">
                      <padding>
-                        <Insets right="20.0" top="5.0" />
-                     </padding>
-                  </HBox>
+                        <Insets right="10.0" />
+                     </padding></VBox>
                   <ButtonBar prefHeight="40.0" prefWidth="200.0">
                     <buttons>
-                        <Button mnemonicParsing="false" text="Wyczyść liste">
+                        <Button fx:id="clearReportList" mnemonicParsing="false" text="Wyczyść listę">
                            <styleClass>
                               <String fx:value="redButton" />
                               <String fx:value="clearAllReportList" />
                            </styleClass></Button>
-                        <Button mnemonicParsing="false" text="Generuj raporty">
+                        <Button fx:id="genSelectReport" mnemonicParsing="false" prefHeight="26.0" text="Wybrane">
                            <styleClass>
                               <String fx:value="greenButton" />
                               <String fx:value="genAllReport" />
                            </styleClass></Button>
+                       <Button fx:id="genAllReport" mnemonicParsing="false" text="Wszystkie ">
+                          <styleClass>
+                             <String fx:value="greenButton" />
+                             <String fx:value="genAllReport" />
+                          </styleClass></Button>
+                        <Button fx:id="genAllMyReport" layoutX="591.0" layoutY="17.0" mnemonicParsing="false" text="Wysztskie moje">
+                           <styleClass>
+                              <String fx:value="greenButton" />
+                              <String fx:value="genAllReport" />
+                           </styleClass>
+                        </Button>
+                        <Button fx:id="genMyTaskReport" layoutX="495.0" layoutY="17.0" mnemonicParsing="false" text="Raport z moich zadań">
+                           <styleClass>
+                              <String fx:value="greenButton" />
+                              <String fx:value="genAllReport" />
+                           </styleClass>
+                        </Button>
                     </buttons>
                      <VBox.margin>
                         <Insets right="15.0" />
