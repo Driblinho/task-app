@@ -26,6 +26,7 @@ import org.controlsfx.control.BreadCrumbBar;
 import pl.tarsius.controller.invite.InvitesController;
 import pl.tarsius.controller.project.NewProjectController;
 import pl.tarsius.controller.project.ShowProject;
+import pl.tarsius.controller.raport.ReportController;
 import pl.tarsius.controller.task.*;
 import pl.tarsius.controller.users.UsersListController;
 import pl.tarsius.database.Model.User;
@@ -33,6 +34,7 @@ import pl.tarsius.util.gui.MyBread;
 import pl.tarsius.util.gui.ResponsiveDesign;
 
 import javax.annotation.PostConstruct;
+import java.util.HashSet;
 
 /**
  * Created by Jarek on 2016-04-09.
@@ -76,6 +78,10 @@ public abstract class BaseController {
     @LinkAction(UsersListController.class)
     public Hyperlink sideBarUsers;
 
+    @FXML
+    @LinkAction(ReportController.class)
+    public Hyperlink sideBarRaports;
+
     public String search;
     public String sort="";
 
@@ -92,10 +98,8 @@ public abstract class BaseController {
     public TreeItem<MyBread> myInv = new TreeItem<>(new MyBread("Zaproszenia", InvitesController.class));
     public TreeItem<MyBread> useresManagment = new TreeItem<>(new MyBread("Zarządzanie użytkownikami", UsersListController.class));
     public TreeItem<MyBread> profilView = new TreeItem<>(new MyBread("Profil", MyProfileController.class));
-    public TreeItem<MyBread> bucketReport = new TreeItem<>(new MyBread("Profil", MyProfileController.class));
-
-
-
+    public TreeItem<MyBread> bucketReport = new TreeItem<>(new MyBread("Raporty", ReportController.class));
+    public User user;
 
 
     public void setUserBar(User user) {
@@ -106,7 +110,7 @@ public abstract class BaseController {
 
     @PostConstruct
     public void start() {
-        User user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
+        user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
         if(user.isAdmin()) {
             sideBarUsers.setVisible(true);
         }
@@ -126,7 +130,8 @@ public abstract class BaseController {
             new ResponsiveDesign((Stage) operationButtons.getParent().getScene().getWindow()).resizeBodyWidth(operationButtons.getParent().getScene().getWindow().getWidth());
             //-3.48% HACK
             double h = operationButtons.getParent().getScene().getWindow().getHeight();
-            h = h-h*0.0348;
+            //h = h-h*0.0348;
+            h = h-h*0.0248;
             new ResponsiveDesign((Stage) operationButtons.getParent().getScene().getWindow()).resizeBodyHeight(h);
         });
 
@@ -137,6 +142,15 @@ public abstract class BaseController {
         Long l = null;
         ApplicationContext.getInstance().register("showUserID", l);
         flowActionHandler.navigate(MyProfileController.class);
+    }
+
+    @ActionMethod("AddToBucket")
+    public void AddToBucket() throws VetoException, FlowException {
+        long projectId = (long) ApplicationContext.getInstance().getRegisteredObject("projectId");
+        HashSet<Long> bucket = (HashSet<Long>) ApplicationContext.getInstance().getRegisteredObject("reportBucket");
+        bucket.add(projectId);
+        ApplicationContext.getInstance().register("reportBucket", bucket);
+        System.out.println("KLIKNOLEM DODALEM");
     }
 
 

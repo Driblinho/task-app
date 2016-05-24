@@ -15,10 +15,12 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.tarsius.controller.StartupController;
-import pl.tarsius.database.InitializeConnection;
+import pl.tarsius.database.Model.ReportProject;
+import pl.tarsius.util.GenReportProjects;
 import pl.tarsius.util.gui.ResponsiveDesign;
 
 import java.sql.SQLException;
+import java.util.HashSet;
 
 public class Main extends Application {
 
@@ -31,9 +33,10 @@ public class Main extends Application {
         loger = LoggerFactory.getLogger(getClass());
 
 
-        ApplicationContext.getInstance().register("connection", new InitializeConnection().connect());
+        //new GenReportProjects(new ReportProject().genProjects(null)).run();
 
         ApplicationContext.getInstance().register("userSession",new Object());
+        ApplicationContext.getInstance().register("reportBucket", new HashSet<Long>());
 
         //Font.loadFont(getClass().getResourceAsStream("assets/font/RobotoCondensed-Regular.ttf"), 14);
         //Font.loadFont(getClass().getResourceAsStream("assets/font/RobotoCondensed-Light.ttf"), 14);
