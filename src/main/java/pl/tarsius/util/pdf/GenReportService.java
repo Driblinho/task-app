@@ -1,5 +1,6 @@
 package pl.tarsius.util.pdf;
 
+import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -18,6 +19,7 @@ import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
+import pl.tarsius.Main;
 import pl.tarsius.database.Model.ReportProject;
 import pl.tarsius.database.Model.ReportTasks;
 
@@ -53,14 +55,29 @@ public class GenReportService extends Service<Void>{
 
     private boolean isTaskReport;
 
+    private HostServices hostServices;
+
     public GenReportService(long userId) {
+        this();
         this.userId = userId;
     }
     public GenReportService(HashSet<Long> projectIds) {
+        this();
         this.projectIds = projectIds;
     }
 
-    public GenReportService() {}
+    public GenReportService() {
+        hostServices = new Main().getHostServices();
+    }
+
+    /**
+     * Setter for property 'hostServices'.
+     *
+     * @param hostServices Value to set for property 'hostServices'.
+     */
+    public void setHostServices(HostServices hostServices) {
+        this.hostServices = hostServices;
+    }
 
     /**
      * Getter for property 'taskReport'.
@@ -426,6 +443,8 @@ public class GenReportService extends Service<Void>{
                 else
                     genProjectReport();
                 Platform.runLater(() -> new Alert(Alert.AlertType.INFORMATION,"Raport został wygenerowany").show());
+                if(hostServices!=null)
+                    hostServices.showDocument("./tmp.pdf");
                 return null;
             }
         };
