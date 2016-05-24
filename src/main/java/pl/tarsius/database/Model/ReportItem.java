@@ -12,12 +12,14 @@ import java.sql.SQLException;
  */
 public class ReportItem {
     private static Logger loger = LoggerFactory.getLogger(ReportItem.class);
+    private Long projectId;
     private String name;
     private String author;
     private long tasks;
     private long users;
 
-    public ReportItem(String name, String author, long tasks, long users) {
+    public ReportItem(Long projectId, String name, String author, long tasks, long users) {
+        this.projectId=projectId;
         this.name = name;
         this.author = author;
         this.tasks = tasks;
@@ -30,6 +32,7 @@ public class ReportItem {
             public ReportItem convertOneRow(ResultSet resultSet) {
                 try {
                     return new ReportItem(
+                            resultSet.getLong("projekt_id"),
                             resultSet.getString("nazwa"),
                             resultSet.getString("imie")+" "+resultSet.getString("nazwisko"),
                             resultSet.getLong("t_count"),
@@ -77,5 +80,14 @@ public class ReportItem {
      */
     public long getUsers() {
         return users;
+    }
+
+    /**
+     * Getter for property 'projectId'.
+     *
+     * @return Value for property 'projectId'.
+     */
+    public Long getProjectId() {
+        return projectId;
     }
 }
