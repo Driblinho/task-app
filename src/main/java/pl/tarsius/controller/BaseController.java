@@ -132,7 +132,7 @@ public abstract class BaseController {
             double h = operationButtons.getParent().getScene().getWindow().getHeight();
             //h = h-h*0.0348;
             h = h-h*0.0248;
-            new ResponsiveDesign((Stage) operationButtons.getParent().getScene().getWindow()).resizeBodyHeight(h);
+            new ResponsiveDesign((Stage) sideBarProject.getParent().getScene().getWindow()).resizeBodyHeight(h);
         });
 
     }
