@@ -33,6 +33,7 @@ import pl.tarsius.util.gui.MyBread;
 import pl.tarsius.util.gui.ResponsiveDesign;
 
 import javax.annotation.PostConstruct;
+import java.util.HashSet;
 
 /**
  * Created by Jarek on 2016-04-09.
@@ -91,6 +92,7 @@ public abstract class BaseController {
     public TreeItem<MyBread> noweTask = new TreeItem<>(new MyBread("Dodaj task", NewTaskController.class));
     public TreeItem<MyBread> changeTaskStatus = new TreeItem<>(new MyBread("Zmień status", StatusController.class));
     public TreeItem<MyBread> editTask = new TreeItem<>(new MyBread("Edytuj Zadanie", EditTaskController.class));
+    public User user;
 
 
     public void setUserBar(User user) {
@@ -101,7 +103,7 @@ public abstract class BaseController {
 
     @PostConstruct
     public void start() {
-        User user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
+        user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
         if(user.isAdmin()) {
             sideBarUsers.setVisible(true);
         }
@@ -121,7 +123,8 @@ public abstract class BaseController {
             new ResponsiveDesign((Stage) operationButtons.getParent().getScene().getWindow()).resizeBodyWidth(operationButtons.getParent().getScene().getWindow().getWidth());
             //-3.48% HACK
             double h = operationButtons.getParent().getScene().getWindow().getHeight();
-            h = h-h*0.0348;
+            //h = h-h*0.0348;
+            h = h-h*0.0248;
             new ResponsiveDesign((Stage) operationButtons.getParent().getScene().getWindow()).resizeBodyHeight(h);
         });
 
@@ -132,6 +135,15 @@ public abstract class BaseController {
         Long l = null;
         ApplicationContext.getInstance().register("showUserID", l);
         flowActionHandler.navigate(MyProfileController.class);
+    }
+
+    @ActionMethod("AddToBucket")
+    public void AddToBucket() throws VetoException, FlowException {
+        long projectId = (long) ApplicationContext.getInstance().getRegisteredObject("projectId");
+        HashSet<Long> bucket = (HashSet<Long>) ApplicationContext.getInstance().getRegisteredObject("reportBucket");
+        bucket.add(projectId);
+        ApplicationContext.getInstance().register("reportBucket", bucket);
+        System.out.println("KLIKNOLEM DODALEM");
     }
 
 
