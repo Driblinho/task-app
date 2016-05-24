@@ -34,6 +34,7 @@ import pl.tarsius.controller.project.ShowProject;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.TaskDb;
 import pl.tarsius.database.Model.User;
+import pl.tarsius.util.gui.BlockDatePicker;
 import pl.tarsius.util.gui.StockButtons;
 import pl.tarsius.util.validator.CustomValidator;
 import pl.tarsius.util.validator.form.TaskFormValidator;
@@ -91,6 +92,8 @@ public class EditTaskController extends BaseController {
 
         breadCrumb.setSelectedCrumb(editTask);
         breadCrumb.setOnCrumbAction(crumbActionEventEventHandler());
+
+        taskEndDatePicker.setDayCellFactory(new BlockDatePicker());
 
         taskDbModel = (TaskDb) ApplicationContext.getInstance().getRegisteredObject("taskModel");
         if(taskDbModel.getStatus()==TaskDb.Status.END.getValue())

@@ -26,6 +26,7 @@ import pl.tarsius.controller.BaseController;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.Project;
 import pl.tarsius.database.Model.User;
+import pl.tarsius.util.gui.BlockDatePicker;
 import pl.tarsius.util.gui.StockButtons;
 import pl.tarsius.util.validator.CustomValidator;
 
@@ -72,6 +73,7 @@ public class EditProject extends BaseController {
     public void init() {
         new StockButtons(operationButtons,flowActionHandler).inProjectButton();
         Project project = (Project) ApplicationContext.getInstance().getRegisteredObject("projectModel");
+        editProjectDatePicker.setDayCellFactory(new BlockDatePicker());
         editProjectTitleField.setText(project.getNazwa());
         editProjectDescField.setText(project.getOpis());
         if(project.getData_zakonczenia()!=null)

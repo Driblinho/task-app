@@ -32,6 +32,7 @@ import pl.tarsius.controller.project.ShowProject;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.TaskDb;
 import pl.tarsius.database.Model.User;
+import pl.tarsius.util.gui.BlockDatePicker;
 import pl.tarsius.util.gui.StockButtons;
 import pl.tarsius.util.validator.CustomValidator;
 import pl.tarsius.util.validator.form.TaskFormValidator;
@@ -86,6 +87,8 @@ public class NewTaskController extends BaseController{
 
         breadCrumb.setSelectedCrumb(noweTask);
         breadCrumb.setOnCrumbAction(crumbActionEventEventHandler());
+
+        taskEndDatePicker.setDayCellFactory(new BlockDatePicker());
 
         toggleGroup = new ToggleGroup();
         long projectId = (long) ApplicationContext.getInstance().getRegisteredObject("projectId");
