@@ -2,17 +2,20 @@
 
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Group?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Pagination?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -20,7 +23,7 @@
 <?import org.controlsfx.control.BreadCrumbBar?>
 <?import org.controlsfx.control.SegmentedButton?>
 
-<StackPane xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <BorderPane fx:id="body" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1170.0">
          <left>
@@ -34,51 +37,107 @@
                <children>
                   <fx:include source="../userbar.fxml" />
                   <BreadCrumbBar fx:id="breadCrumb" />
-                  <FlowPane>
-                     <VBox.margin>
-                        <Insets left="10.0" right="10.0" />
-                     </VBox.margin>
+                  <VBox prefHeight="242.0" prefWidth="950.0" style="-fx-background-color: #fff;">
                      <children>
-                        <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="248.0" prefWidth="944.0" style="-fx-background-color: #fff;" styleClass="rwdW">
+                        <GridPane prefHeight="32.0" prefWidth="931.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="297.0" minWidth="10.0" prefWidth="287.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
                            <children>
-                              <Label fx:id="inprojectTitle" layoutX="14.0" layoutY="14.0" text="Tytuł projektu">
+                              <Label fx:id="inprojectTitle" text="Tytuł projektu">
                                  <font>
                                     <Font name="System Bold" size="22.0" />
                                  </font>
+                                 <GridPane.margin>
+                                    <Insets left="6.0" />
+                                 </GridPane.margin>
                               </Label>
-                              <Text fx:id="inprojectDesc" layoutX="14.0" layoutY="53.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum." wrappingWidth="660.4700012207031">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Text>
-                              <Hyperlink fx:id="inprojectAuthor" layoutX="14.0" layoutY="174.0" text="Jan Kowalski" />
-                              <Label layoutX="403.0" layoutY="177.0" text="Data startu: " />
-                              <Label fx:id="inprojectDataStopLabel" layoutX="654.0" layoutY="177.0" text="Data końcowa:" />
-                              <Text fx:id="inprojectDataStart" layoutX="486.0" layoutY="190.0" strokeType="OUTSIDE" strokeWidth="0.0" text="11.04.2016" />
-                              <Text fx:id="inprojectDataStop" layoutX="761.0" layoutY="191.0" strokeType="OUTSIDE" strokeWidth="0.0" text="30.05.2016" />
-                              <Label layoutX="14.0" layoutY="218.0" text="Nowe:" />
-                              <Label layoutX="105.0" layoutY="220.0" text="W trakcie" />
-                              <Label layoutX="223.0" layoutY="220.0" text="Do sprawdzenia" />
-                              <Text fx:id="taskCountNew" layoutX="60.0" layoutY="232.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
-                              <Text fx:id="taskCountInProgress" layoutX="172.0" layoutY="233.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
-                              <Text fx:id="taskCountForTest" layoutX="331.0" layoutY="234.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
-                              <Label layoutX="376.0" layoutY="221.0" text="Zakończone:" />
-                              <Text fx:id="taskCountEnd" layoutX="461.0" layoutY="235.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
-                              <Button fx:id="addToReportBucket" layoutX="791.0" layoutY="14.0" mnemonicParsing="false" text="Dodaj do raportów" />
-                              <Button layoutX="791.0" layoutY="54.0" mnemonicParsing="false" text="Wygeneruj raport" />
+                              <ButtonBar GridPane.columnIndex="1">
+                                 <buttons>
+                                    <Button fx:id="addToReportBucket" mnemonicParsing="false" text="Dodaj do raportów" />
+                                    <Button mnemonicParsing="false" text="Wygeneruj raport" />
+                                 </buttons>
+                              </ButtonBar>
                            </children>
-                        </AnchorPane>
+                        </GridPane>
+                        <Text fx:id="inprojectDesc" strokeType="OUTSIDE" strokeWidth="0.0" text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum." wrappingWidth="660.4700012207031">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets left="5.0" />
+                           </VBox.margin>
+                        </Text>
+                        <GridPane prefHeight="47.0" prefWidth="950.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="448.0" spacing="5.0" GridPane.columnIndex="1">
+                                 <children>
+                                    <Group>
+                                       <children>
+                                          <Label layoutX="-85.0" text="Data startu: " />
+                                          <Text fx:id="inprojectDataStart" layoutX="-21.0" layoutY="13.0" strokeType="OUTSIDE" strokeWidth="0.0" text="11.04.2016" />
+                                          <Label fx:id="inprojectDataStopLabel" layoutX="130.0" text="Data końcowa:" />
+                                          <Text fx:id="inprojectDataStop" layoutX="213.0" layoutY="13.0" strokeType="OUTSIDE" strokeWidth="0.0" text="30.05.2016" />
+                                       </children>
+                                    </Group>
+                                 </children>
+                                 <padding>
+                                    <Insets right="15.0" />
+                                 </padding>
+                              </HBox>
+                              <VBox spacing="5.0">
+                                 <children>
+                                    <Group>
+                                       <children>
+                                          <Label prefHeight="16.0" prefWidth="234.0" text="Wykonuje zadanie: " />
+                                          <Hyperlink fx:id="inprojectAuthor" layoutX="124.0" layoutY="-4.0" prefHeight="24.0" prefWidth="166.0" text="Jan Kowalski" />
+                                       </children>
+                                    </Group>
+                                    <Group>
+                                       <children>
+                                          <Label layoutX="81.0" prefHeight="17.0" prefWidth="79.0" text="Statusy zadań">
+                                             <font>
+                                                <Font name="System Bold" size="12.0" />
+                                             </font></Label>
+                                          <Label layoutX="169.0" text="Nowe:" />
+                                          <Text fx:id="taskCountNew" layoutX="208.0" layoutY="14.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+                                          <Label layoutX="240.0" prefHeight="17.0" prefWidth="240.0" text="W trakcie:" />
+                                          <Text fx:id="taskCountInProgress" layoutX="299.0" layoutY="14.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+                                          <Label layoutX="340.0" text="Do sprawdzenia:" />
+                                          <Text fx:id="taskCountForTest" layoutX="433.0" layoutY="13.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+                                          <Label layoutX="449.0" layoutY="1.0" text="Zakończone:" />
+                                          <Text fx:id="taskCountEnd" layoutX="521.0" layoutY="14.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+                                       </children>
+                                    </Group>
+                                 </children>
+                                 <padding>
+                                    <Insets left="15.0" />
+                                 </padding>
+                              </VBox>
+                           </children>
+                        </GridPane>
                      </children>
-                  </FlowPane>
+                  </VBox>
                   <TabPane prefHeight="497.0" prefWidth="961.0" tabClosingPolicy="UNAVAILABLE">
-                    <tabs>
-                      <Tab fx:id="userTab" text="Uczestnicy">
-                        <content>
+                     <tabs>
+                        <Tab fx:id="userTab" text="Uczestnicy">
+                           <content>
                               <VBox alignment="TOP_RIGHT">
                                  <children>
                                     <SegmentedButton fx:id="sortProjectUsers" prefHeight="26.0" prefWidth="180.0">
                                        <VBox.margin>
-                                          <Insets right="20.0" />
+                                          <Insets bottom="10.0" right="20.0" />
                                        </VBox.margin>
                                     </SegmentedButton>
                                     <VBox fx:id="userInProject" spacing="10.0" />
@@ -88,18 +147,34 @@
                                     <Insets top="10.0" />
                                  </padding>
                               </VBox>
-                        </content>
-                      </Tab>
-                      <Tab fx:id="taskTab" text="Zadania">
+                           </content>
+                        </Tab>
+                        <Tab fx:id="taskTab" text="Zadania">
                            <content>
                               <VBox alignment="TOP_RIGHT">
                                  <children>
                                     <HBox alignment="CENTER_RIGHT" spacing="5.0">
                                        <children>
-                                          <CheckBox fx:id="filtrNew" mnemonicParsing="false" text="Nowe" />
-                                          <CheckBox fx:id="filtrForTest" layoutX="728.0" layoutY="10.0" mnemonicParsing="false" text="Do sprawdzenia" />
-                                          <CheckBox fx:id="filtrInProgres" layoutX="686.0" layoutY="14.0" mnemonicParsing="false" text="W trakcie" />
-                                          <CheckBox fx:id="filtrEnd" layoutX="661.0" layoutY="10.0" mnemonicParsing="false" text="Zakończone" />
+                                          <CheckBox fx:id="filtrNew" mnemonicParsing="false" text="Nowe">
+                                             <HBox.margin>
+                                                <Insets bottom="10.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="filtrForTest" layoutX="728.0" layoutY="10.0" mnemonicParsing="false" text="Do sprawdzenia">
+                                             <HBox.margin>
+                                                <Insets bottom="10.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="filtrInProgres" layoutX="686.0" layoutY="14.0" mnemonicParsing="false" text="W trakcie">
+                                             <HBox.margin>
+                                                <Insets bottom="10.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="filtrEnd" layoutX="661.0" layoutY="10.0" mnemonicParsing="false" text="Zakończone">
+                                             <HBox.margin>
+                                                <Insets bottom="10.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
                                           <SegmentedButton fx:id="sortProjectTask" prefHeight="26.0" prefWidth="180.0" />
                                        </children>
                                        <VBox.margin>
@@ -114,8 +189,8 @@
                                  </padding>
                               </VBox>
                            </content>
-                      </Tab>
-                    </tabs>
+                        </Tab>
+                     </tabs>
                   </TabPane>
       
                </children>
