@@ -7,11 +7,13 @@ import javafx.collections.ObservableList;
 import org.apache.commons.dbutils.DbUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.tarsius.controller.project.AddToProjectController;
 import pl.tarsius.database.InitializeConnection;
 
 import java.sql.*;
 import java.sql.Connection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -212,7 +214,38 @@ public class Project {
             }
         };
     }
+    public static Object[] addUsersToProject(HashSet<Long> users,long projectId) {
+        Connection connection = null;
+        PreparedStatement ps = null;
+        Object[] msg = new Object[]{false,"Nie wybrano użytkowników do dodania"};
+        if(users.size()==0) return msg;
 
+        try {
+            connection =  new InitializeConnection().connect();
+
+            String sql = "INSERT INTO ProjektyUzytkownicy\n" +
+                    "(uzytkownik_id, projekt_id)\n" +
+                    "VALUES(?, ?);";
+            connection.setAutoCommit(false);
+
+            for (Long user: users) {
+                ps = (PreparedStatement) connection.prepareStatement(sql);
+                ps.setLong(1,user);
+                ps.setLong(2,projectId);
+                ps.addBatch();
+            }
+            ps.executeUpdate();
+            connection.createStatement().executeUpdate("delete from Zaproszenia where projekt_id = "+projectId+" and uzytkownik_id in ("+users.toString().replace("[","").replace("]","")+")");
+            connection.commit();
+            msg = new Object[]{true,"Użytkownicy zostali dodani do projektu"};
+        } catch (SQLException e) {
+            loger.debug("addUserToProject", e);
+            msg = new Object[]{false,"Błąd podczas dodawania do bazy"};
+        } finally {
+            DbUtils.closeQuietly(connection,ps,null);
+            return msg;
+        }
+    }
 
     public static Map<TaskDb.Status, Long> getStatistic(Long projectId) {
         Map<TaskDb.Status, Long> stat = new HashMap<>();
