@@ -93,6 +93,9 @@ public class MyTasksController extends BaseController {
             taskStatus.setText(status);
 
             taskName.setText(taskDb.getName());
+
+            taskUser.setOnAction(event -> navigateToProfile(taskDb.getUserId()));
+
             taskName.setOnAction(event -> {
                 try {
                     ApplicationContext.getInstance().register("taskId", taskDb.getId());

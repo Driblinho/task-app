@@ -13,10 +13,7 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TreeItem;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -32,6 +29,7 @@ import pl.tarsius.controller.task.*;
 import pl.tarsius.controller.users.UsersListController;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.User;
+import pl.tarsius.util.gui.DataFxEXceptionHandler;
 import pl.tarsius.util.gui.MyBread;
 import pl.tarsius.util.gui.ResponsiveDesign;
 
@@ -60,7 +58,6 @@ public abstract class BaseController {
     @FXML public Circle userBarAvatar;
 
     @FXML
-    //@LinkAction(MyProfileController.class)
     @ActionTrigger("OpenProfile")
     public Hyperlink userBarFullName;
 
@@ -115,6 +112,11 @@ public abstract class BaseController {
     public User user;
 
 
+    /**
+     * Setter for property 'userBar'.
+     *
+     * @param user Value to set for property 'userBar'.
+     */
     public void setUserBar(User user) {
         userBarFullName.setText(user.getImie()+" "+user.getNazwisko());
         userBarAvatar.setFill(new ImagePattern(new Image(user.getAvatarUrl())));
@@ -209,11 +211,15 @@ public abstract class BaseController {
 
     }
 
+
+    /**
+     * Metoda otwierająca profil obecnie zalogowanego użytkownika
+     * @throws VetoException
+     * @throws FlowException
+     */
     @ActionMethod("OpenProfile")
     public void OpenProfile() throws VetoException, FlowException {
-        Long l = null;
-        ApplicationContext.getInstance().register("showUserID", l);
-        flowActionHandler.navigate(MyProfileController.class);
+        navigateToProfile(null);
     }
 
     @ActionMethod("AddToBucket")
@@ -222,7 +228,6 @@ public abstract class BaseController {
         HashSet<Long> bucket = (HashSet<Long>) ApplicationContext.getInstance().getRegisteredObject("reportBucket");
         bucket.add(projectId);
         ApplicationContext.getInstance().register("reportBucket", bucket);
-        System.out.println("KLIKNOLEM DODALEM");
     }
 
 
@@ -238,6 +243,21 @@ public abstract class BaseController {
                 e.printStackTrace();
             }
         };
+    }
+
+    /**
+     * Metoda odpowiada za nawigację do profilu użytkownika
+     * @param profileID ID użytkownika którego profil ma zostać wyświetlony
+     * @throws VetoException
+     * @throws FlowException
+     */
+    public void navigateToProfile(Long profileID) {
+        user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
+        if(user.getUzytkownikId()==profileID)
+            profileID=null;
+
+        ApplicationContext.getInstance().register("showUserID", profileID); //Usunięcie wartość odpowiadającej za otwieranie profilu niezalogowanego użytkownika
+        DataFxEXceptionHandler.navigateQuietly(flowActionHandler,MyProfileController.class);
     }
 
 

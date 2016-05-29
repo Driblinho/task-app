@@ -207,6 +207,9 @@ public class HomeController extends BaseController{
 
 
             author.setText(project.getLiderImieNazwisko());
+
+            author.setOnAction(event -> navigateToProfile(project.getLider()));
+
             desc.setText(project.getOpis());
             title.setText(project.getNazwa());
             title.setUserData(project.getProjekt_id());
@@ -266,7 +269,6 @@ public class HomeController extends BaseController{
         User u = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
         contentFlow.getChildren().clear();
         int perPage = PER_PAGE;
-        //int page = 1;
 
         String sql = "select * from ProjektyUzytkownicy pu,Projekty p,Uzytkownicy u,(select imie as l_imie,nazwisko as l_nazwisko,uzytkownik_id l_id from Uzytkownicy)au where pu.uzytkownik_id=u.uzytkownik_id \n" +
                 "and pu.projekt_id=p.projekt_id and au.l_id=p.lider";

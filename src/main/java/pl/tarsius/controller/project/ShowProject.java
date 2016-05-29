@@ -204,21 +204,21 @@ public class ShowProject extends BaseController{
     }
 
     @ActionMethod("showAuthorProfile")
-    public void showAuthorProfile() throws VetoException, FlowException {
-        System.out.println("OOOPEN"+project.getLider());
-        // TODO: 29.05.16 Otwieranie profilu
+    public void showAuthorProfile() {
+        navigateToProfile(project.getLider());
     }
 
 
-    private AnchorPane inProjectUser(User user){
+    private AnchorPane inProjectUser(User userData){
         try {
             AnchorPane anchorPane  = FXMLLoader.load(getClass().getClassLoader().getResource("view/app/userInProjectTPL.fxml"));
             Circle avatar = (Circle) anchorPane.lookup(".userInProjectAvatar");
             Hyperlink name = (Hyperlink) anchorPane.lookup(".userInProjectName");
             Text task = (Text) anchorPane.lookup(".userInProjectTaskCount");
             Text endTask = (Text) anchorPane.lookup(".userInProjectTaskEndCount");
-            avatar.setFill(new ImagePattern(new Image(user.getAvatarUrl())));
-            name.setText(user.getImieNazwisko());
+            avatar.setFill(new ImagePattern(new Image(userData.getAvatarUrl())));
+            name.setOnAction(event -> navigateToProfile(userData.getUzytkownikId()));
+            name.setText(userData.getImieNazwisko());
             task.setText(""+0);
             endTask.setText("0");
             return anchorPane;
@@ -238,6 +238,8 @@ public class ShowProject extends BaseController{
             Label taskdateLable = (Label) anchorPane.lookup(".taskdateLable");
             Text taskDate = (Text) anchorPane.lookup(".taskDate");
             Label taskStatus = (Label) anchorPane.lookup(".taskStatus");
+
+            taskUser.setOnAction(event -> navigateToProfile(taskDb.getUserId()));
 
             String status = "Zakończone";
             switch (taskDb.getStatus()) {

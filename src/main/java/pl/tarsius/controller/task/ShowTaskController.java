@@ -4,6 +4,7 @@ import io.datafx.controller.FXMLController;
 import io.datafx.controller.context.ApplicationContext;
 import io.datafx.controller.flow.FlowException;
 import io.datafx.controller.flow.action.ActionMethod;
+import io.datafx.controller.flow.action.ActionTrigger;
 import io.datafx.controller.util.VetoException;
 import io.datafx.io.DataReader;
 import io.datafx.io.JdbcSource;
@@ -42,7 +43,9 @@ public class ShowTaskController extends BaseController {
     @FXML private Label taskTitle;
     @FXML private Label taskEndL;
     @FXML private Text taskEnd;
-    @FXML private Hyperlink taskProjectAuthor;
+    @FXML
+    @ActionTrigger("showTaskOwnerProfile")
+    private Hyperlink taskProjectAuthor;
     @FXML private Text taskStatus;
     private TaskDb taskDb;
 
@@ -94,6 +97,12 @@ public class ShowTaskController extends BaseController {
 
 
     }
+
+    @ActionMethod("showTaskOwnerProfile")
+    public void showTaskOwnerProfile() {
+        navigateToProfile(taskDb.getUserId());
+    }
+
 
     private AnchorPane inTaskComment(TaskComment taskComment) {
         try {

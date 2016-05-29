@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import pl.tarsius.controller.BaseController;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.ReportItem;
+import pl.tarsius.util.gui.DataFxEXceptionHandler;
 import pl.tarsius.util.gui.StockButtons;
 import pl.tarsius.util.pdf.GenReportService;
 import javax.annotation.PostConstruct;
@@ -100,16 +101,10 @@ public class ReportController extends BaseController {
             remove.setOnAction(event -> {
                 projectBucket.remove(row.getProjectId());
                 ApplicationContext.getInstance().register("reportBucket", projectBucket);
-                try {
-                    flowActionHandler.navigate(ReportController.class);
-                } catch (VetoException e) {
-                    loger.debug("Remove report node", e);
-                } catch (FlowException e) {
-                    loger.debug("Remove report node", e);
-                }
+                DataFxEXceptionHandler.navigateQuietly(flowActionHandler,ReportController.class);
             });
 
-
+            projectAutor.setOnAction(event -> navigateToProfile(row.getAuthorId()));
 
             title.setText(row.getName());
             projectAutor.setText(row.getAuthor());
@@ -124,7 +119,7 @@ public class ReportController extends BaseController {
     }
 
     private Task<ObservableList<ReportItem>> renderReports(Connection connection, int page) {
-        String sql = "select p.projekt_id,p.nazwa,p.opis,p.data_dodania,p.data_zakonczenia,u.imie,u.nazwisko,count(*) as u_count,(select count(*) from Zadania z where p.projekt_id=z.projekt_id) as t_count from Projekty p,ProjektyUzytkownicy pu,Uzytkownicy u where p.projekt_id=pu.projekt_id and u.uzytkownik_id=pu.uzytkownik_id";
+        String sql = "select p.projekt_id,p.nazwa,p.lider,p.opis,p.data_dodania,p.data_zakonczenia,u.imie,u.nazwisko,count(*) as u_count,(select count(*) from Zadania z where p.projekt_id=z.projekt_id) as t_count from Projekty p,ProjektyUzytkownicy pu,Uzytkownicy u where p.projekt_id=pu.projekt_id and u.uzytkownik_id=pu.uzytkownik_id";
         sql+=" and p.projekt_id in ("+projectBucket.toString().replace("[","").replace("]","")+") ";
         sql+=" group by p.projekt_id";
         sql+=" limit "+page*perPage+","+perPage+"";
