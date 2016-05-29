@@ -26,6 +26,7 @@ import pl.tarsius.controller.BaseController;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.Project;
 import pl.tarsius.database.Model.User;
+import pl.tarsius.util.gui.BlockDatePicker;
 import pl.tarsius.util.gui.StockButtons;
 import pl.tarsius.util.validator.CustomValidator;
 
@@ -72,6 +73,7 @@ public class EditProject extends BaseController {
     public void init() {
         new StockButtons(operationButtons,flowActionHandler).inProjectButton();
         Project project = (Project) ApplicationContext.getInstance().getRegisteredObject("projectModel");
+        editProjectDatePicker.setDayCellFactory(new BlockDatePicker());
         editProjectTitleField.setText(project.getNazwa());
         editProjectDescField.setText(project.getOpis());
         if(project.getData_zakonczenia()!=null)
@@ -101,7 +103,7 @@ public class EditProject extends BaseController {
     private Task userListTask(@Nullable String search, Connection connection) {
 
         Project projectM = (Project) ApplicationContext.getInstance().getRegisteredObject("projectModel");
-        String sql = "select u.uzytkownik_id,u.imie,u.nazwisko from Uzytkownicy u \n" +
+        String sql = "select u.uzytkownik_id,u.imie,u.nazwisko,u.avatar_id from Uzytkownicy u \n" +
                 "where uzytkownik_id not in (select uzytkownik_id from ProjektyUzytkownicy where projekt_id="+projectM.getProjekt_id()+");";
 
         if(search!=null) sql+= " and u.imie like '%"+search+"%'";

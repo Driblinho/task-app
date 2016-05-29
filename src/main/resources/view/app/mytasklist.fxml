@@ -5,7 +5,6 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Pagination?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
@@ -28,17 +27,17 @@
                   <BreadCrumbBar fx:id="breadCrumb" />
                   <HBox alignment="CENTER_RIGHT" prefHeight="46.0" prefWidth="960.0" spacing="5.0">
                      <children>
-                        <CheckBox fx:id="showAllProject" layoutX="837.0" layoutY="27.0" mnemonicParsing="false" text="Wszystkie projekty w bazie" />
-                        <CheckBox fx:id="showEndProject" mnemonicParsing="false" text="Zakończone" />
-                        <CheckBox fx:id="showEndOnlyProject" layoutX="837.0" layoutY="27.0" mnemonicParsing="false" text="Tylko zakończone" />
-                        <SegmentedButton fx:id="filtrButtons" />
+                        <CheckBox fx:id="filtrNew" mnemonicParsing="false" text="Nowe" />
+                        <CheckBox fx:id="filtrForTest" mnemonicParsing="false" text="Do sprawdzenia" />
+                        <CheckBox fx:id="filtrInProgres" mnemonicParsing="false" text="W trakcie" />
+                        <CheckBox fx:id="filtrEnd" mnemonicParsing="false" text="Zakończone" />
                         <SegmentedButton fx:id="sortButtons" />
                      </children>
                      <padding>
                         <Insets right="20.0" top="5.0" />
                      </padding>
                   </HBox>
-                  <FlowPane fx:id="contentFlow" prefHeight="526.0" prefWidth="960.0" />
+                  <VBox fx:id="taskList" spacing="10.0" />
                   <Pagination fx:id="pagination" prefHeight="52.0" prefWidth="960.0" />
                </children>
             </VBox>

@@ -6,6 +6,7 @@ import io.datafx.io.JdbcSource;
 import io.datafx.io.converter.JdbcConverter;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.apache.commons.dbutils.DbUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.tarsius.database.InitializeConnection;
@@ -78,10 +79,12 @@ public class TaskDb {
     }
 
     public static Object[] insertWithUser(TaskDb taskDb, Long userId) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
         try {
-            Connection connection = new InitializeConnection().connect();
+            connection = new InitializeConnection().connect();
             connection.setAutoCommit(false);
-            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO Zadania (nazwa, opis, data_zakonczenia, stan, projekt_id, uzytkownik_id) VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            preparedStatement = connection.prepareStatement("INSERT INTO Zadania (nazwa, opis, data_zakonczenia, stan, projekt_id, uzytkownik_id) VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, taskDb.getName());//Nazwa
             preparedStatement.setString(2, taskDb.getDesc());//Opis
 
@@ -101,45 +104,58 @@ public class TaskDb {
         } catch (SQLException e) {
             loger.debug("insertWithUser", e);
             return new Object[]{false,"Zadanie nie zostało dodane"};
+        } finally {
+            DbUtils.closeQuietly(connection,preparedStatement,null);
         }
     }
 
     public static Object[] updateTask(TaskDb taskDb,Long userId, Long taskId) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
         try {
-            Connection connection = new InitializeConnection().connect();
-            PreparedStatement preparedStatement = connection.prepareStatement("update Zadania set nazwa=?,opis=?,data_zakonczenia=?,uzytkownik_id=? where zadanie_id=?");
+            connection = new InitializeConnection().connect();
+            preparedStatement = connection.prepareStatement("update Zadania set nazwa=?,opis=?,data_zakonczenia=?,uzytkownik_id=?,stan=? where zadanie_id=?");
             preparedStatement.setString(1, taskDb.getName());//Nazwa
             preparedStatement.setString(2, taskDb.getDesc());//Opis
             if(taskDb.endDate!=null) preparedStatement.setDate(3,taskDb.getEndDate());//Data zakonczenia
             else preparedStatement.setNull(3, Types.DATE); //Date Null
             if(userId!=null) preparedStatement.setLong(4, userId);
             else preparedStatement.setNull(4, Types.BIGINT);
-            preparedStatement.setLong(5, taskId);
+            preparedStatement.setInt(5, taskDb.getStatus());
+            preparedStatement.setLong(6, taskId);
             preparedStatement.executeUpdate();
             return new Object[] {true, "Zadanie zostało zaktualizowane"};
         } catch (SQLException e) {
             loger.debug("Update Task", e);
             return new Object[] {false, "Aktualizacja zadania nie powiodła się"};
+        } finally {
+            DbUtils.closeQuietly(connection,preparedStatement,null);
         }
     }
 
     public static Object[] remove(Long id) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
         try {
-            Connection connection = new InitializeConnection().connect();
-            PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM Zadania WHERE zadanie_id= ?");
+            connection = new InitializeConnection().connect();
+            preparedStatement = connection.prepareStatement("DELETE FROM Zadania WHERE zadanie_id= ?");
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
             return new Object[]{true, "Zadanie zostało usunięte"};
         } catch (SQLException e) {
             loger.debug("remove ", e);
             return new Object[]{false,"Usuwanie zadania nie powiodło się"};
+        } finally {
+            DbUtils.closeQuietly(connection,preparedStatement,null);
         }
     }
 
     public static Object[] removeUser(Long id, Long userId) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
         try {
-            Connection connection = new InitializeConnection().connect();
-            PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM ZadaniaUzytkownicy WHERE uzytkownik_id=? AND zadanie_id=?");
+            connection = new InitializeConnection().connect();
+            preparedStatement = connection.prepareStatement("DELETE FROM ZadaniaUzytkownicy WHERE uzytkownik_id=? AND zadanie_id=?");
             preparedStatement.setLong(1, userId);
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
@@ -148,13 +164,17 @@ public class TaskDb {
         } catch (SQLException e) {
             loger.debug("removeUser", e);
             return new Object[]{false,"Usuwanie użytkownika nie powiodło się"};
+        } finally {
+            DbUtils.closeQuietly(connection,preparedStatement,null);
         }
     }
 
     public static Object[] updateStatus(Long id,TaskDb.Status status) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
         try {
-            Connection connection = new InitializeConnection().connect();
-            PreparedStatement preparedStatement = connection.prepareStatement("UPDATE Zadania SET stan = ? WHERE zadanie_id= ?");
+            connection = new InitializeConnection().connect();
+            preparedStatement = connection.prepareStatement("UPDATE Zadania SET stan = ? WHERE zadanie_id= ?");
             preparedStatement.setInt(1,status.getValue());
             preparedStatement.setLong(2,id);
             preparedStatement.executeUpdate();
@@ -163,14 +183,18 @@ public class TaskDb {
         } catch (SQLException e) {
             loger.debug("updateStatus", e);
             return new Object[]{false, "Zmiana statusu nie nie powiodła się"};
+        } finally {
+            DbUtils.closeQuietly(connection,preparedStatement,null);
         }
     }
 
     public static Object[] updateStatus(Long id, TaskDb.Status status, String comment) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
         try {
-            Connection connection = new InitializeConnection().connect();
+            connection = new InitializeConnection().connect();
             connection.setAutoCommit(false);
-            PreparedStatement preparedStatement = connection.prepareStatement("UPDATE Zadania SET stan = ? WHERE zadanie_id= ?");
+            preparedStatement = connection.prepareStatement("UPDATE Zadania SET stan = ? WHERE zadanie_id= ?");
             preparedStatement.setInt(1, status.getValue());
             preparedStatement.setLong(2, id);
             preparedStatement.executeUpdate();
@@ -185,6 +209,8 @@ public class TaskDb {
         } catch (SQLException e) {
             loger.debug("updateStatus", e);
             return new Object[]{false, "Zmiana statusu nie nie powiodła się"};
+        } finally {
+            DbUtils.closeQuietly(connection,preparedStatement,null);
         }
     }
 
@@ -208,8 +234,7 @@ public class TaskDb {
                             resultSet.getLong("uzytkownik_id")
                     );
                 } catch (SQLException e) {
-                    // TODO: 21.04.16 LOG
-                    e.printStackTrace();
+                    loger.debug("JDBCConverter", e);
                     return null;
                 }
             }
@@ -220,8 +245,9 @@ public class TaskDb {
         String sql = "select z.*,u.imie,u.nazwisko from Zadania z,Uzytkownicy u where z.uzytkownik_id=u.uzytkownik_id and z.zadanie_id="+id+"\n" +
                 "union \n" +
                 "select *,null,null from Zadania where uzytkownik_id is null and zadanie_id="+id;
+        Connection connection = null;
         try {
-            Connection connection = new InitializeConnection().connect();
+            connection = new InitializeConnection().connect();
             DataReader<TaskDb> dr = new JdbcSource<>(connection, sql, TaskDb.jdbcConverter());
             return dr.get();
         } catch (SQLException e) {
@@ -230,6 +256,8 @@ public class TaskDb {
         } catch (IOException e) {
             e.printStackTrace();
             return null;
+        } finally {
+            DbUtils.closeQuietly(connection);
         }
     }
 

@@ -34,8 +34,10 @@ import pl.tarsius.controller.project.ShowProject;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.TaskDb;
 import pl.tarsius.database.Model.User;
+import pl.tarsius.util.gui.BlockDatePicker;
 import pl.tarsius.util.gui.StockButtons;
 import pl.tarsius.util.validator.CustomValidator;
+import pl.tarsius.util.validator.form.TaskFormValidator;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -91,6 +93,8 @@ public class EditTaskController extends BaseController {
         breadCrumb.setSelectedCrumb(editTask);
         breadCrumb.setOnCrumbAction(crumbActionEventEventHandler());
 
+        taskEndDatePicker.setDayCellFactory(new BlockDatePicker());
+
         taskDbModel = (TaskDb) ApplicationContext.getInstance().getRegisteredObject("taskModel");
         if(taskDbModel.getStatus()==TaskDb.Status.END.getValue())
             new StockButtons(operationButtons,flowActionHandler).inCloseTask();
@@ -121,16 +125,8 @@ public class EditTaskController extends BaseController {
         });
 
         validationSupport = new ValidationSupport();
-        validationSupport.registerValidator(taskName, Validator.combine(
-                Validator.createEmptyValidator("Pole jest wymagane"),
-                CustomValidator.createMinSizeValidator("Minimalnie 20 znaków", 20),
-                CustomValidator.createMaxSizeValidator("Maksymalnie 100 znaków", 100)
-        ));
-        validationSupport.registerValidator(taskDesc, Validator.combine(
-                Validator.createEmptyValidator("Opis jest wymagany"),
-                CustomValidator.createMinSizeValidator("Minimalnie 50 znaków", 50),
-                CustomValidator.createMaxSizeValidator("Maksymalnie 300 znaków", 300)
-        ));
+        validationSupport.registerValidator(taskName, TaskFormValidator.getName());
+        validationSupport.registerValidator(taskDesc, TaskFormValidator.getDescription());
 
     }
 
@@ -214,15 +210,15 @@ public class EditTaskController extends BaseController {
             Task<Object[]> task = new Task<Object[]>() {
                 @Override
                 protected Object[] call() throws Exception {
-
-
-
+                    taskDb.setStatus(taskDbModel.getStatus());
                     if(toggleGroup.getSelectedToggle()!=null) {
                         User user = (User) toggleGroup.getSelectedToggle().getUserData();
                         // TODO: 03.05.16 FIX SETTER
                         taskDb.setStatus(TaskDb.Status.INPROGRES.getValue());
                         return TaskDb.updateTask(taskDb,user.getUzytkownikId(),taskDbModel.getId());
                     }
+
+                    if(taskRemoveUser.isSelected()) taskDb.setStatus(TaskDb.Status.NEW.getValue());
                     return TaskDb.updateTask(taskDb,null,taskDbModel.getId());
                 }
             };

@@ -13,7 +13,7 @@ public class UserFormValidator {
     public static Validator getEmail() {
         return Validator.combine(
                 Validator.createEmptyValidator("Email jest wymagany"),
-                CustomValidator.createMaxSizeValidator("Maksymalnie 100 znaków", 100),
+                CustomValidator.createMaxSizeValidator("Maksymalnie 254 znaków", 254),
                 CustomValidator.createEmailValidator("Nieprawidłowy email")
         );
     }

@@ -28,7 +28,6 @@ import org.controlsfx.control.SegmentedButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.tarsius.controller.BaseController;
-import pl.tarsius.controller.ProfileController;
 import pl.tarsius.controller.task.ShowTaskController;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.Project;
@@ -86,6 +85,8 @@ public class ShowProject extends BaseController{
     @FXML Text taskCountForTest;
     @FXML Text taskCountEnd;
 
+    @FXML @ActionTrigger("AddToBucket") private Button addToReportBucket;
+
     private static Logger loger = LoggerFactory.getLogger(ShowProject.class);
 
     @PostConstruct
@@ -113,7 +114,7 @@ public class ShowProject extends BaseController{
         project = Project.getProject((long)ApplicationContext.getInstance().getRegisteredObject("projectId"));
         ApplicationContext.getInstance().register("projectModel", project);
         new StockButtons(operationButtons, flowActionHandler).inProjectButton();
-       ApplicationContext.getInstance().register("projectLider", project.getLider());
+        ApplicationContext.getInstance().register("projectLider", project.getLider());
             inprojectTitle.setText(project.getNazwa());
             inprojectDesc.setText(project.getOpis());
             inprojectDataStart.setText(project.getData_dodania().toString());
@@ -205,9 +206,7 @@ public class ShowProject extends BaseController{
     @ActionMethod("showAuthorProfile")
     public void showAuthorProfile() throws VetoException, FlowException {
         System.out.println("OOOPEN"+project.getLider());
-
-        flowActionHandler.navigate(ProfileController.class);
-
+        // TODO: 29.05.16 Otwieranie profilu
     }
 
 
@@ -361,7 +360,7 @@ public class ShowProject extends BaseController{
         int perPage=1;
         String countSql = sql.replace("{tpl}", "count(*)");
         sql+= " limit "+page*perPage+","+perPage+"";
-        String exc = sql.replace("{tpl}", "u.uzytkownik_id,u.imie,u.nazwisko,u.avatar_id");
+        String exc = sql.replace("{tpl}", "u.uzytkownik_id,u.imie,u.nazwisko,u.avatar_id,u.email");
         DataReader<User> dataReader = new JdbcSource<>(connection, exc, User.jdbcConverter());
         Task<ObservableList<User>> task = new Task<ObservableList<User>>() {
             @Override
@@ -372,8 +371,10 @@ public class ShowProject extends BaseController{
                     rs.next();
                     long count = rs.getLong(1);
                     int pageCount = (int) Math.ceil(count/perPage);
-                    InProjectMemberPagination.setPageCount(pageCount);
-                    InProjectMemberPagination.setCurrentPageIndex(page);
+                    Platform.runLater(() -> {
+                        InProjectMemberPagination.setPageCount(pageCount);
+                        InProjectMemberPagination.setCurrentPageIndex(page);
+                    });
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -383,14 +384,10 @@ public class ShowProject extends BaseController{
                 return osb;
             }
         };
-        task.setOnRunning(event -> {
-
-
-        });
 
         task.setOnSucceeded(event -> {
-            userInProject.getChildren().clear();
-            task.getValue().forEach(user -> userInProject.getChildren().add(inProjectUser(user)));
+            Platform.runLater(() -> userInProject.getChildren().clear());
+            task.getValue().forEach(user -> Platform.runLater(() -> userInProject.getChildren().add(inProjectUser(user))));
         });
         return task;
     }

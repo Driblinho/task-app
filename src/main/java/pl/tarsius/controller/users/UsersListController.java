@@ -41,6 +41,10 @@ public class UsersListController extends BaseController {
     private TableView userTable;
     @PostConstruct
     public void init() {
+
+        breadCrumb.setSelectedCrumb(useresManagment);
+        breadCrumb.setOnCrumbAction(crumbActionEventEventHandler());
+
         new StockButtons(operationButtons, flowActionHandler).homeAction();
         TableColumn idCol = new TableColumn("ID");
         TableColumn imieCol = new TableColumn("Imię");

@@ -17,6 +17,7 @@ public class TaskComment {
     private Timestamp addDate;
     private long tasId;
     private static Logger loger = LoggerFactory.getLogger(TaskComment.class);
+
     public TaskComment() {
     }
 
@@ -40,8 +41,7 @@ public class TaskComment {
                             resultSet.getLong("zadanie_id")
                     );
                 } catch (SQLException e) {
-                    // TODO: 21.04.16 LOG
-                    e.printStackTrace();
+                    loger.debug("JDbcConverter TaskComment", e);
                     return null;
                 }
             }

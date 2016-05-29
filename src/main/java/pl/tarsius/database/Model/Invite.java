@@ -6,6 +6,7 @@ import io.datafx.controller.context.ApplicationContext;
 import io.datafx.io.converter.JdbcConverter;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import org.apache.commons.dbutils.DbUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.tarsius.database.InitializeConnection;
@@ -50,9 +51,11 @@ public class Invite {
     }
 
     public Object[] save() {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
         try {
-            Connection connection = new InitializeConnection().connect();
-            PreparedStatement preparedStatement= (PreparedStatement) connection.prepareStatement("insert into Zaproszenia (projekt_id,uzytkownik_id,stan) values (?,?,?);");
+            connection = new InitializeConnection().connect();
+            preparedStatement = (PreparedStatement) connection.prepareStatement("insert into Zaproszenia (projekt_id,uzytkownik_id,stan) values (?,?,?);");
             preparedStatement.setLong(1,this.projektId);
             preparedStatement.setLong(2,this.uzytkownikId);
             preparedStatement.setInt(3,this.stan);
@@ -60,15 +63,18 @@ public class Invite {
             return new Object[]{true, "Zaproszenie dodane"};
         } catch (SQLException e) {
             return new Object[]{false,"Błąd bazy danych"};
+        } finally {
+            DbUtils.closeQuietly(connection,preparedStatement,null);
         }
     }
 
     public static Object[] saveList(List<Invite> lu) {
         int[] x=new int[1];
         String msg = "Użytkownicy zaproszeni do projektu";
+        Connection connection = null;
         try {
-            Connection connection = new InitializeConnection().connect();
-            PreparedStatement preparedStatement= (PreparedStatement) connection.prepareStatement("insert into Zaproszenia (projekt_id,uzytkownik_id,stan) values (?,?,?);");
+            connection = new InitializeConnection().connect();
+            PreparedStatement preparedStatement = (PreparedStatement) connection.prepareStatement("insert into Zaproszenia (projekt_id,uzytkownik_id,stan) values (?,?,?);");
             lu.forEach(invite -> {
                 try {
                     preparedStatement.setLong(1, invite.getProjektId());
@@ -87,20 +93,27 @@ public class Invite {
             }
             loger.debug("svaeInvList:", e);
             return new Object[]{false, "Błąd bazy danych"};
+        } finally {
+            DbUtils.closeQuietly(connection);
         }
     }
 
     public static Object[] getUserInv(long userID) {
         String sql = "select p.projekt_id,p.nazwa,p.data_zakonczenia,lider,u.imie,u.nazwisko,z.data_dodania from Zaproszenia z,Projekty p,Uzytkownicy u where p.projekt_id=z.projekt_id and p.lider=u.uzytkownik_id and z.uzytkownik_id=? and stan=1;";
+        Connection connection = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
         try {
-            Connection connection = new InitializeConnection().connect();
-            PreparedStatement ps = (PreparedStatement) connection.prepareStatement(sql);
+            connection = new InitializeConnection().connect();
+            ps = (PreparedStatement) connection.prepareStatement(sql);
             ps.setLong(1,userID);
-            ResultSet rs = ps.executeQuery();
+            rs = ps.executeQuery();
             return new Object[]{ true };
         } catch (SQLException e) {
             loger.debug("getUserInv", e);
             return new Object[]{false,"Problem z bazą"};
+        } finally {
+            DbUtils.closeQuietly(connection,ps,rs);
         }
 
     }
@@ -122,15 +135,19 @@ public class Invite {
     }
 
     public static Object[] remove(long id) {
+        Connection connection = null;
+        PreparedStatement ps = null;
         try {
-            Connection connection = new InitializeConnection().connect();
-            PreparedStatement ps = (PreparedStatement) connection.prepareStatement("delete from Zaproszenia where zaproszenie_id=?");
+            connection = new InitializeConnection().connect();
+            ps = (PreparedStatement) connection.prepareStatement("delete from Zaproszenia where zaproszenie_id=?");
             ps.setLong(1,id);
             ps.executeUpdate();
             return new Object[] {true, "Zaproszenie usunięte"};
         } catch (SQLException e) {
             loger.debug("Usuwanie zaproszenia", e);
             return new Object[] {false, "Błąd podczas wykonywania zapytania"};
+        } finally {
+            DbUtils.closeQuietly(connection,ps,null);
         }
     }
 

@@ -17,21 +17,21 @@ import io.datafx.controller.flow.context.ViewFlowContext;
 import io.datafx.controller.util.VetoException;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.util.Callback;
 import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
 import pl.tarsius.controller.BaseController;
 import pl.tarsius.controller.HomeController;
 import pl.tarsius.database.Model.Project;
 import pl.tarsius.database.Model.User;
+import pl.tarsius.util.gui.BlockDatePicker;
 import pl.tarsius.util.gui.StockButtons;
 import pl.tarsius.util.validator.CustomValidator;
 
 import javax.annotation.PostConstruct;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 
 /**
  * Created by Jarosław Kuliga on 14.04.16.
@@ -62,6 +62,10 @@ public class NewProjectController extends BaseController {
 
         new StockButtons(operationButtons, flowActionHandler).homeAction();
 
+        breadCrumb.setSelectedCrumb(newProject);
+        breadCrumb.setOnCrumbAction(crumbActionEventEventHandler());
+
+        newProjectDatePicker.setDayCellFactory(new BlockDatePicker());
         validationSupport = new ValidationSupport();
         validationSupport.registerValidator(newProjectTitleField, Validator.combine(
                 Validator.createEmptyValidator("Tytuł jest wymagany"),

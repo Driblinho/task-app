@@ -117,6 +117,10 @@ public class MyProfileController extends BaseController {
 
     @PostConstruct
     public void init() {
+
+        breadCrumb.setSelectedCrumb(profilView);
+        breadCrumb.setOnCrumbAction(crumbActionEventEventHandler());
+
         loger = LoggerFactory.getLogger(getClass());
 
 
