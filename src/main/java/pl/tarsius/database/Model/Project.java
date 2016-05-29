@@ -182,7 +182,7 @@ public class Project {
             preparedStatement.setLong(1, project.getLider());
             resultSet = preparedStatement.executeQuery();
             resultSet.next();
-            project.setLiderImieNazwisko(resultSet.getString("imie"), resultSet.getString("imie"));
+            project.setLiderImieNazwisko(resultSet.getString("imie"), resultSet.getString("nazwisko"));
         } catch (SQLException e) {
             loger.debug("getProject", e);
         } finally {

@@ -15,11 +15,13 @@ public class ReportItem {
     private Long projectId;
     private String name;
     private String author;
+    private Long authorId;
     private long tasks;
     private long users;
 
-    public ReportItem(Long projectId, String name, String author, long tasks, long users) {
+    public ReportItem(Long projectId, Long authorId, String name, String author, long tasks, long users) {
         this.projectId=projectId;
+        this.authorId = authorId;
         this.name = name;
         this.author = author;
         this.tasks = tasks;
@@ -33,6 +35,7 @@ public class ReportItem {
                 try {
                     return new ReportItem(
                             resultSet.getLong("projekt_id"),
+                            resultSet.getLong("lider"),
                             resultSet.getString("nazwa"),
                             resultSet.getString("imie")+" "+resultSet.getString("nazwisko"),
                             resultSet.getLong("t_count"),
@@ -44,6 +47,15 @@ public class ReportItem {
                 return null;
             }
         };
+    }
+
+    /**
+     * Getter for property 'authorId'.
+     *
+     * @return Value for property 'authorId'.
+     */
+    public Long getAuthorId() {
+        return authorId;
     }
 
     /**
