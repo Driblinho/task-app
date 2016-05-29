@@ -47,7 +47,11 @@ import java.util.HashSet;
  * Created by Jarek on 2016-04-09.
  */
 public abstract class BaseController {
-
+    
+    
+    @FXML
+    @LinkAction(AboutController.class)
+    private Hyperlink aboutUs;
     //UserBar
     @FXML
     @LinkAction(StartupController.class)
