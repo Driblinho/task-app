@@ -81,6 +81,7 @@ public class ShowProject extends BaseController{
     @FXML private CheckBox filtrForTest;
     @FXML private CheckBox filtrEnd;
     @FXML private CheckBox filtrInProgres;
+    @FXML private CheckBox filtrOnlyMy;
 
     @FXML Text taskCountNew;
     @FXML Text taskCountInProgress;
@@ -90,6 +91,8 @@ public class ShowProject extends BaseController{
     @FXML @ActionTrigger("AddToBucket") private Button addToReportBucket;
 
     private static Logger loger = LoggerFactory.getLogger(ShowProject.class);
+
+    private static final int USER_AND_TASK_PER_PAGE = 6;
 
     @PostConstruct
     public void init(){
@@ -169,6 +172,8 @@ public class ShowProject extends BaseController{
             });
 
 
+
+
             InProjectMemberPagination.currentPageIndexProperty().addListener((observable, oldValue, newValue) -> {
                 new Thread(renderUser(connection,newValue.intValue())).start();
             });
@@ -181,6 +186,7 @@ public class ShowProject extends BaseController{
             filtrForTest.setOnMouseClicked(event -> new Thread(renderTasks(connection,0)).start());
             filtrEnd.setOnMouseClicked(event -> new Thread(renderTasks(connection,0)).start());
             filtrInProgres.setOnMouseClicked(event -> new Thread(renderTasks(connection,0)).start());
+            filtrOnlyMy.setOnMouseClicked(event -> new Thread(renderTasks(connection,0)).start());
 
 
             Task<Map<TaskDb.Status,Long>> countTask = new Task<Map<TaskDb.Status, Long>>() {
@@ -314,7 +320,7 @@ public class ShowProject extends BaseController{
                 "select *,null,null from Zadania where uzytkownik_id is null and projekt_id="+project.getProjekt_id()+") Z";
 
 
-        int perPage=1;
+        int perPage=USER_AND_TASK_PER_PAGE;
 
 
 
@@ -337,6 +343,14 @@ public class ShowProject extends BaseController{
             sql+=" where stan in ("+stan+")";
         }
 
+        if(filtrOnlyMy.isSelected()) {
+            if(stan.isEmpty())
+                sql+=" where";
+            else sql+=" and";
+            sql+=" uzytkownik_id="+user.getUzytkownikId();
+        }
+
+
         String countSql = sql.replace("{tpl}", "count(*)");
 
         loger.debug("IN TEST: "+ stan);
@@ -355,18 +369,10 @@ public class ShowProject extends BaseController{
                     rs.next();
                     long count = rs.getLong(1);
                     int pageCount = (int) Math.ceil(count/perPage);
-                    if(pageCount==0) {
-                        Platform.runLater(() -> inProjectTaskPg.setVisible(false));
-                        return observableList;
-                    }
-                    else {
-                        Platform.runLater(() -> {
-                            inProjectTaskPg.setVisible(true);
+                    Platform.runLater(() -> {
                             inProjectTaskPg.setPageCount(pageCount);
                             inProjectTaskPg.setCurrentPageIndex(page);
                         });
-                    }
-
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -386,7 +392,7 @@ public class ShowProject extends BaseController{
         String sql = "SELECT {tpl} FROM ProjektyUzytkownicy pu,Uzytkownicy u WHERE projekt_id="+project.getProjekt_id()+" and u.uzytkownik_id=pu.uzytkownik_id";
 
         if (sort.length()>0) sql+= " order by pu.projekt_uzytkownik "+sort;
-        int perPage=1;
+        int perPage=USER_AND_TASK_PER_PAGE;
         String countSql = sql.replace("{tpl}", "count(*)");
         sql+= " limit "+page*perPage+","+perPage+"";
         String exc = sql.replace("{tpl}", "u.uzytkownik_id,u.imie,u.nazwisko,u.avatar_id,u.email");
