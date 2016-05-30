@@ -44,6 +44,10 @@
           <element id="library" level="project" name="Maven: org.javassist:javassist:3.18.1-GA" />
           <element id="library" level="project" name="Maven: org.jvnet.mimepull:mimepull:1.9.3" />
           <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:1.7.19" />
+          <element id="library" level="project" name="Maven: org.jfree:jfreechart:1.0.19" />
+          <element id="library" level="project" name="Maven: org.jfree:jcommon:1.0.23" />
+          <element id="library" level="project" name="Maven: org.apache.pdfbox:pdfbox:2.0.1" />
+          <element id="library" level="project" name="Maven: org.apache.pdfbox:fontbox:2.0.1" />
         </element>
       </element>
     </root>
