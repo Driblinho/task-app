@@ -165,6 +165,11 @@ public abstract class BaseController {
                 data.put("zadania", 0L);
                 data.put("zaproszenia", 0L);
                 data.put("raporty", 0L);
+
+                HashSet<Long> bucket = (HashSet<Long>) ApplicationContext.getInstance().getRegisteredObject("reportBucket");
+                if(bucket!=null && bucket.size()>0)
+                    data.put("raporty", (long) bucket.size());
+
                 try {
                     Connection connection = new InitializeConnection().connect();
                     Statement st = connection.createStatement();
@@ -199,7 +204,7 @@ public abstract class BaseController {
                 sideBarProjectCount.setText(""+loc.get("projekty"));
                 sideBarTaskCount.setText(loc.get("zadania") + "");
                 sideBarInvCount.setText(loc.get("zaproszenia") + "");
-                sideBarRaportsCount.setText("1");
+                sideBarRaportsCount.setText(loc.get("raporty") + "");
             });
 
         });
