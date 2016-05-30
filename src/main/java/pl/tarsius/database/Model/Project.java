@@ -63,33 +63,17 @@ public class Project {
         this.projekt_id = projekt_id;
     }
 
-    public static Object[] updateProject(Project project, ObservableList<User> users) {
+    public static Object[] updateProject(Project project) {
         Connection connection = null;
         PreparedStatement ps = null;
         try {
             connection = new InitializeConnection().connect();
-            connection.setAutoCommit(false);
             ps = (PreparedStatement) connection.prepareStatement("UPDATE Projekty SET nazwa=?, opis =?, data_zakonczenia =? WHERE projekt_id =?");
             ps.setString(1, project.getNazwa());
             ps.setString(2, project.getOpis());
             ps.setTimestamp(3, project.data_zakonczenia);
             ps.setLong(4, project.getProjekt_id());
             ps.executeUpdate();
-            ps = (PreparedStatement) connection.prepareStatement("delete from ProjektyUzytkownicy where projekt_id=? and lider!=1;");
-            ps.setLong(1, project.getProjekt_id());
-            ps.executeUpdate();
-
-            for (User user : users) {
-                ps = (PreparedStatement) connection.prepareStatement("insert into ProjektyUzytkownicy (uzytkownik_id,projekt_id) values (?,?)");
-                ps.setLong(1, user.getUzytkownikId());
-                ps.setLong(2, project.getProjekt_id());
-                ps.addBatch();
-            }
-            ps.executeBatch();
-
-            connection.commit();
-
-
             return new Object[]{true, "Zaktualizowano signalProject"};
         } catch (SQLException e) {
             e.printStackTrace();
@@ -264,6 +248,26 @@ public class Project {
         } finally {
             DbUtils.closeQuietly(connection, ps, rs);
             return stat;
+        }
+    }
+
+    public static Object[] removeUserFormProject(Long userId, Long projectId) {
+        try {
+            Connection connection = new InitializeConnection().connect();
+            connection.setAutoCommit(false);
+            PreparedStatement ps = (PreparedStatement) connection.prepareStatement("DELETE FROM ProjektyUzytkownicy WHERE projekt_id=? AND uzytkownik_id=?;");
+            ps.setLong(1, projectId);
+            ps.setLong(2, userId);
+            int del = ps.executeUpdate();
+            ps = (PreparedStatement) connection.prepareStatement("UPDATE Zadania SET uzytkownik_id=NULL,stan=1 WHERE projekt_id=? AND uzytkownik_id=?");
+            ps.setLong(1, projectId);
+            ps.setLong(2, userId);
+            ps.executeUpdate();
+            connection.commit();
+            return new Object[] {true, "Użytkownik został usunięty z projektu"};
+        } catch (SQLException e) {
+            loger.debug("removeUserFormProject", e);
+            return new Object[] {false, "Błąd podczas wykonywania zapytania"};
         }
     }
 

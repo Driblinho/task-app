@@ -33,6 +33,7 @@ import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.Project;
 import pl.tarsius.database.Model.TaskDb;
 import pl.tarsius.database.Model.User;
+import pl.tarsius.util.gui.DataFxEXceptionHandler;
 import pl.tarsius.util.gui.StockButtons;
 
 import javax.annotation.PostConstruct;
@@ -42,6 +43,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by Ireneusz Kuliga on 15.04.16.
@@ -112,6 +114,7 @@ public class ShowProject extends BaseController{
         sortProjectTask.getButtons().addAll(ascTask,descTask);
 
         project = Project.getProject((long)ApplicationContext.getInstance().getRegisteredObject("projectId"));
+        user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
         ApplicationContext.getInstance().register("projectModel", project);
         new StockButtons(operationButtons, flowActionHandler).inProjectButton();
         ApplicationContext.getInstance().register("projectLider", project.getLider());
@@ -216,6 +219,30 @@ public class ShowProject extends BaseController{
             Hyperlink name = (Hyperlink) anchorPane.lookup(".userInProjectName");
             Text task = (Text) anchorPane.lookup(".userInProjectTaskCount");
             Text endTask = (Text) anchorPane.lookup(".userInProjectTaskEndCount");
+            Button removeBtn = (Button) anchorPane.lookup(".removeUserFormProject");
+
+            if((project.getLider()==user.getUzytkownikId() || user.isAdmin()) && userData.getUzytkownikId()!=project.getLider() )
+                removeBtn.setVisible(true);
+
+            removeBtn.setOnAction(event -> {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Usuwanie użytkownika z projektu");
+                alert.setHeaderText("LUsuwasz użytkownika");
+                alert.setContentText("Na pewno usunąć użytkownika?");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    Object[] msg = Project.removeUserFormProject(userData.getUzytkownikId(), project.getProjekt_id());
+                    Alert infoAlert = new Alert(Alert.AlertType.INFORMATION, (String) msg[1]);
+                    if((boolean)msg[0]) {
+                        infoAlert.show();
+                        DataFxEXceptionHandler.navigateQuietly(flowActionHandler,getClass());
+                    } else {
+                        infoAlert.setAlertType(Alert.AlertType.ERROR);
+                        infoAlert.show();
+                    }
+                }
+            });
+
             avatar.setFill(new ImagePattern(new Image(userData.getAvatarUrl())));
             name.setOnAction(event -> navigateToProfile(userData.getUzytkownikId()));
             name.setText(userData.getImieNazwisko());

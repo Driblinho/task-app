@@ -77,6 +77,8 @@ public class NewTaskController extends BaseController{
 
     @FXML private Pagination taskUserListpPag;
 
+    private final int USER_PER_PAGE = 4;
+
 
     private static Logger loger = LoggerFactory.getLogger(NewTaskController.class);
     private ValidationSupport validationSupport;
@@ -142,7 +144,7 @@ public class NewTaskController extends BaseController{
             sql = sql.replace("{tpl}", "u.*");
 
             loger.debug("SQL :"+sql);
-            int perPage = 1;
+            int perPage = USER_PER_PAGE;
             sql+= " limit "+page*perPage+","+perPage+"";
             DataReader<User> dr = new JdbcSource<>(connection, sql, User.jdbcConverter());
 
@@ -196,7 +198,6 @@ public class NewTaskController extends BaseController{
                 protected Object[] call() throws Exception {
                     if(toggleGroup.getSelectedToggle()!=null) {
                         User user = (User) toggleGroup.getSelectedToggle().getUserData();
-                        // TODO: 03.05.16 FIX SETTER
                         taskDb.setStatus(TaskDb.Status.INPROGRES.getValue());
                         return TaskDb.insertWithUser(taskDb, user.getUzytkownikId());
                     }
