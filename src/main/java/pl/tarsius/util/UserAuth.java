@@ -169,13 +169,9 @@ public class UserAuth {
                 preparedStatement.setString(i++, token);
                 preparedStatement.setTimestamp(i++, Timestamp.valueOf(tokenTime));
                 preparedStatement.setLong(i++, userId);
-                int up = preparedStatement.executeUpdate();
-
-                Properties properties = new Properties();
+                preparedStatement.executeUpdate();
                 try {
-                    InputStream cfgFile = UserAuth.class.getResourceAsStream("/properties/mail.properties");
-                    properties.load(cfgFile);
-                    Mail mail = new Mail(properties.getProperty("apiKey"),UserAuth.class.getResourceAsStream("/assets/emailtempleate.html"));
+                    Mail mail = new Mail(UserAuth.class.getResourceAsStream("/assets/emailtempleate.html"));
                     mail.setToken(token);
                     mail.setApDomain("mail@taskapp.com");
                     mail.setSubject("Zmiana hasła");

@@ -3,9 +3,9 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.Transformation;
 import com.cloudinary.utils.ObjectUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * Created by Jarek on 06.04.16.
@@ -15,20 +15,12 @@ public class ImageCloudinaryUpload {
     private Cloudinary cloudinary;
 
     public ImageCloudinaryUpload() {
-        Properties properties = new Properties();
-        try {
-            InputStream cfgFile = getClass().getResourceAsStream("/properties/cloudinary.properties");
-            properties.load(cfgFile);
-            cloudinary = new Cloudinary(ObjectUtils.asMap(
-                    "cloud_name", properties.getProperty("cloudinary.cloudNam"),
-                    "api_key", properties.getProperty("cloudinary.apiKey"),
-                    "api_secret", properties.getProperty("cloudinary.apiSecret")));
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        ApiKeyReader key = new ApiKeyReader().load();
+        if(key!=null)
+        cloudinary = new Cloudinary(ObjectUtils.asMap(
+                "cloud_name", key.getCloudinaryCloudNam(),
+                "api_key", key.getCloudinaryApiKey(),
+                "api_secret", key.getCloudinaryApiSecret()));
     }
 
     public ImageCloudinaryUpload(String cloudNam, String apiSecret, String apiKey) {

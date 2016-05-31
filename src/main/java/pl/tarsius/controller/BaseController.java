@@ -258,7 +258,7 @@ public abstract class BaseController {
      */
     public void navigateToProfile(Long profileID) {
         user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
-        if(user.getUzytkownikId()==profileID)
+        if(profileID!=null && user.getUzytkownikId()==profileID)
             profileID=null;
 
         ApplicationContext.getInstance().register("showUserID", profileID); //Usunięcie wartość odpowiadającej za otwieranie profilu niezalogowanego użytkownika

@@ -29,9 +29,13 @@ public class Mail {
 
         this.apiKey = apiKey;
         this.emailTemplate = emailTemplate;
+    }
 
-
-
+    public Mail(InputStream emailTemplate) {
+        ApiKeyReader key = new ApiKeyReader().load();
+        if(key!=null)
+            this.apiKey = key.getMailApiKey();
+        this.emailTemplate = emailTemplate;
     }
 
     public String getApDomain() {
