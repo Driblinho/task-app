@@ -37,7 +37,7 @@ public class ApiKeyReader {
         try {
             connection = new InitializeConnection().connect();
             st = connection.createStatement();
-            rs = st.executeQuery("select * from apis");
+            rs = st.executeQuery("select * from ApiKeys");
             HashMap<String, String> map = new HashMap<>();
             while (rs.next()) {
                 map.put(rs.getString("nazwa_wartosci"),rs.getString("wartosc"));
