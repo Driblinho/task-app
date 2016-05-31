@@ -28,6 +28,7 @@ public class Main extends Application {
         ApplicationContext.getInstance().register("userSession",new Object());//
         ApplicationContext.getInstance().register("reportBucket", new HashSet<Long>()); //Inicjalizuje koszyk raportów
         ApplicationContext.getInstance().register("version", "0.1"); //Określa wersje aplikacji
+        ApplicationContext.getInstance().register("appName", "Tarsius"); //Określa wersje aplikacji
         InitializeConnection.configLoader(); //Ładowanie dko ApplicationContext konfiguracji połączenia z bazą danych
 
         Flow flow = new Flow(StartupController.class);

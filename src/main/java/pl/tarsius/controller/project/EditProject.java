@@ -28,7 +28,7 @@ import java.sql.Timestamp;
 /**
  * Created by Ireneusz Kuliga on 20.04.16.
  */
-@FXMLController(value = "/view/app/editproject.fxml", title = "TaskApp")
+@FXMLController(value = "/view/app/editproject.fxml", title = "Edytuj projekt - Tarsius")
 public class EditProject extends BaseController {
 
 

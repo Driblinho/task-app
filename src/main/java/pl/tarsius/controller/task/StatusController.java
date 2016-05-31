@@ -23,7 +23,7 @@ import javax.annotation.PostConstruct;
 /**
  * Created by ireq on 03.05.16.
  */
-@FXMLController(value = "/view/app/taskStatus.fxml", title = "TaskApp")
+@FXMLController(value = "/view/app/taskStatus.fxml", title = "Określ status zadania - Tarsius")
 public class StatusController extends BaseController{
     private TaskDb taskDb;
 

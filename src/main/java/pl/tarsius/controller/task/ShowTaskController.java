@@ -37,7 +37,7 @@ import java.util.Optional;
 /**
  * Created by ireq on 30.04.16.
  */
-@FXMLController(value = "/view/app/showTask.fxml", title = "TaskApp")
+@FXMLController(value = "/view/app/showTask.fxml", title = "Zadanie - Tarsius")
 public class ShowTaskController extends BaseController {
     @FXML private Text taskDesc;
     @FXML private Label taskTitle;

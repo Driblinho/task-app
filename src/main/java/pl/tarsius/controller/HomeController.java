@@ -50,7 +50,7 @@ import java.util.Map;
 /**
  * Created by Ireneusz Kuliga on 02.04.16.
  */
-@FXMLController(value = "/view/app/start.fxml", title = "TaskApp - Home")
+@FXMLController(value = "/view/app/start.fxml", title = "Projekty - Tarsius")
 public class HomeController extends BaseController{
 
 

@@ -44,7 +44,7 @@ import java.util.Collection;
 /**
  * Created by Ireneusz Kuliga on 19.04.16.
  */
-@FXMLController(value = "/view/app/myInv.fxml", title = "TaskApp - Moje Zaproszenia")
+@FXMLController(value = "/view/app/myInv.fxml", title = "Moje Zaproszenia - Tarsius" )
 public class InvitesController extends BaseController {
 
     @FXML private SegmentedButton invFiltr;

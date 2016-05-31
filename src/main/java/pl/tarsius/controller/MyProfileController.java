@@ -40,7 +40,7 @@ import java.util.Properties;
 /**
  * Created by Ireneusz Kuliga on 02.04.16.
  */
-@FXMLController(value = "/view/app/profile.fxml", title = "TaskApp - Moje Dane")
+@FXMLController(value = "/view/app/profile.fxml", title = "Profil użytkownika - Tarsius")
 public class MyProfileController extends BaseController {
 
     private Logger loger;

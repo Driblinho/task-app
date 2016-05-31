@@ -49,7 +49,7 @@ import java.sql.SQLException;
 /**
  * Created by ireq on 01.05.16.
  */
-@FXMLController(value = "/view/app/newtask.fxml", title = "TaskApp")
+@FXMLController(value = "/view/app/newtask.fxml", title = "Edytuj zadanie - Tarsius")
 public class EditTaskController extends BaseController {
     @FXML private TextField taskName;
     @FXML private TextField taskDesc;

@@ -36,7 +36,7 @@ import java.time.LocalDate;
 /**
  * Created by Jarosław Kuliga on 14.04.16.
  */
-@FXMLController(value = "/view/app/newproject.fxml", title = "TaskApp")
+@FXMLController(value = "/view/app/newproject.fxml", title = "Dodaj projekt - Tarsius")
 public class NewProjectController extends BaseController {
     @FXML private TextField newProjectTitleField;
     @FXML private TextField newProjectDescField;

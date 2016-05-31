@@ -36,7 +36,7 @@ import java.sql.SQLException;
 /**
  * Created by ireq on 30.04.16.
  */
-@FXMLController(value = "/view/app/mytasklist.fxml", title = "TaskApp")
+@FXMLController(value = "/view/app/mytasklist.fxml", title = "Moje zadania - Tarsius")
 public class MyTasksController extends BaseController {
 
     @FXML private CheckBox filtrNew;

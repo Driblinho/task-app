@@ -41,7 +41,7 @@ import java.util.List;
 /**
  * Created by Ireneusz Kuliga on 18.04.16.
  */
-@FXMLController(value = "/view/app/addUserToProject.fxml", title = "TaskApp - Dodaj uczestników do projektu")
+@FXMLController(value = "/view/app/addUserToProject.fxml", title = "Dodaj uczestników do projektu - Tarsius")
 public class AddToProjectController extends BaseController {
     @FXML
     @BackAction

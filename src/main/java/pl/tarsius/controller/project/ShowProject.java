@@ -48,7 +48,7 @@ import java.util.Optional;
 /**
  * Created by Ireneusz Kuliga on 15.04.16.
  */
-@FXMLController(value = "/view/app/widokprojektu.fxml", title = "TaskApp")
+@FXMLController(value = "/view/app/widokprojektu.fxml", title = "Projekt - Tarsius")
 public class ShowProject extends BaseController{
 
     @FXML private Label inprojectTitle;

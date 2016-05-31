@@ -37,7 +37,7 @@ import java.util.HashSet;
 /**
  * Created by ireq on 05.05.16.
  */
-@FXMLController(value = "/view/app/generatingReports.fxml", title = "Generowanie Raportów - TaskApp")
+@FXMLController(value = "/view/app/generatingReports.fxml", title = "Generowanie Raportów - Tarsius")
 public class ReportController extends BaseController {
     private static Logger loger = LoggerFactory.getLogger(ReportController.class);
     @FXML private VBox reportList;
