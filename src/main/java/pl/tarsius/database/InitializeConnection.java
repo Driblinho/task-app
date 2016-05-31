@@ -44,7 +44,7 @@ public class InitializeConnection {
             FileInputStream cfgFile=null;
             try {
                 String path = URLDecoder.decode(url.getFile(), "UTF-8");
-                cfgFile = new FileInputStream(new File(path+"database.properties"));
+                cfgFile = new FileInputStream(new File(new File("").getAbsolutePath()+File.separator+"database.properties"));
             } catch (UnsupportedEncodingException e) {
                 loger.debug("Kodowanie pliku CFG DB", e);
                 new Alert(Alert.AlertType.ERROR,"Problem z kodowaniem pliku konfiguracyjnego bazy danych").show();
