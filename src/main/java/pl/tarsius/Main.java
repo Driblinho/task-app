@@ -4,6 +4,7 @@ package pl.tarsius;
  */
 
 
+import com.sun.jersey.core.impl.provider.entity.XMLJAXBElementProvider;
 import io.datafx.controller.context.ApplicationContext;
 import io.datafx.controller.context.FXMLApplicationContext;
 import io.datafx.controller.flow.Flow;
@@ -26,20 +27,14 @@ public class Main extends Application {
 
     @FXML private StackPane stackPane;
     @FXMLApplicationContext private ApplicationContext applicationContext;
-    private Logger loger;
+    private static Logger loger = LoggerFactory.getLogger(Main.class);
     @Override
     public void start(Stage primaryStage) throws FlowException, SQLException {
 
-        loger = LoggerFactory.getLogger(getClass());
-
-
-        //new GenReportProjects(new ReportProject().genProjects(null)).run();
 
         ApplicationContext.getInstance().register("userSession",new Object());
         ApplicationContext.getInstance().register("reportBucket", new HashSet<Long>());
-
-        //Font.loadFont(getClass().getResourceAsStream("assets/font/RobotoCondensed-Regular.ttf"), 14);
-        //Font.loadFont(getClass().getResourceAsStream("assets/font/RobotoCondensed-Light.ttf"), 14);
+        ApplicationContext.getInstance().register("version", "0.1");
 
         Flow flow = new Flow(StartupController.class);
 
