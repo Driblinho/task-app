@@ -139,8 +139,12 @@ public class ShowTaskController extends BaseController {
                     long count = rs.getLong(1);
                     int pageCount = (int) Math.ceil(count/perPage);
                     Platform.runLater(() -> {
-                        taskCommentPg.setPageCount(pageCount);
-                        taskCommentPg.setCurrentPageIndex(page);
+                        if(pageCount>0) {
+                            taskCommentPg.setVisible(true);
+                            taskCommentPg.setPageCount(pageCount);
+                            taskCommentPg.setCurrentPageIndex(page);
+                        }
+
                     });
                 } catch (SQLException e) {
                     e.printStackTrace();
