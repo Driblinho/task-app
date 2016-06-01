@@ -12,10 +12,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
-import javafx.scene.control.Pagination;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -71,7 +68,8 @@ public class MyTasksController extends BaseController {
             filtrInProgres.setOnMouseClicked(event -> new Thread(renderTasks(connection,0)).start());
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            loger.debug("Moja lista zadań", e);
+            new Alert(Alert.AlertType.ERROR, "Problem z bazą danych").show();
         }
     }
 
