@@ -2,10 +2,8 @@ package pl.tarsius.controller.task;
 
 import io.datafx.controller.FXMLController;
 import io.datafx.controller.context.ApplicationContext;
-import io.datafx.controller.flow.FlowException;
 import io.datafx.controller.flow.action.ActionMethod;
 import io.datafx.controller.flow.action.ActionTrigger;
-import io.datafx.controller.util.VetoException;
 import io.datafx.io.DataReader;
 import io.datafx.io.JdbcSource;
 import javafx.application.Platform;
@@ -21,7 +19,6 @@ import javafx.scene.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.tarsius.controller.BaseController;
-import pl.tarsius.controller.project.ShowProject;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.TaskComment;
 import pl.tarsius.database.Model.TaskDb;
@@ -32,7 +29,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Optional;
 
 /**
  * Created by ireq on 30.04.16.

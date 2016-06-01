@@ -13,9 +13,9 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.layout.VBox;
 import pl.tarsius.controller.HomeController;
 import pl.tarsius.controller.project.AddToProjectController;
-import pl.tarsius.controller.project.EditProject;
+import pl.tarsius.controller.project.EditProjectController;
 import pl.tarsius.controller.project.NewProjectController;
-import pl.tarsius.controller.project.ShowProject;
+import pl.tarsius.controller.project.ShowProjectController;
 import pl.tarsius.controller.task.EditTaskController;
 import pl.tarsius.controller.task.NewTaskController;
 import pl.tarsius.controller.task.StatusController;
@@ -71,7 +71,7 @@ public class StockButtons {
 
         if(curUser.isAdmin() || project.getLider()==curUser.getUzytkownikId()) {
             container.getChildren().addAll(user, task, edit);
-            flowActionHandler.attachLinkEventHandler(edit, EditProject.class);
+            flowActionHandler.attachLinkEventHandler(edit, EditProjectController.class);
             flowActionHandler.attachLinkEventHandler(user, AddToProjectController.class);
             flowActionHandler.attachLinkEventHandler(task, NewTaskController.class);
 
@@ -133,7 +133,7 @@ public class StockButtons {
                 if((boolean) msg[0]) {
                     new Alert(Alert.AlertType.INFORMATION,""+msg[1]).show();
                     try {
-                        flowActionHandler.navigate(ShowProject.class);
+                        flowActionHandler.navigate(ShowProjectController.class);
                     } catch (VetoException e) {
                         e.printStackTrace();
                     } catch (FlowException e) {
@@ -155,7 +155,7 @@ public class StockButtons {
                 if((boolean) msg[0]) {
                     new Alert(Alert.AlertType.INFORMATION,""+msg[1]).show();
                     try {
-                        flowActionHandler.navigate(ShowProject.class);
+                        flowActionHandler.navigate(ShowProjectController.class);
                     } catch (VetoException e) {
                         e.printStackTrace();
                     } catch (FlowException e) {

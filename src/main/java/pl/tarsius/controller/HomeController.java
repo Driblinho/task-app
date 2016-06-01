@@ -10,27 +10,22 @@ import io.datafx.controller.flow.context.FlowActionHandler;
 import io.datafx.controller.util.VetoException;
 import io.datafx.io.DataReader;
 import io.datafx.io.JdbcSource;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
-import javafx.util.Callback;
 import org.controlsfx.control.SegmentedButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.tarsius.controller.project.ShowProject;
+import pl.tarsius.controller.project.ShowProjectController;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.Project;
 import pl.tarsius.database.Model.TaskDb;
@@ -44,9 +39,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Map;
 
 /**
@@ -191,7 +183,7 @@ public class HomeController extends BaseController{
             title.setOnAction(event -> {
                 long id = (long) ((Hyperlink)event.getSource()).getUserData();
                 ApplicationContext.getInstance().register("projectId",id);
-                DataFxEXceptionHandler.navigateQuietly(flowActionHandler, ShowProject.class);
+                DataFxEXceptionHandler.navigateQuietly(flowActionHandler, ShowProjectController.class);
             });
 
 

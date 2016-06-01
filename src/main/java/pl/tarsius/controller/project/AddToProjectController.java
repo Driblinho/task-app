@@ -1,6 +1,5 @@
 package pl.tarsius.controller.project;
 
-import com.sun.istack.internal.Nullable;
 import io.datafx.controller.FXMLController;
 import io.datafx.controller.context.ApplicationContext;
 import io.datafx.controller.flow.FlowException;
@@ -216,7 +215,7 @@ public class AddToProjectController extends BaseController {
 
         Alert.AlertType a = ((boolean)ms[0])?Alert.AlertType.INFORMATION: Alert.AlertType.ERROR;
         new Alert(a,""+ms[1]).show();
-        if((boolean)ms[0]) flowActionHandler.navigate(ShowProject.class);
+        if((boolean)ms[0]) flowActionHandler.navigate(ShowProjectController.class);
     }
 
 

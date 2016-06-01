@@ -29,15 +29,13 @@ import java.sql.Timestamp;
  * Created by Ireneusz Kuliga on 20.04.16.
  */
 @FXMLController(value = "/view/app/editproject.fxml", title = "Edytuj projekt - Tarsius")
-public class EditProject extends BaseController {
+public class EditProjectController extends BaseController {
 
 
     @FXML
     private TextField editProjectTitleField;
     @FXML
     private TextField editProjectDescField;
-    @FXML
-    private ListSelectionView<User> editProjectSelectUser;
     @FXML
     private DatePicker editProjectDatePicker;
 
@@ -83,7 +81,6 @@ public class EditProject extends BaseController {
             if(editProjectDatePicker.getValue()!=null) {
                 dz = Timestamp.valueOf(editProjectDatePicker.getValue().atStartOfDay());
             }
-            editProjectSelectUser.getTargetItems();
             Project p = new Project();
             Project projectM = (Project) ApplicationContext.getInstance().getRegisteredObject("projectModel");
             p.setProjekt_id(projectM.getProjekt_id());
@@ -99,7 +96,7 @@ public class EditProject extends BaseController {
             task.setOnRunning(event -> loading.setVisible(true));
             task.setOnSucceeded(event -> {
                 loading.setVisible(false);
-                if((boolean)task.getValue()[0]) DataFxEXceptionHandler.navigateQuietly(flowActionHandler,ShowProject.class);
+                if((boolean)task.getValue()[0]) DataFxEXceptionHandler.navigateQuietly(flowActionHandler,ShowProjectController.class);
                 else  new Alert(Alert.AlertType.ERROR,""+task.getValue()[1]);
             });
 

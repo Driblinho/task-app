@@ -3,12 +3,10 @@ package pl.tarsius.controller.project;
 
 import io.datafx.controller.FXMLController;
 import io.datafx.controller.context.ApplicationContext;
-import io.datafx.controller.flow.FlowException;
 import io.datafx.controller.flow.action.ActionMethod;
 import io.datafx.controller.flow.action.ActionTrigger;
 import io.datafx.controller.flow.context.ActionHandler;
 import io.datafx.controller.flow.context.FlowActionHandler;
-import io.datafx.controller.util.VetoException;
 import io.datafx.io.DataReader;
 import io.datafx.io.JdbcSource;
 import javafx.application.Platform;
@@ -49,7 +47,7 @@ import java.util.Optional;
  * Created by Ireneusz Kuliga on 15.04.16.
  */
 @FXMLController(value = "/view/app/widokprojektu.fxml", title = "Projekt - Tarsius")
-public class ShowProject extends BaseController{
+public class ShowProjectController extends BaseController{
 
     @FXML private Label inprojectTitle;
     @FXML private Text inprojectDesc;
@@ -90,7 +88,7 @@ public class ShowProject extends BaseController{
 
     @FXML @ActionTrigger("AddToBucket") private Button addToReportBucket;
 
-    private static Logger loger = LoggerFactory.getLogger(ShowProject.class);
+    private static Logger loger = LoggerFactory.getLogger(ShowProjectController.class);
 
     private static final int USER_AND_TASK_PER_PAGE = 6;
 

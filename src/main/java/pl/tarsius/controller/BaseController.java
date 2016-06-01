@@ -23,7 +23,7 @@ import javafx.stage.Stage;
 import org.controlsfx.control.BreadCrumbBar;
 import pl.tarsius.controller.invite.InvitesController;
 import pl.tarsius.controller.project.NewProjectController;
-import pl.tarsius.controller.project.ShowProject;
+import pl.tarsius.controller.project.ShowProjectController;
 import pl.tarsius.controller.raport.ReportController;
 import pl.tarsius.controller.task.*;
 import pl.tarsius.controller.users.UsersListController;
@@ -98,7 +98,7 @@ public abstract class BaseController {
 
     public TreeItem<MyBread> root = new TreeItem<MyBread>(new MyBread("Home", HomeController.class));
 
-    public TreeItem<MyBread> signalProject = new TreeItem<MyBread>(new MyBread("Projekt",ShowProject.class));
+    public TreeItem<MyBread> signalProject = new TreeItem<MyBread>(new MyBread("Projekt",ShowProjectController.class));
     public TreeItem<MyBread> task = new TreeItem<MyBread>(new MyBread("Zadanie", ShowTaskController.class));
     public TreeItem<MyBread> noweTask = new TreeItem<>(new MyBread("Dodaj task", NewTaskController.class));
     public TreeItem<MyBread> changeTaskStatus = new TreeItem<>(new MyBread("Zmień status", StatusController.class));

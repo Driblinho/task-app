@@ -5,20 +5,16 @@ package pl.tarsius.controller.project;
 import io.datafx.controller.FXMLController;
 import io.datafx.controller.FxmlLoadException;
 import io.datafx.controller.context.ApplicationContext;
-import io.datafx.controller.context.FXMLApplicationContext;
 import io.datafx.controller.flow.FlowException;
 import io.datafx.controller.flow.action.ActionMethod;
 import io.datafx.controller.flow.action.ActionTrigger;
 import io.datafx.controller.flow.action.LinkAction;
 import io.datafx.controller.flow.context.ActionHandler;
-import io.datafx.controller.flow.context.FXMLViewFlowContext;
 import io.datafx.controller.flow.context.FlowActionHandler;
-import io.datafx.controller.flow.context.ViewFlowContext;
 import io.datafx.controller.util.VetoException;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.util.Callback;
 import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
 import pl.tarsius.controller.BaseController;
@@ -31,7 +27,6 @@ import pl.tarsius.util.validator.CustomValidator;
 
 import javax.annotation.PostConstruct;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 
 /**
  * Created by Jarosław Kuliga on 14.04.16.
@@ -112,7 +107,7 @@ public class NewProjectController extends BaseController {
                    try {
                        new Alert(Alert.AlertType.INFORMATION, (String) task.getValue()[2]).show();
                        ApplicationContext.getInstance().register("projectId", task.getValue()[1]);
-                       flowActionHandler.navigate(ShowProject.class);
+                       flowActionHandler.navigate(ShowProjectController.class);
                    } catch (VetoException e) {
                        e.printStackTrace();
                    } catch (FlowException e) {

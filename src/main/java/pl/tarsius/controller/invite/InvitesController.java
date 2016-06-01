@@ -2,32 +2,26 @@ package pl.tarsius.controller.invite;
 
 import io.datafx.controller.FXMLController;
 import io.datafx.controller.context.ApplicationContext;
-import io.datafx.controller.flow.FlowException;
 import io.datafx.controller.flow.context.ActionHandler;
 import io.datafx.controller.flow.context.FlowActionHandler;
-import io.datafx.controller.util.VetoException;
 import io.datafx.io.DataReader;
 import io.datafx.io.JdbcSource;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import javafx.event.WeakEventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.SegmentedButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.tarsius.controller.BaseController;
-import pl.tarsius.controller.project.ShowProject;
+import pl.tarsius.controller.project.ShowProjectController;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.Invite;
 import pl.tarsius.database.Model.Project;
@@ -40,7 +34,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
 
 /**
  * Created by Ireneusz Kuliga on 19.04.16.
@@ -206,7 +199,7 @@ public class InvitesController extends BaseController {
                     task.setOnSucceeded(event1 -> {
                         loading.setVisible(false);
                         if((boolean)task.getValue()[0]) {
-                            DataFxEXceptionHandler.navigateQuietly(flowActionHandler,ShowProject.class);
+                            DataFxEXceptionHandler.navigateQuietly(flowActionHandler,ShowProjectController.class);
                         }
                         new Alert(Alert.AlertType.INFORMATION,(String) task.getValue()[1]).show();
                     });

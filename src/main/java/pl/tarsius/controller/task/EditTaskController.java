@@ -26,17 +26,15 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import org.controlsfx.control.ListSelectionView;
 import org.controlsfx.validation.ValidationSupport;
-import org.controlsfx.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.tarsius.controller.BaseController;
-import pl.tarsius.controller.project.ShowProject;
+import pl.tarsius.controller.project.ShowProjectController;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.TaskDb;
 import pl.tarsius.database.Model.User;
 import pl.tarsius.util.gui.BlockDatePicker;
 import pl.tarsius.util.gui.StockButtons;
-import pl.tarsius.util.validator.CustomValidator;
 import pl.tarsius.util.validator.form.TaskFormValidator;
 
 import javax.annotation.PostConstruct;
@@ -66,7 +64,7 @@ public class EditTaskController extends BaseController {
     private Button taskSave;
 
     @FXML
-    @LinkAction(ShowProject.class)
+    @LinkAction(ShowProjectController.class)
     private Button taskCancel;
 
     @FXML private FlowPane taskUserList;
