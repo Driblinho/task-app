@@ -32,6 +32,7 @@ import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.Invite;
 import pl.tarsius.database.Model.Project;
 import pl.tarsius.database.Model.User;
+import pl.tarsius.util.gui.DataFxEXceptionHandler;
 import pl.tarsius.util.gui.StockButtons;
 
 import javax.annotation.PostConstruct;
@@ -70,7 +71,7 @@ public class InvitesController extends BaseController {
         breadCrumb.setOnCrumbAction(crumbActionEventEventHandler());
 
 
-        sort="DESC";
+        //sort="DESC";
         invPagination.setPageCount(1);
         loger = LoggerFactory.getLogger(getClass());
         User user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
@@ -178,13 +179,7 @@ public class InvitesController extends BaseController {
                 task.setOnSucceeded(event1 -> {
                     loading.setVisible(false);
                     if((boolean)task.getValue()[0]) {
-                        try {
-                            flowActionHandler.navigate(InvitesController.class);
-                        } catch (VetoException e) {
-                            loger.debug("Cancdel Inv TaskDb", e);
-                        } catch (FlowException e) {
-                            loger.debug("Cancdel Inv TaskDb", e);
-                        }
+                        DataFxEXceptionHandler.navigateQuietly(flowActionHandler, InvitesController.class);
                     } else {
                         new Alert(Alert.AlertType.INFORMATION,""+task.getValue()[1]).show();
                     }
@@ -209,23 +204,13 @@ public class InvitesController extends BaseController {
                         }
                     };
                     task.setOnSucceeded(event1 -> {
-                        try {
-                            if((boolean)task.getValue()[0]) {
-                                flowActionHandler.navigate(ShowProject.class);
-                            }
-                            loading.setVisible(false);
-                            new Alert(Alert.AlertType.INFORMATION,(String) task.getValue()[1]).show();
-                        } catch (VetoException e) {
-                            e.printStackTrace();
-                        } catch (FlowException e) {
-                            e.printStackTrace();
+                        loading.setVisible(false);
+                        if((boolean)task.getValue()[0]) {
+                            DataFxEXceptionHandler.navigateQuietly(flowActionHandler,ShowProject.class);
                         }
+                        new Alert(Alert.AlertType.INFORMATION,(String) task.getValue()[1]).show();
                     });
-
                     new Thread(task).start();
-
-
-
             });
 
             projectName.setText(invite.getNazwaProjektu());
@@ -235,7 +220,7 @@ public class InvitesController extends BaseController {
 
 
         } catch (IOException e) {
-            e.printStackTrace();
+            loger.debug("Szablon zaproszeń", e);
         } finally {
             return gridPane;
         }
@@ -271,7 +256,13 @@ public class InvitesController extends BaseController {
                     ResultSet rs = connection.prepareStatement(sqlCount).executeQuery();
                     rs.next();
                     long count = rs.getLong(1);
-                    Platform.runLater(() -> invPagination.setPageCount((int) Math.ceil((float)count/perPage)));
+                    int pageCount = (int) Math.ceil((float)count/perPage);
+                    Platform.runLater(() -> {
+                        if(pageCount>0) {
+                            invPagination.setVisible(true);
+                            invPagination.setPageCount(pageCount);
+                        }
+                    });
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

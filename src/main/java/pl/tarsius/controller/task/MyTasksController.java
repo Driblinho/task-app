@@ -47,7 +47,8 @@ public class MyTasksController extends BaseController {
     @FXML private VBox taskList;
     @FXML private Pagination pagination;
     private static Logger loger = LoggerFactory.getLogger(MyTasksController.class);
-    private User user;
+    private static int PER_PAGE = 8;
+
 
     @PostConstruct
     public void init() {
@@ -130,7 +131,7 @@ public class MyTasksController extends BaseController {
         String sql = "select {tpl} from Zadania z,Uzytkownicy u where z.uzytkownik_id=u.uzytkownik_id and z.uzytkownik_id="+user.getUzytkownikId();
 
 
-        int perPage=1;
+        int perPage=PER_PAGE;
 
 
 
@@ -154,8 +155,6 @@ public class MyTasksController extends BaseController {
         }
 
         String countSql = sql.replace("{tpl}", "count(*)");
-
-        loger.debug("IN TEST: "+ stan);
         if (!sort.isEmpty()) sql+= " order by data_dodania "+sort;
         sql+= " limit "+page*perPage+","+perPage+"";
         sql=sql.replace("{tpl}", "*");
@@ -170,19 +169,16 @@ public class MyTasksController extends BaseController {
                     ResultSet rs = connection.prepareStatement(countSql).executeQuery();
                     rs.next();
                     long count = rs.getLong(1);
-                    int pageCount = (int) Math.ceil(count/perPage);
+                    int pageCount = (int) Math.ceil(count/(float)perPage);
                     if(pageCount==0) {
                         Platform.runLater(() -> pagination.setVisible(false));
-                        return observableList;
-                    }
-                    else {
+                    } else {
                         Platform.runLater(() -> {
                             pagination.setVisible(true);
                             pagination.setPageCount(pageCount);
                             pagination.setCurrentPageIndex(page);
                         });
                     }
-
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

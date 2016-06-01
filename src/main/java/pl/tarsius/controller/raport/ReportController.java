@@ -50,6 +50,7 @@ public class ReportController extends BaseController {
     @FXML @ActionTrigger("genAllMyReport") private Button genAllMyReport;
     @FXML @ActionTrigger("genTaskReport") private Button genMyTaskReport;
     @FXML @ActionTrigger("clearList") private Button clearReportList;
+    private static int PER_PAGE = 8;
     private int perPage;
     private HashSet<Long> projectBucket;
     private Service<Void> service;
@@ -58,7 +59,7 @@ public class ReportController extends BaseController {
         new StockButtons(operationButtons, flowActionHandler).homeAction();
         breadCrumb.setSelectedCrumb(bucketReport);
         breadCrumb.setOnCrumbAction(crumbActionEventEventHandler());
-        perPage = 2;
+        perPage = PER_PAGE;
         projectBucket = (HashSet<Long>) ApplicationContext.getInstance().getRegisteredObject("reportBucket");
         Platform.runLater(() -> {
             clearReportList.setVisible(false);
