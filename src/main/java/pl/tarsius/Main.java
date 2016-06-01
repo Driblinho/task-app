@@ -13,8 +13,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.tarsius.controller.StartupController;
 import pl.tarsius.database.InitializeConnection;
+import pl.tarsius.util.Mail;
 import pl.tarsius.util.gui.ResponsiveDesign;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.sql.SQLException;
 import java.util.HashSet;
 
@@ -35,7 +41,9 @@ public class Main extends Application {
         flow.startInStage(primaryStage);
         primaryStage.setWidth(1170.0);
         primaryStage.setHeight(835.0);
-        primaryStage.setX(0.0);
+        primaryStage.centerOnScreen();
+        primaryStage.setMinWidth(1138);
+        primaryStage.setMinHeight(800);
 
 
         primaryStage.getScene().heightProperty().addListener((observable, oldValue, newValue) -> {
@@ -55,6 +63,28 @@ public class Main extends Application {
 
     @Override
     public void stop(){
+        URL url = Main.class.getProtectionDomain().getCodeSource().getLocation();
+        try {
+            String path = URLDecoder.decode(url.getFile(), "UTF-8");
+            final File folder = new File(new File("").getAbsolutePath());
+            final File[] files = folder.listFiles( new FilenameFilter() {
+                @Override
+                public boolean accept( final File dir,
+                                       final String name ) {
+                    return name.matches( ".*\\.pdf" );
+                }
+            } );
+            for ( final File file : files ) {
+                if ( !file.delete() ) {
+                    System.err.println( "Can't remove " + file.getAbsolutePath() );
+                }
+            }
+
+
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
     }
 

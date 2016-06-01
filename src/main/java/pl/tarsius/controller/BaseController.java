@@ -136,10 +136,8 @@ public abstract class BaseController {
         signalProject.getChildren().addAll(task, noweTask);
         task.getChildren().addAll(changeTaskStatus, editTask);
 
-
         root.getChildren().addAll(signalProject, newProject, myTaskList, myInv, useresManagment, profilView, bucketReport);
         breadCrumb=new BreadCrumbBar(root);
-
 
         Platform.runLater(() -> {
             new ResponsiveDesign((Stage) operationButtons.getParent().getScene().getWindow()).resizeBodyWidth(operationButtons.getParent().getScene().getWindow().getWidth());
@@ -240,13 +238,7 @@ public abstract class BaseController {
         return event -> {
             System.out.println(event.getSelectedCrumb().toString());
             MyBread b = (MyBread) event.getSelectedCrumb().getValue();
-            try {
-                flowActionHandler.navigate(b.getLink());
-            } catch (VetoException e) {
-                e.printStackTrace();
-            } catch (FlowException e) {
-                e.printStackTrace();
-            }
+            DataFxEXceptionHandler.navigateQuietly(flowActionHandler,b.getLink());
         };
     }
 

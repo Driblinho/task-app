@@ -38,12 +38,15 @@ public class ReportTasks {
                 switch (rs.getInt("stan")) {
                     case 2:
                         stan="W trakcie";
+                        rt.setInProgressTask(rt.getInProgressTask()+1);
                         break;
                     case 3:
                         stan="Do sprawdzenia";
+                        rt.setForTestTask(rt.getForTestTask()+1);
                         break;
                     default:
                         stan="Zakończone";
+                        rt.setEndTask(rt.getEndTask()+1);
                         break;
                 }
                 tasks.add(new String[] {
