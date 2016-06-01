@@ -179,7 +179,6 @@ public class Project {
         return new JdbcConverter<Project>() {
             @Override
             public Project convertOneRow(ResultSet resultSet) {
-
                 try {
                     Project p = new Project(
                             resultSet.getLong("projekt_id"),

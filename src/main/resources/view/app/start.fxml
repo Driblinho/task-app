@@ -27,11 +27,12 @@
                <children>
                   <fx:include source="../userbar.fxml" />
                   <BreadCrumbBar fx:id="breadCrumb" />
-                  <HBox alignment="CENTER_RIGHT" prefHeight="46.0" prefWidth="960.0" spacing="5.0">
+                  <HBox alignment="CENTER_RIGHT" layoutX="20.0" layoutY="80.0" prefHeight="46.0" prefWidth="960.0" spacing="5.0">
                      <children>
-                        <CheckBox fx:id="showAllProject" layoutX="837.0" layoutY="27.0" mnemonicParsing="false" text="Wszystkie projekty w bazie" />
-                        <CheckBox fx:id="showEndProject" mnemonicParsing="false" text="Zakończone" />
-                        <CheckBox fx:id="showEndOnlyProject" layoutX="837.0" layoutY="27.0" mnemonicParsing="false" text="Tylko zakończone" />
+                        <CheckBox fx:id="myProjects" mnemonicParsing="false" text="Moje" />
+                        <CheckBox fx:id="collProjects" layoutX="777.0" layoutY="20.0" mnemonicParsing="false" text="Uczestnicze" />
+                        <CheckBox fx:id="managerProjects" layoutX="730.0" layoutY="20.0" mnemonicParsing="false" text="Kierownicze" />
+                        <CheckBox fx:id="endProject" layoutX="837.0" layoutY="27.0" mnemonicParsing="false" text="Zakończone" />
                         <SegmentedButton fx:id="filtrButtons" />
                         <SegmentedButton fx:id="sortButtons" />
                      </children>
@@ -39,7 +40,7 @@
                         <Insets right="20.0" top="5.0" />
                      </padding>
                   </HBox>
-                  <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="600.0">
+                  <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="638.0" prefWidth="960.0">
                      <content>
                         <FlowPane fx:id="contentFlow" prefHeight="600.0" prefWidth="958.0" />
                      </content>

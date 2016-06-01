@@ -284,14 +284,8 @@ public class ShowProject extends BaseController{
 
             taskName.setText(taskDb.getName());
             taskName.setOnAction(event -> {
-                try {
-                    ApplicationContext.getInstance().register("taskId", taskDb.getId());
-                    flowActionHandler.navigate(ShowTaskController.class);
-                } catch (VetoException e) {
-                    e.printStackTrace();
-                } catch (FlowException e) {
-                    e.printStackTrace();
-                }
+                ApplicationContext.getInstance().register("taskId", taskDb.getId());
+                DataFxEXceptionHandler.navigateQuietly(flowActionHandler,ShowTaskController.class);
             });
 
 
@@ -308,7 +302,7 @@ public class ShowProject extends BaseController{
             } else taskDate.setText(taskDb.getEndDate().toString());
             return anchorPane;
         } catch (IOException e) {
-            e.printStackTrace();
+            loger.debug("Brak szablonu projektu", e);
             return null;
         }
     }

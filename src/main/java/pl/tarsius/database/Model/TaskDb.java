@@ -150,25 +150,6 @@ public class TaskDb {
         }
     }
 
-    public static Object[] removeUser(Long id, Long userId) {
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        try {
-            connection = new InitializeConnection().connect();
-            preparedStatement = connection.prepareStatement("DELETE FROM ZadaniaUzytkownicy WHERE uzytkownik_id=? AND zadanie_id=?");
-            preparedStatement.setLong(1, userId);
-            preparedStatement.setLong(1, id);
-            preparedStatement.executeUpdate();
-            loger.debug("SQL (removeUser):", preparedStatement.toString());
-            return new Object[] {true, "Użytkownik usunięty z zadania"};
-        } catch (SQLException e) {
-            loger.debug("removeUser", e);
-            return new Object[]{false,"Usuwanie użytkownika nie powiodło się"};
-        } finally {
-            DbUtils.closeQuietly(connection,preparedStatement,null);
-        }
-    }
-
     public static Object[] updateStatus(Long id,TaskDb.Status status) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;

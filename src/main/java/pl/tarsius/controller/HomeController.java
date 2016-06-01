@@ -15,6 +15,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -34,6 +35,7 @@ import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.Project;
 import pl.tarsius.database.Model.TaskDb;
 import pl.tarsius.database.Model.User;
+import pl.tarsius.util.gui.DataFxEXceptionHandler;
 import pl.tarsius.util.gui.StockButtons;
 
 import javax.annotation.PostConstruct;
@@ -72,18 +74,19 @@ public class HomeController extends BaseController{
     @FXML
     private SegmentedButton sortButtons;
 
-    @FXML
-    private SegmentedButton filtrButtons;
 
     private boolean isBoss;
     private  boolean showMyproject;
 
-    private int PER_PAGE = 6;
+    private static final int PER_PAGE = 10;
 
-    @FXML private CheckBox showAllProject;
-    @FXML private CheckBox showEndProject;
-    @FXML private CheckBox showEndOnlyProject;
 
+    private Service<ObservableList<Project>> renderService;
+
+    @FXML private CheckBox endProject;
+    @FXML private CheckBox myProjects;
+    @FXML private CheckBox collProjects;
+    @FXML private CheckBox managerProjects;
 
     @PostConstruct
     public void init() throws VetoException, FlowException {
@@ -100,12 +103,6 @@ public class HomeController extends BaseController{
         desc.setUserData("DESC");
         sortButtons.getButtons().addAll(asc,desc);
 
-        ToggleButton boss = new ToggleButton("Kierownicze");
-        ToggleButton my = new ToggleButton("Moje Projekty");
-        ToggleButton collaborate = new ToggleButton("Uczestnicze");
-
-        filtrButtons.getButtons().addAll(my,boss,collaborate);
-
 
 
 
@@ -115,73 +112,44 @@ public class HomeController extends BaseController{
         InitializeConnection initializeConnection = new InitializeConnection();
         try {
             Connection conn = initializeConnection.connect();
-            new Thread(renderProject(null,0,conn)).start();
+            renderService = renderProject(null,0,conn);
+            renderService.start();
 
             userBarSearch.setOnKeyPressed(event -> {
                 if(event.getCode().equals(KeyCode.ENTER)) {
                     search = userBarSearch.getText().trim();
-                    new Thread(renderProject(search,0,conn)).start();
+                    reloadProject(conn);
                 }
             });
 
             asc.selectedProperty().addListener((observable, oldValue, newValue) -> {
                 if(newValue) {
                     sort=(String) asc.getUserData();
-                    new Thread(renderProject(search,0,conn)).start();
+                    reloadProject(conn);
                 } else desc.setSelected(true);
             });
 
             desc.selectedProperty().addListener((observable, oldValue, newValue) -> {
                 if(newValue) {
                     sort = (String) desc.getUserData();
-                    new Thread(renderProject(search,0,conn)).start();
+                    reloadProject(conn);
+
                 } else asc.setSelected(true);
             });
 
-
-
-            boss.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                if(newValue) {
-                    isBoss = true;
-                    new Thread(renderProject(search, 0, conn)).start();
-                } else
-                    isBoss = false;
-
-            });
-            my.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                if(newValue) {
-                    showMyproject=true;
-                    new Thread(renderProject(search,0,conn)).start();
-                } else {
-                    showMyproject=false;
-                }
-
-
-            });
-            collaborate.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                if(newValue) {
-                    isBoss = false;
-                    showMyproject = false;
-                    new Thread(renderProject(search,0,conn)).start();
-                }
-
-            });
-
-
-            showAllProject.setOnMouseClicked(event -> {
-                new Thread(renderProject(search,0,conn)).start();
-            });
-            showEndProject.setOnMouseClicked(event -> {
-                new Thread(renderProject(search,0,conn)).start();
-            });
-            showEndOnlyProject.setOnMouseClicked(event -> {
-                new Thread(renderProject(search,0,conn)).start();
-            });
+            endProject.setOnMouseClicked(event -> reloadProject(conn));
+            myProjects.setOnMouseClicked(event -> reloadProject(conn));
+            collProjects.setOnMouseClicked(event -> reloadProject(conn));
+            managerProjects.setOnMouseClicked(event -> reloadProject(conn));
 
 
 
             pagination.currentPageIndexProperty().addListener((observable, oldValue, newValue) -> {
-                new Thread(renderProject(search,newValue.intValue(),conn)).start();
+                if(renderService.isRunning())
+                    renderService.cancel();
+                renderService = renderProject(search,newValue.intValue(),conn);
+                renderService.start();
+
             });
         } catch (SQLException e) {
             e.printStackTrace();
@@ -217,23 +185,13 @@ public class HomeController extends BaseController{
             if(project.getData_zakonczenia()==null) {
                 end.setVisible(false);
                 endL.setVisible(false);
-            } else {
+            } else end.setText(project.getData_zakonczenia().toString());
 
 
-                end.setText(project.getData_zakonczenia().toString());
-            }
-            //status.setText("Dane na podstawie zadań");
             title.setOnAction(event -> {
                 long id = (long) ((Hyperlink)event.getSource()).getUserData();
                 ApplicationContext.getInstance().register("projectId",id);
-                // TODO: 17.04.16 Obsłużyć
-                try {
-                    flowActionHandler.navigate(ShowProject.class);
-                } catch (VetoException e) {
-                    e.printStackTrace();
-                } catch (FlowException e) {
-                    e.printStackTrace();
-                }
+                DataFxEXceptionHandler.navigateQuietly(flowActionHandler, ShowProject.class);
             });
 
 
@@ -264,87 +222,94 @@ public class HomeController extends BaseController{
     }
 
 
-    private Task<ObservableList<Project>> renderProject(String search, int page, Connection connection) {
-
-        User u = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
-        contentFlow.getChildren().clear();
-        int perPage = PER_PAGE;
-
-        String sql = "select * from ProjektyUzytkownicy pu,Projekty p,Uzytkownicy u,(select imie as l_imie,nazwisko as l_nazwisko,uzytkownik_id l_id from Uzytkownicy)au where pu.uzytkownik_id=u.uzytkownik_id \n" +
-                "and pu.projekt_id=p.projekt_id and au.l_id=p.lider";
-
-        if(!showAllProject.isSelected())
-            sql+=" and pu.uzytkownik_id="+u.getUzytkownikId();
-
-        if(showEndOnlyProject.isSelected())
-            sql+=" and p.status=0";
-        else if(!showEndProject.isSelected())
-            sql+=" and p.status=1";
+    private Service<ObservableList<Project>> renderProject(String search, int page, Connection connection) {
 
 
 
+        Service<ObservableList<Project>> service = new Service<ObservableList<Project>>() {
 
-        if(search!=null && search.length()>0) sql+=" and (nazwa like '%"+search+"%' or opis like '%"+search+"%')";
-
-
-
-
-
-        if(isBoss)
-            sql+=" and p.lider in (select uzytkownik_id from Uzytkownicy WHERE typ in (2,3))";
-
-        if(showMyproject)
-            sql+=" and p.lider="+u.getUzytkownikId();
-
-
-        sql+= " order by p.data_dodania "+sort;
-
-        String countSql = sql.replace("*","count(*)");
-
-        sql+= " limit "+page*perPage+","+perPage+"";
-
-        loger.debug("SQL (count): "+countSql);
-        loger.debug("SQL: "+sql);
-        try {
-            PreparedStatement ps = connection.prepareStatement(countSql);
-            ResultSet rs = ps.executeQuery();
-            rs.next();
-            long count = rs.getLong(1);
-            pagination.setCurrentPageIndex(page);
-            int pageCount = (int) Math.ceil((float)count/perPage);
-            if(pageCount>0)
-                pagination.setPageCount(pageCount);
-            else pagination.setPageCount(1);
-
-        } catch (SQLException e) {
-            loger.debug("RENDER projects ",e);
-        }
-
-        DataReader<Project> dataReader = new JdbcSource<>(connection, sql, Project.jdbcConverter());
-
-        Task<ObservableList<Project>> task = new Task<ObservableList<Project>>() {
             @Override
-            protected ObservableList<Project> call() throws InterruptedException, IOException {
-                ObservableList<Project> observableList = FXCollections.observableArrayList();
-                do {
-                    Project i = dataReader.get();
-                    observableList.add(i);
-                    Thread.sleep(500);
-                } while (dataReader.next());
-                return observableList;
+            protected Task<ObservableList<Project>> createTask() {
+                User u = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
+                contentFlow.getChildren().clear();
+                int perPage = PER_PAGE;
+
+                String sql = "select * from Projekty p,(select imie as l_imie,nazwisko as l_nazwisko,uzytkownik_id l_id from Uzytkownicy)au where p.lider=au.l_id";
+
+                if(endProject.isSelected())
+                    sql+=" and p.status=0";
+                else
+                    sql+=" and p.status=1";
+
+                if(myProjects.isSelected() && !collProjects.isSelected())
+                    sql+=" and l_id="+u.getUzytkownikId();
+
+                if(collProjects.isSelected()) {
+                    String lider = myProjects.isSelected()?"":"and lider=0";
+                    sql+=" and p.projekt_id in (select distinct projekt_id from ProjektyUzytkownicy where uzytkownik_id="+user.getUzytkownikId()+" "+lider+")";
+                }
+
+                if(managerProjects.isSelected())
+                    sql+=" and p.lider in (select uzytkownik_id from Uzytkownicy WHERE typ in (2,3))";
+
+                if(search!=null && search.length()>0) sql+=" and (nazwa like '%"+search+"%' or opis like '%"+search+"%')";
+
+
+
+
+
+                sql+= " order by p.data_dodania "+sort;
+
+                String countSql = sql.replace("*","count(*)");
+
+                sql+= " limit "+page*perPage+","+perPage+"";
+
+                loger.debug("SQL (count): "+countSql);
+                loger.debug("SQL: "+sql);
+                try {
+                    PreparedStatement ps = connection.prepareStatement(countSql);
+                    ResultSet rs = ps.executeQuery();
+                    rs.next();
+                    long count = rs.getLong(1);
+                    pagination.setCurrentPageIndex(page);
+                    int pageCount = (int) Math.ceil((float)count/perPage);
+                    if(pageCount>0)
+                        pagination.setPageCount(pageCount);
+                    else pagination.setPageCount(1);
+
+                } catch (SQLException e) {
+                    loger.debug("RENDER projects ",e);
+                }
+
+                DataReader<Project> dataReader = new JdbcSource<>(connection, sql, Project.jdbcConverter());
+
+                Task<ObservableList<Project>> task = new Task<ObservableList<Project>>() {
+                    @Override
+                    protected ObservableList<Project> call() throws InterruptedException, IOException {
+                        ObservableList<Project> observableList = FXCollections.observableArrayList();
+                        do {
+                            Project i = dataReader.get();
+                            observableList.add(i);
+                            Thread.sleep(500);
+                        } while (dataReader.next());
+                        return observableList;
+                    }
+                };
+                task.setOnSucceeded(event -> {
+                    contentFlow.getChildren().clear();
+                    task.getValue().forEach(project -> createLis(project));
+                });
+                return task;
             }
         };
-        task.setOnSucceeded(event -> {
-            // TODO: 20.04.16 To FIX
-            try {
-                contentFlow.getChildren().clear();
-                task.getValue().forEach(this::createLis);
-            } catch (NullPointerException e) {
-                loger.debug("Bark danych", e);
-            }
 
-        });
-        return task;
+        return service;
+    }
+
+    private void reloadProject(Connection connection) {
+        if(renderService.isRunning()) renderService.cancel();
+        renderService = renderProject(search,0,connection);
+        renderService.start();
     }
 
 
