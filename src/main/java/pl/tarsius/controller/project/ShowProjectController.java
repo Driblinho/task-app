@@ -43,55 +43,146 @@ import java.sql.Timestamp;
 import java.util.Map;
 import java.util.Optional;
 
-/**
+/** Kontroler odpowiadający za Wyświetlanie pojedynczego projektu
  * Created by Ireneusz Kuliga on 15.04.16.
  */
 @FXMLController(value = "/view/app/widokprojektu.fxml", title = "Projekt - Tarsius")
 public class ShowProjectController extends BaseController{
 
+    /**
+     * Mapowanie {@link Label} z FXML (Tytuł projektu)
+     */
     @FXML private Label inprojectTitle;
+    /**
+     * Mapowanie {@link Text} z FXML (Opis projektu)
+     */
     @FXML private Text inprojectDesc;
+    /**
+     * Mapowanie {@link Text} z FXML (Data rozpoczęcia projektu)
+     */
     @FXML private Text inprojectDataStart;
+    /**
+     * Mapowanie {@link Text} z FXML (Data zakończenia projektu)
+     */
     @FXML private Text inprojectDataStop;
+    /**
+     * Mapowanie {@link Label} z FXML (Nagłówek zakończenia projektu)
+     */
     @FXML private Label inprojectDataStopLabel;
+    /**
+     * Mapowanie {@link Pagination} z FXML (Stronicowanie uczestników projektu)
+     */
     @FXML private Pagination InProjectMemberPagination;
+    /**
+     * DataFX {@link FlowActionHandler}
+     */
     @ActionHandler
     private FlowActionHandler flowActionHandler;
 
+    /**
+     * {@link Hyperlink} obsługujący wyświetlanie profilu użytkownika projektu
+     */
     @FXML
     @ActionTrigger("showAuthorProfile")
     private Hyperlink inprojectAuthor;
 
+    /**
+     * {@link VBox} na uczestników projektu
+     */
     @FXML
     private VBox userInProject;
 
+    /**
+     * Pole na dane otwartego projektu
+     */
     private Project project;
 
+    /**
+     * Sortowanie użytkowników
+     */
     @FXML private SegmentedButton sortProjectUsers;
+
+    /**
+     * Sortowanie Zadań
+     */
     @FXML private SegmentedButton sortProjectTask;
+
+    /**
+     * {@link VBox} na zadania w projekcie
+     */
     @FXML private VBox taskInProject;
+    /**
+     * Stronicowanie zadań
+     */
     @FXML private Pagination inProjectTaskPg;
 
+    /**
+     * Zakładka użytkownicy
+     */
     @FXML private Tab userTab;
+    /**
+     * Zakładka zadania
+     */
     @FXML private Tab taskTab;
 
+    /**
+     * {@link CheckBox} na filtr (Nowe zadania)
+     */
     @FXML private CheckBox filtrNew;
+    /**
+     * {@link CheckBox} na filtr (Do sprawdzenia)
+     */
     @FXML private CheckBox filtrForTest;
+    /**
+     * {@link CheckBox} na filtr (Zakończone)
+     */
     @FXML private CheckBox filtrEnd;
+    /**
+     * {@link CheckBox} na filtr (W trakcie)
+     */
     @FXML private CheckBox filtrInProgres;
+    /**
+     * {@link CheckBox} na filtr (Moje zadania)
+     */
     @FXML private CheckBox filtrOnlyMy;
 
+    /**
+     * {@link Text} na ilość zadań nowych
+     */
     @FXML Text taskCountNew;
+    /**
+     * {@link Text} na ilość zadań w trakcie
+     */
     @FXML Text taskCountInProgress;
+    /**
+     * {@link Text} na ilość zadań do sprawdzenia
+     */
     @FXML Text taskCountForTest;
+    /**
+     * {@link Text} na ilość zadań zakończonych
+     */
     @FXML Text taskCountEnd;
 
-    @FXML @ActionTrigger("AddToBucket") private Button addToReportBucket;
 
+    /**
+     * {@link Button} obsługujący dodawanie projektu do koszyka
+     */
+    @FXML
+    @ActionTrigger("AddToBucket") private Button addToReportBucket;
+
+    /**
+     * {@link Logger}
+     */
     private static Logger loger = LoggerFactory.getLogger(ShowProjectController.class);
 
+    /**
+     * Ilość użytkowników i zadań na stronie
+     */
     private static final int USER_AND_TASK_PER_PAGE = 6;
 
+    /**
+     * Metoda inicjalizująca kontroler
+     */
     @PostConstruct
     public void init(){
 
@@ -210,12 +301,20 @@ public class ShowProjectController extends BaseController{
 
     }
 
+    /**
+     * Metoda obsługująca przechodzenie do profilu lider projektu
+     */
     @ActionMethod("showAuthorProfile")
     public void showAuthorProfile() {
         navigateToProfile(project.getLider());
     }
 
 
+    /**
+     * Metoda generująca pojedynczy wiersz z użytkownikami uczestniczącymi w projekcie
+     * @param userData Obiekt reprezentujący dane użytkownika
+     * @return AnchorPane - wiersz z użytkownikiem
+     */
     private AnchorPane inProjectUser(User userData){
         try {
             AnchorPane anchorPane  = FXMLLoader.load(getClass().getClassLoader().getResource("view/app/userInProjectTPL.fxml"));
@@ -259,7 +358,11 @@ public class ShowProjectController extends BaseController{
         }
 
     }
-
+    /**
+     * Metoda generująca pojedynczy wiersz z użytkownikami uczestniczącymi w projekcie
+     * @param taskDb Obiekt reprezentujący dane zadania
+     * @return AnchorPane - wiersz z zadaniem
+     */
     private AnchorPane inProjectTask(TaskDb taskDb) {
         try {
             AnchorPane anchorPane  = FXMLLoader.load(getClass().getClassLoader().getResource("view/app/taskInProjectTPL.fxml"));
@@ -306,6 +409,11 @@ public class ShowProjectController extends BaseController{
     }
 
 
+    /** Metoda generująca task wyświetlający zadania
+     * @param connection Połączeni z bazą danych
+     * @param page Strona na jaką ma zostać ustawione stronicowanie
+     * @return Task wyświetlający listę zadań
+     */
     private Task<ObservableList<TaskDb>> renderTasks(Connection connection,int page){
         String sql = "select {tpl} from (select z.*,u.imie,u.nazwisko from Zadania z,Uzytkownicy u where z.uzytkownik_id=u.uzytkownik_id and z.projekt_id="+project.getProjekt_id()+"\n" +
                 "union \n" +
@@ -379,7 +487,11 @@ public class ShowProjectController extends BaseController{
         });
         return task;
     }
-
+    /** Metoda generująca task wyświetlający użytkowników
+     * @param connection Połączeni z bazą danych
+     * @param page Strona na jaką ma zostać ustawione stronicowanie
+     * @return Task wyświetlający listę użytkowników
+     */
     private Task<ObservableList<User>> renderUser(Connection connection,int page) {
         String sql = "SELECT {tpl} FROM ProjektyUzytkownicy pu,Uzytkownicy u WHERE projekt_id="+project.getProjekt_id()+" and u.uzytkownik_id=pu.uzytkownik_id";
 

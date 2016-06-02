@@ -30,7 +30,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-/**
+/** Kontroler odpowiadający za wyświetlanie zadań użytkownika
  * Created by ireq on 30.04.16.
  */
 @FXMLController(value = "/view/app/mytasklist.fxml", title = "Moje zadania - Tarsius")

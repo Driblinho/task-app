@@ -10,6 +10,11 @@ import javafx.scene.control.Alert;
  */
 public class DataFxEXceptionHandler {
 
+    /**
+     * Nawigacja z cichą obsługą wyjątków DataFX
+     * @param flowActionHandler
+     * @param dest
+     */
     public static void navigateQuietly(FlowActionHandler flowActionHandler, Class dest) {
         try {
             flowActionHandler.navigate(dest);

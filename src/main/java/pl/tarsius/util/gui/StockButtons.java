@@ -30,11 +30,18 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 /**
+ * Klasa obsługująca nawigację w spersonalizowaną dla użytkowników (Sidebar -> Akcje)
  * Created by Ireneusz Kuliga on 15.04.16.
  */
 public class StockButtons {
 
+    /**
+     * {@link VBox} na Akcje
+     */
     @FXML private VBox container;
+    /**
+     * DataFX {@link FlowActionHandler}
+     */
     @ActionHandler
     private FlowActionHandler flowActionHandler;
 
@@ -43,22 +50,35 @@ public class StockButtons {
         this.flowActionHandler = flowActionHandler;
     }
 
+    /** Konstruktor inicjalizująca
+     * @param container Kontener na akcje
+     */
     public StockButtons(VBox container) {
         this.container = container;
     }
 
+    /** Metoda generująca buton Akcji
+     * @param name
+     * @return
+     */
     private Button stockButton(String name) {
         Button b = new Button(name);
         b.getStyleClass().add("stock-button");
         return b;
     }
 
+    /**
+     * Podstawowe akcje
+     */
     public void homeAction() {
         Button b = this.stockButton("Nowy projekt");
         container.getChildren().add(b);
         flowActionHandler.attachLinkEventHandler(b, NewProjectController.class);
     }
 
+    /**
+     * Akcje dla projektu
+     */
     public void inProjectButton() {
         Button user = this.stockButton("Dodaj uczestnika");
         Button task = this.stockButton("Dodaj zadanie");
@@ -108,6 +128,9 @@ public class StockButtons {
 
     }
 
+    /**
+     * Akcje dla zadań
+     */
     public void inTask() {
         Button edit = this.stockButton("Edytuj");
         Button remove = this.stockButton("Usuń");
@@ -175,6 +198,9 @@ public class StockButtons {
 
     }
 
+    /**
+     * Akcje w zamkniętym zadaniu
+     */
     public void inCloseTask() {
         this.inTask();
         container.getChildren().remove(2);

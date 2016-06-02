@@ -59,7 +59,6 @@
                               <ButtonBar GridPane.columnIndex="1">
                                  <buttons>
                                     <Button fx:id="addToReportBucket" mnemonicParsing="false" styleClass="greenButton" text="Dodaj do raportów" />
-                                    <Button mnemonicParsing="false" text="Wygeneruj raport" />
                                  </buttons>
                               </ButtonBar>
                            </children>

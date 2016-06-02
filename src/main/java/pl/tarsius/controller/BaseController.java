@@ -22,6 +22,7 @@ import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import org.controlsfx.control.BreadCrumbBar;
 import pl.tarsius.controller.invite.InvitesController;
+import pl.tarsius.controller.project.EditProjectController;
 import pl.tarsius.controller.project.NewProjectController;
 import pl.tarsius.controller.project.ShowProjectController;
 import pl.tarsius.controller.raport.ReportController;
@@ -109,6 +110,9 @@ public abstract class BaseController {
     public TreeItem<MyBread> useresManagment = new TreeItem<>(new MyBread("Zarządzanie użytkownikami", UsersListController.class));
     public TreeItem<MyBread> profilView = new TreeItem<>(new MyBread("Profil", MyProfileController.class));
     public TreeItem<MyBread> bucketReport = new TreeItem<>(new MyBread("Raporty", ReportController.class));
+    public TreeItem<MyBread> editProject = new TreeItem<>(new MyBread("Edytuj projekt", EditProjectController.class));
+    public TreeItem<MyBread> about = new TreeItem<>(new MyBread("O programie", AboutController.class));
+    public TreeItem<MyBread> addUserToProject = new TreeItem<>(new MyBread("Dodaj do projektu", ReportController.class));
     public User user;
 
 
@@ -133,10 +137,10 @@ public abstract class BaseController {
 
 
 
-        signalProject.getChildren().addAll(task, noweTask);
+        signalProject.getChildren().addAll(task, noweTask,editProject,addUserToProject);
         task.getChildren().addAll(changeTaskStatus, editTask);
 
-        root.getChildren().addAll(signalProject, newProject, myTaskList, myInv, useresManagment, profilView, bucketReport);
+        root.getChildren().addAll(signalProject, newProject, myTaskList, myInv, useresManagment, profilView, bucketReport,about);
         breadCrumb=new BreadCrumbBar(root);
 
         Platform.runLater(() -> {

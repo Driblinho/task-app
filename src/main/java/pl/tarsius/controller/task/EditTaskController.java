@@ -44,47 +44,89 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-/**
+/** Kontroler odpowiadający za edycje zadania
  * Created by ireq on 01.05.16.
  */
 @FXMLController(value = "/view/app/newtask.fxml", title = "Edytuj zadanie - Tarsius")
 public class EditTaskController extends BaseController {
+    /**
+     * Nazwa zadania
+     */
     @FXML private TextField taskName;
+    /**
+     * Opis zadania
+     */
     @FXML private TextField taskDesc;
     @FXML private ListSelectionView<User> taskUser;
 
+    /**
+     * Data zakończenia zadania
+     */
     @FXML private DatePicker taskEndDatePicker;
 
+    /**
+     * {@link Button} usuwający date zakończenia
+     */
     @FXML
     @ActionTrigger("cleanDate")
     private Button taskEndDatePickerClean;
 
+    /**
+     * {@link Button} obsługujący akcje zapisywania do bazy
+     */
     @FXML
     @ActionTrigger("saveTask")
     private Button taskSave;
 
+    /**
+     * {@link Button} na akcje wstecz (anuluj)
+     */
     @FXML
     @LinkAction(ShowProjectController.class)
     private Button taskCancel;
 
     @FXML private FlowPane taskUserList;
+    /**
+     * Grupa na sortowanie użytkowników
+     */
     private ToggleGroup toggleGroup;
 
+    /**
+     * Odznaczanie zaznaczonych użytkowników
+     */
     @FXML
     @ActionTrigger("clearSelectedUser")
     private Button taskClearUser;
 
+    /**
+     * Stronicowanie użytkowników
+     */
     @FXML private Pagination taskUserListpPag;
 
+    /**
+     * Pole na {@link CheckBox} określający czy usunąć kogoś z zadania
+     */
     @FXML private CheckBox taskRemoveUser;
     @FXML private Text taskCurentUser;
+    /**
+     * {@link Group}
+     */
     @FXML private Group taskCurUserGroup;
 
+    /**
+     * Pole na validatro formularza
+     */
     private ValidationSupport validationSupport;
 
     private static Logger loger = LoggerFactory.getLogger(EditTaskController.class);
+    /**
+     * Reprezentacja edytowanego zadania
+     */
     private TaskDb taskDbModel;
 
+    /**
+     * Metoda inicjalizująca Kontroler
+     */
     @PostConstruct
     public void init() {
 
@@ -128,6 +170,10 @@ public class EditTaskController extends BaseController {
 
     }
 
+    /**Metoda zwraca wypełniony szablon pojedynczego użytkownika
+     * @param user Obiekt reprezentujący użytkownika
+     * @return AnchorPane z wypełnionym szablonem
+     */
     public AnchorPane userItem(User user) {
         try {
             AnchorPane root = FXMLLoader.load(getClass().getClassLoader().getResource("view/app/userListItemTPL.fxml"));
@@ -146,6 +192,12 @@ public class EditTaskController extends BaseController {
     }
 
 
+    /**
+     * Metoda wyświetlająca użytkowników możliwych do wybrania
+     * @param projectId ID projektu
+     * @param page Strona na jaką ma zostać ustawione stronicowanie
+     * @return Task wyświetlający użytkowników w taskUserList.
+     */
     private Task<ObservableList<User>> renderUsers(long projectId, int page){
 
         try {
@@ -195,6 +247,10 @@ public class EditTaskController extends BaseController {
     }
 
 
+    /**
+     * Metoda zapisująca zadanie do i wyświetlająca komunikat.
+     * Po pomyślnym dodaniu do bazy przenosi do now edytowanego zadnia
+     */
     @ActionMethod("saveTask")
     public void saveTask() {
         if(validationSupport.isInvalid()) {
@@ -241,10 +297,16 @@ public class EditTaskController extends BaseController {
     }
 
 
+    /**
+     * Usuwa datę z {@link DatePicker}
+     */
     @ActionMethod("cleanDate")
     public void cleanDate(){ taskEndDatePicker.setValue(null);
     }
 
+    /**
+     * Usuwa zaznaczonego użytkownika z listy dostawnych użytkowników
+     */
     @ActionMethod("clearSelectedUser")
     public void clearSelectedUser() {
         if(toggleGroup.getSelectedToggle()!=null)

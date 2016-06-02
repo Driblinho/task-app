@@ -46,7 +46,7 @@
                              <String fx:value="greenButton" />
                              <String fx:value="genAllReport" />
                           </styleClass></Button>
-                        <Button fx:id="genAllMyReport" layoutX="591.0" layoutY="17.0" mnemonicParsing="false" text="Wysztskie moje">
+                        <Button fx:id="genAllMyReport" layoutX="591.0" layoutY="17.0" mnemonicParsing="false" text="Moje projekty">
                            <styleClass>
                               <String fx:value="greenButton" />
                               <String fx:value="genAllReport" />
@@ -63,7 +63,7 @@
                         <Insets right="15.0" />
                      </VBox.margin>
                   </ButtonBar>
-                  <Pagination fx:id="pagination" prefHeight="52.0" prefWidth="960.0" />
+                  <Pagination fx:id="pagination" pageCount="1" prefHeight="52.0" prefWidth="960.0" />
                </children>
             </VBox>
          </center>

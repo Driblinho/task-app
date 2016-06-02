@@ -21,7 +21,7 @@ import java.util.Properties;
  */
 public class InitializeConnection {
 
-    private static Logger loger = LoggerFactory.getLogger(InitializeConnection.class);;
+    private static Logger loger = LoggerFactory.getLogger(InitializeConnection.class);
     private Connection connection;
     private String jdbcUrl;
     private String username;

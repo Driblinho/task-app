@@ -36,37 +36,54 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
+ * Kontroler odpowiadający z a wyświetlanie i zarządzanie użytkownikami
  * Created by Ireneusz Kuliga on 19.04.16.
  */
 @FXMLController(value = "/view/app/myInv.fxml", title = "Moje Zaproszenia - Tarsius" )
 public class InvitesController extends BaseController {
 
+
     @FXML private SegmentedButton invFiltr;
     @FXML private SegmentedButton invSort;
 
+    /**
+     * Pole mapujące element FXML odpowiadający za wyświetlanie listy zaproszeń
+     */
+    @FXML private VBox invContent;
 
-    @FXML
-    private VBox invContent;
-
+    /**
+     * Pole mapujące element FXML odpowiadający za stronicowanie zaproszeń
+     */
     @FXML private Pagination invPagination;
 
+    /**
+     * DataFX FlowActionHandler
+     */
     @ActionHandler
     private FlowActionHandler flowActionHandler;
-    private Logger loger;
 
+
+    /**
+     * Loger
+     */
+    private static Logger loger = LoggerFactory.getLogger(InvitesController.class);
+
+    /**
+     * Pole pomagające określić czy filtrować po zaproszeniach od kierownika
+     */
     private boolean isBoss;
 
 
+    /**
+     * Metoda inicjalizująca kontroler Zaproszeń
+     */
     @PostConstruct
     public void init() {
 
         breadCrumb.setSelectedCrumb(myInv);
         breadCrumb.setOnCrumbAction(crumbActionEventEventHandler());
 
-
-        //sort="DESC";
         invPagination.setPageCount(1);
-        loger = LoggerFactory.getLogger(getClass());
         User user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
         new StockButtons(operationButtons, flowActionHandler).homeAction();
 
@@ -143,6 +160,11 @@ public class InvitesController extends BaseController {
 
     }
 
+
+    /** Meada zwraca <code>GridPane</code> z zaproszeniem użytkownika
+     * @param invite Obiekt reprezentujący zaproszenie
+     * @return GridPane
+     */
     private GridPane invRow(Invite invite) {
         GridPane gridPane = new GridPane();
         try {
@@ -161,7 +183,7 @@ public class InvitesController extends BaseController {
 
             cancel.setOnAction(event -> {
                 Button b = (Button) event.getSource();
-                Node n = (Node) b.getParent();
+                Node n = b.getParent();
                 Task<Object[]> task = new Task<Object[]>() {
                     @Override
                     protected Object[] call() throws Exception {
@@ -220,6 +242,13 @@ public class InvitesController extends BaseController {
 
     }
 
+    /**
+     * Metoda generująca task który wyświetla zaproszenia użytkownika
+     * @param connection Połączenie bazy danych
+     * @param userId Identyfikator użytkownika dla którego mają zastać wyświetlone zaproszenia
+     * @param page Index strony dla stronicowania
+     * @return Task wyświetlający zaproszenia
+     */
     public Task<ObservableList<Invite>> inviteTask(Connection connection, long userId,int page) {
 
         String sql = "select {tpl} " +

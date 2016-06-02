@@ -56,7 +56,7 @@ public class UserAuth {
             if(!resultSet.getBoolean("aktywny")) {
                 value[1] = "Użytkownik nie jest aktywny";
                 return value;
-            };
+            }
             Timestamp lock = resultSet.getTimestamp("blokada");
             if(lock!=null && lock.before(new Timestamp(new Date().getTime()))) {
                 value[1] = "Użytkownik zablokowany do: "+lock.toString();
@@ -66,7 +66,7 @@ public class UserAuth {
 
 
         } catch (SQLException e) {
-            loger.debug(e.getSQLState());
+            loger.debug("create user", e);
             value[1] = "Problem z bazą danych";
             return value;
         }

@@ -344,7 +344,7 @@ public class GenReportService extends Service<Void>{
         String[][] content = new String[1][1];
         content = userList.toArray(content);
 
-        float tableHeight = IS_LANDSCAPE ? PAGE_SIZE.getWidth() - (2 * MARGIN) : PAGE_SIZE.getHeight() - (2 * MARGIN);
+        float tableHeight = PAGE_SIZE.getWidth() - 2 * MARGIN;
 
         Table table = new TableBuilder()
                 .setCellMargin(CELL_MARGIN)
@@ -371,9 +371,9 @@ public class GenReportService extends Service<Void>{
         String[][] content = new String[1][1];
         content = userList.toArray(content);
 
-        float tableHeight = IS_LANDSCAPE ? PAGE_SIZE.getWidth() - (2 * MARGIN) : PAGE_SIZE.getHeight() - (2 * MARGIN);
+        float tableHeight = PAGE_SIZE.getWidth() - 2 * MARGIN;
 
-        Table table = new TableBuilder()
+        return new TableBuilder()
                 .setCellMargin(CELL_MARGIN)
                 .setColumns(columns)
                 .setContent(content)
@@ -386,7 +386,6 @@ public class GenReportService extends Service<Void>{
                 .setTextFont(font)
                 .setFontSize(FONT_SIZE)
                 .build();
-        return table;
     }
 
 

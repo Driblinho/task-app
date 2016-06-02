@@ -20,12 +20,7 @@ public class PeselValidator {
             for (int i = 0; i < 11; i++){
                 PESEL[i] = Byte.parseByte(PESELNumber.substring(i, i+1));
             }
-            if (checkSum() && checkMonth() && checkDay()) {
-                valid = true;
-            }
-            else {
-                valid = false;
-            }
+            valid = checkSum() && checkMonth() && checkDay();
         }
     }
 
@@ -114,23 +109,13 @@ public class PeselValidator {
         sum = 10 - sum;
         sum %= 10;
 
-        if (sum == PESEL[10]) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return sum == PESEL[10];
     }
 
     private boolean checkMonth() {
         int month = getBirthMonth();
         int day = getBirthDay();
-        if (month > 0 && month < 13) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return month > 0 && month < 13;
     }
 
     private boolean checkDay() {
@@ -148,19 +133,11 @@ public class PeselValidator {
                         month == 11)) {
             return true;
         }
-        else if ((day >0 && day < 30 && leapYear(year)) ||
-                (day >0 && day < 29 && !leapYear(year))) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        else return (day > 0 && day < 30 && leapYear(year)) ||
+                    (day > 0 && day < 29 && !leapYear(year));
     }
 
     private boolean leapYear(int year) {
-        if (year % 4 == 0 && year % 100 != 0 || year % 400 == 0)
-            return true;
-        else
-            return false;
+        return year % 4 == 0 && year % 100 != 0 || year % 400 == 0;
     }
 }

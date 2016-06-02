@@ -35,31 +35,64 @@ import java.sql.SQLException;
 import java.util.HashSet;
 
 /**
+ * Kontroler odpowiadający za generowanie raportów
  * Created by ireq on 05.05.16.
  */
 @FXMLController(value = "/view/app/generatingReports.fxml", title = "Generowanie Raportów - Tarsius")
 public class ReportController extends BaseController {
+    /**
+     * {@link Logger}
+     */
     private static Logger loger = LoggerFactory.getLogger(ReportController.class);
+    /**
+     * {@link VBox} na listę raportów
+     */
     @FXML private VBox reportList;
     @FXML private RadioButton rTaskRadio;
     @FXML private RadioButton rProjectRadio;
     @FXML private Pagination pagination;
 
+    /**
+     * Button obsługujący akcje generowania raportów z wszystkich projektów
+     */
     @FXML @ActionTrigger("genFullReport") private Button genAllReport;
+    /**
+     * Button obsługujący akcje generowania raportów z wybranych raportów
+     */
     @FXML @ActionTrigger("genSelectedReport") private Button genSelectReport;
+    /**
+     * Button obsługujący akcje generowania raportów z tylko moich zadań projektów
+     */
     @FXML @ActionTrigger("genAllMyReport") private Button genAllMyReport;
+    /**
+     * Generowanie raportów z moich zadań
+     */
     @FXML @ActionTrigger("genTaskReport") private Button genMyTaskReport;
+    /**
+     *  Czyszczenie listy raportów
+     */
     @FXML @ActionTrigger("clearList") private Button clearReportList;
-    private static int PER_PAGE = 8;
-    private int perPage;
+    /**
+     * Ilość raportów na stronie
+     */
+    private int PER_PAGE = 8;
+    /**
+     * Koszyk raportów
+     */
     private HashSet<Long> projectBucket;
+    /**
+     * {@link Service} generujący raporty
+     */
     private Service<Void> service;
+
+    /**
+     * Inicjalizacja kontrolera
+     */
     @PostConstruct
     public void  init() {
         new StockButtons(operationButtons, flowActionHandler).homeAction();
         breadCrumb.setSelectedCrumb(bucketReport);
         breadCrumb.setOnCrumbAction(crumbActionEventEventHandler());
-        perPage = PER_PAGE;
         projectBucket = (HashSet<Long>) ApplicationContext.getInstance().getRegisteredObject("reportBucket");
         Platform.runLater(() -> {
             clearReportList.setVisible(false);
@@ -89,6 +122,11 @@ public class ReportController extends BaseController {
 
     }
 
+    /**
+     *
+     * @param row
+     * @return
+     */
     private GridPane reportRow(ReportItem row) {
         GridPane node = null;
         try {
@@ -123,7 +161,7 @@ public class ReportController extends BaseController {
         String sql = "select p.projekt_id,p.nazwa,p.lider,p.opis,p.data_dodania,p.data_zakonczenia,u.imie,u.nazwisko,count(*) as u_count,(select count(*) from Zadania z where p.projekt_id=z.projekt_id) as t_count from Projekty p,ProjektyUzytkownicy pu,Uzytkownicy u where p.projekt_id=pu.projekt_id and u.uzytkownik_id=pu.uzytkownik_id";
         sql+=" and p.projekt_id in ("+projectBucket.toString().replace("[","").replace("]","")+") ";
         sql+=" group by p.projekt_id";
-        sql+=" limit "+page*perPage+","+perPage+"";
+        sql+=" limit "+page* PER_PAGE +","+ PER_PAGE +"";
 
         String countSql = "select count(*) from Projekty where projekt_id in ("+projectBucket.toString().replace("[","").replace("]","")+")";
         loger.debug("SQL: "+sql);
@@ -136,7 +174,7 @@ public class ReportController extends BaseController {
                 ResultSet rs = ps.executeQuery();
                 rs.next();
                 double count = rs.getLong(1);
-                Platform.runLater(() -> pagination.setPageCount((int) Math.ceil(count/perPage)));
+                Platform.runLater(() -> pagination.setPageCount((int) Math.ceil(count/ PER_PAGE)));
                 dataReader.forEach(reportItem -> observableList.add(reportItem));
                 return observableList;
             }

@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_task-app" default="compile.module.task-app">
+  <dirname property="module.task-app.basedir" file="${ant.file.module_task-app}"/>
+  
+  <property name="module.jdk.home.task-app" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.task-app" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.task-app" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.task-app" value="-encoding UTF-8 -source 8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="task-app.output.dir" value="${module.task-app.basedir}/target/classes"/>
+  <property name="task-app.testoutput.dir" value="${module.task-app.basedir}/target/test-classes"/>
+  
+  <path id="task-app.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="task-app.module.production.classpath">
+    <path refid="${module.jdk.classpath.task-app}"/>
+    <path refid="library.maven:_org.jfree:jfreechart:1.0.19.classpath"/>
+    <path refid="library.maven:_org.jfree:jcommon:1.0.23.classpath"/>
+    <path refid="library.maven:_mysql:mysql-connector-java:5.1.38.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-api:1.7.19.classpath"/>
+    <path refid="library.maven:_ch.qos.logback:logback-classic:1.1.6.classpath"/>
+    <path refid="library.maven:_ch.qos.logback:logback-core:1.1.6.classpath"/>
+    <path refid="library.maven:_commons-dbutils:commons-dbutils:1.6.classpath"/>
+    <path refid="library.maven:_org.controlsfx:controlsfx:8.40.10.classpath"/>
+    <path refid="library.maven:_io.datafx:datafx:8.0.7.classpath"/>
+    <path refid="library.maven:_io.datafx:core:8.0.7.classpath"/>
+    <path refid="library.maven:_io.datafx:flow:8.0b9.classpath"/>
+    <path refid="library.maven:_io.datafx:datasources:8.0.1.classpath"/>
+    <path refid="library.maven:_org.glassfish:javax.json:1.0.4.classpath"/>
+    <path refid="library.maven:_io.datafx:injection:8.0.1.classpath"/>
+    <path refid="library.maven:_org.javassist:javassist:3.18.1-ga.classpath"/>
+    <path refid="library.maven:_javax.inject:javax.inject:1.classpath"/>
+    <path refid="library.maven:_de.svenkubiak:jbcrypt:0.4.1.classpath"/>
+    <path refid="library.maven:_com.sun.jersey:jersey-client:1.19.1.classpath"/>
+    <path refid="library.maven:_com.sun.jersey:jersey-core:1.19.1.classpath"/>
+    <path refid="library.maven:_javax.ws.rs:jsr311-api:1.1.1.classpath"/>
+    <path refid="library.maven:_com.sun.jersey.contribs:jersey-multipart:1.19.1.classpath"/>
+    <path refid="library.maven:_org.jvnet.mimepull:mimepull:1.9.3.classpath"/>
+    <path refid="library.maven:_com.cloudinary:cloudinary-http44:1.4.1.classpath"/>
+    <path refid="library.maven:_com.cloudinary:cloudinary-core:1.4.1.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-lang3:3.1.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpclient:4.4.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpcore:4.4.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.9.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpmime:4.4.classpath"/>
+    <path refid="library.maven:_com.guigarage:flatter:0.7.classpath"/>
+    <path refid="library.maven:_org.apache.pdfbox:pdfbox:2.0.1.classpath"/>
+    <path refid="library.maven:_org.apache.pdfbox:fontbox:2.0.1.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging:1.2.classpath"/>
+  </path>
+  
+  <path id="task-app.runtime.production.module.classpath">
+    <pathelement location="${task-app.output.dir}"/>
+    <path refid="library.maven:_org.jfree:jfreechart:1.0.19.classpath"/>
+    <path refid="library.maven:_org.jfree:jcommon:1.0.23.classpath"/>
+    <path refid="library.maven:_mysql:mysql-connector-java:5.1.38.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-api:1.7.19.classpath"/>
+    <path refid="library.maven:_ch.qos.logback:logback-classic:1.1.6.classpath"/>
+    <path refid="library.maven:_ch.qos.logback:logback-core:1.1.6.classpath"/>
+    <path refid="library.maven:_commons-dbutils:commons-dbutils:1.6.classpath"/>
+    <path refid="library.maven:_org.controlsfx:controlsfx:8.40.10.classpath"/>
+    <path refid="library.maven:_io.datafx:datafx:8.0.7.classpath"/>
+    <path refid="library.maven:_io.datafx:core:8.0.7.classpath"/>
+    <path refid="library.maven:_io.datafx:flow:8.0b9.classpath"/>
+    <path refid="library.maven:_io.datafx:datasources:8.0.1.classpath"/>
+    <path refid="library.maven:_org.glassfish:javax.json:1.0.4.classpath"/>
+    <path refid="library.maven:_io.datafx:injection:8.0.1.classpath"/>
+    <path refid="library.maven:_org.javassist:javassist:3.18.1-ga.classpath"/>
+    <path refid="library.maven:_javax.inject:javax.inject:1.classpath"/>
+    <path refid="library.maven:_de.svenkubiak:jbcrypt:0.4.1.classpath"/>
+    <path refid="library.maven:_com.sun.jersey:jersey-client:1.19.1.classpath"/>
+    <path refid="library.maven:_com.sun.jersey:jersey-core:1.19.1.classpath"/>
+    <path refid="library.maven:_javax.ws.rs:jsr311-api:1.1.1.classpath"/>
+    <path refid="library.maven:_com.sun.jersey.contribs:jersey-multipart:1.19.1.classpath"/>
+    <path refid="library.maven:_org.jvnet.mimepull:mimepull:1.9.3.classpath"/>
+    <path refid="library.maven:_com.cloudinary:cloudinary-http44:1.4.1.classpath"/>
+    <path refid="library.maven:_com.cloudinary:cloudinary-core:1.4.1.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-lang3:3.1.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpclient:4.4.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpcore:4.4.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.9.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpmime:4.4.classpath"/>
+    <path refid="library.maven:_com.guigarage:flatter:0.7.classpath"/>
+    <path refid="library.maven:_org.apache.pdfbox:pdfbox:2.0.1.classpath"/>
+    <path refid="library.maven:_org.apache.pdfbox:fontbox:2.0.1.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging:1.2.classpath"/>
+  </path>
+  
+  <path id="task-app.module.classpath">
+    <path refid="${module.jdk.classpath.task-app}"/>
+    <pathelement location="${task-app.output.dir}"/>
+    <path refid="library.maven:_org.jfree:jfreechart:1.0.19.classpath"/>
+    <path refid="library.maven:_org.jfree:jcommon:1.0.23.classpath"/>
+    <path refid="library.maven:_mysql:mysql-connector-java:5.1.38.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-api:1.7.19.classpath"/>
+    <path refid="library.maven:_ch.qos.logback:logback-classic:1.1.6.classpath"/>
+    <path refid="library.maven:_ch.qos.logback:logback-core:1.1.6.classpath"/>
+    <path refid="library.maven:_commons-dbutils:commons-dbutils:1.6.classpath"/>
+    <path refid="library.maven:_org.controlsfx:controlsfx:8.40.10.classpath"/>
+    <path refid="library.maven:_io.datafx:datafx:8.0.7.classpath"/>
+    <path refid="library.maven:_io.datafx:core:8.0.7.classpath"/>
+    <path refid="library.maven:_io.datafx:flow:8.0b9.classpath"/>
+    <path refid="library.maven:_io.datafx:datasources:8.0.1.classpath"/>
+    <path refid="library.maven:_org.glassfish:javax.json:1.0.4.classpath"/>
+    <path refid="library.maven:_io.datafx:injection:8.0.1.classpath"/>
+    <path refid="library.maven:_org.javassist:javassist:3.18.1-ga.classpath"/>
+    <path refid="library.maven:_javax.inject:javax.inject:1.classpath"/>
+    <path refid="library.maven:_de.svenkubiak:jbcrypt:0.4.1.classpath"/>
+    <path refid="library.maven:_com.sun.jersey:jersey-client:1.19.1.classpath"/>
+    <path refid="library.maven:_com.sun.jersey:jersey-core:1.19.1.classpath"/>
+    <path refid="library.maven:_javax.ws.rs:jsr311-api:1.1.1.classpath"/>
+    <path refid="library.maven:_com.sun.jersey.contribs:jersey-multipart:1.19.1.classpath"/>
+    <path refid="library.maven:_org.jvnet.mimepull:mimepull:1.9.3.classpath"/>
+    <path refid="library.maven:_com.cloudinary:cloudinary-http44:1.4.1.classpath"/>
+    <path refid="library.maven:_com.cloudinary:cloudinary-core:1.4.1.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-lang3:3.1.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpclient:4.4.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpcore:4.4.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.9.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpmime:4.4.classpath"/>
+    <path refid="library.maven:_com.guigarage:flatter:0.7.classpath"/>
+    <path refid="library.maven:_org.apache.pdfbox:pdfbox:2.0.1.classpath"/>
+    <path refid="library.maven:_org.apache.pdfbox:fontbox:2.0.1.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging:1.2.classpath"/>
+  </path>
+  
+  <path id="task-app.runtime.module.classpath">
+    <pathelement location="${task-app.testoutput.dir}"/>
+    <pathelement location="${task-app.output.dir}"/>
+    <path refid="library.maven:_org.jfree:jfreechart:1.0.19.classpath"/>
+    <path refid="library.maven:_org.jfree:jcommon:1.0.23.classpath"/>
+    <path refid="library.maven:_mysql:mysql-connector-java:5.1.38.classpath"/>
+    <path refid="library.maven:_org.slf4j:slf4j-api:1.7.19.classpath"/>
+    <path refid="library.maven:_ch.qos.logback:logback-classic:1.1.6.classpath"/>
+    <path refid="library.maven:_ch.qos.logback:logback-core:1.1.6.classpath"/>
+    <path refid="library.maven:_commons-dbutils:commons-dbutils:1.6.classpath"/>
+    <path refid="library.maven:_org.controlsfx:controlsfx:8.40.10.classpath"/>
+    <path refid="library.maven:_io.datafx:datafx:8.0.7.classpath"/>
+    <path refid="library.maven:_io.datafx:core:8.0.7.classpath"/>
+    <path refid="library.maven:_io.datafx:flow:8.0b9.classpath"/>
+    <path refid="library.maven:_io.datafx:datasources:8.0.1.classpath"/>
+    <path refid="library.maven:_org.glassfish:javax.json:1.0.4.classpath"/>
+    <path refid="library.maven:_io.datafx:injection:8.0.1.classpath"/>
+    <path refid="library.maven:_org.javassist:javassist:3.18.1-ga.classpath"/>
+    <path refid="library.maven:_javax.inject:javax.inject:1.classpath"/>
+    <path refid="library.maven:_de.svenkubiak:jbcrypt:0.4.1.classpath"/>
+    <path refid="library.maven:_com.sun.jersey:jersey-client:1.19.1.classpath"/>
+    <path refid="library.maven:_com.sun.jersey:jersey-core:1.19.1.classpath"/>
+    <path refid="library.maven:_javax.ws.rs:jsr311-api:1.1.1.classpath"/>
+    <path refid="library.maven:_com.sun.jersey.contribs:jersey-multipart:1.19.1.classpath"/>
+    <path refid="library.maven:_org.jvnet.mimepull:mimepull:1.9.3.classpath"/>
+    <path refid="library.maven:_com.cloudinary:cloudinary-http44:1.4.1.classpath"/>
+    <path refid="library.maven:_com.cloudinary:cloudinary-core:1.4.1.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-lang3:3.1.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpclient:4.4.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpcore:4.4.classpath"/>
+    <path refid="library.maven:_commons-codec:commons-codec:1.9.classpath"/>
+    <path refid="library.maven:_org.apache.httpcomponents:httpmime:4.4.classpath"/>
+    <path refid="library.maven:_com.guigarage:flatter:0.7.classpath"/>
+    <path refid="library.maven:_org.apache.pdfbox:pdfbox:2.0.1.classpath"/>
+    <path refid="library.maven:_org.apache.pdfbox:fontbox:2.0.1.classpath"/>
+    <path refid="library.maven:_commons-logging:commons-logging:1.2.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.task-app">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.task-app">
+    <patternset refid="excluded.from.module.task-app"/>
+  </patternset>
+  
+  <path id="task-app.module.sourcepath">
+    <dirset dir="${module.task-app.basedir}">
+      <include name="src/main/java"/>
+      <include name="src/main/resources"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.task-app" depends="compile.module.task-app.production,compile.module.task-app.tests" description="Compile module task-app"/>
+  
+  <target name="compile.module.task-app.production" depends="register.custom.compilers" description="Compile module task-app; production classes">
+    <mkdir dir="${task-app.output.dir}"/>
+    <javac2 destdir="${task-app.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.task-app}/javac">
+      <compilerarg line="${compiler.args.task-app}"/>
+      <bootclasspath refid="task-app.module.bootclasspath"/>
+      <classpath refid="task-app.module.production.classpath"/>
+      <src refid="task-app.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.task-app"/>
+    </javac2>
+    
+    <copy todir="${task-app.output.dir}">
+      <fileset dir="${module.task-app.basedir}/src/main/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.task-app.basedir}/src/main/resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.task-app.tests" depends="register.custom.compilers,compile.module.task-app.production" description="compile module task-app; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.task-app" description="cleanup module">
+    <delete dir="${task-app.output.dir}"/>
+    <delete dir="${task-app.testoutput.dir}"/>
+  </target>
+</project>

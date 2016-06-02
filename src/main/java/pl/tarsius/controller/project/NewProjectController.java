@@ -22,6 +22,7 @@ import pl.tarsius.controller.HomeController;
 import pl.tarsius.database.Model.Project;
 import pl.tarsius.database.Model.User;
 import pl.tarsius.util.gui.BlockDatePicker;
+import pl.tarsius.util.gui.DataFxEXceptionHandler;
 import pl.tarsius.util.gui.StockButtons;
 import pl.tarsius.util.validator.CustomValidator;
 
@@ -29,31 +30,59 @@ import javax.annotation.PostConstruct;
 import java.sql.Timestamp;
 
 /**
+ * Kontroler odpowiadający za dodawanie nowego projektu
  * Created by Jarosław Kuliga on 14.04.16.
  */
 @FXMLController(value = "/view/app/newproject.fxml", title = "Dodaj projekt - Tarsius")
 public class NewProjectController extends BaseController {
+
+    /**
+     * Pole mapujące TextField na tytuł projektu
+     */
     @FXML private TextField newProjectTitleField;
+    /**
+     * Pole mapujące TextField na opis projektu
+     */
     @FXML private TextField newProjectDescField;
+    /**
+     * Pole mapujące DataPicker na date zakończenia projektu
+     */
     @FXML
     private DatePicker newProjectDatePicker;
 
+    /**
+     * DataFX FlowActionHandler
+     */
     @ActionHandler
     private FlowActionHandler flowActionHandler;
 
-    @FXML
-    @ActionTrigger("cleanDate") private Button newProjectDatePickerClean;
+    /**
+     * Button odpowiadający za usuwanie daty z DataPickera
+     */
+    @FXML @ActionTrigger("cleanDate") private Button newProjectDatePickerClean;
 
+    /**
+     * Button obsługujący zapis projektu
+     */
     @FXML
     @ActionTrigger("saveProject")
     private Button newProjectSave;
+    /**
+     * Buton obsługujący akcje cofania (Anuluj)
+     */
     @FXML @LinkAction(HomeController.class) private Button newProjectCancel;
 
-    ValidationSupport validationSupport;
+    /**
+     * Pole na validator formularza
+     */
+    private ValidationSupport validationSupport;
 
 
+    /**
+     * Metoda inicjalizująca kontroler
+     */
     @PostConstruct
-    public void init() throws FxmlLoadException {
+    public void init() {
 
         new StockButtons(operationButtons, flowActionHandler).homeAction();
 
@@ -72,6 +101,9 @@ public class NewProjectController extends BaseController {
 
     }
 
+    /**
+     * Metoda zapisująca nowy  projekt do bazy
+     */
    @ActionMethod("saveProject")
    public void saveProject() throws VetoException, FlowException {
 
@@ -104,15 +136,9 @@ public class NewProjectController extends BaseController {
            });
            task.setOnSucceeded(event -> {
                if((boolean)task.getValue()[0]) {
-                   try {
-                       new Alert(Alert.AlertType.INFORMATION, (String) task.getValue()[2]).show();
-                       ApplicationContext.getInstance().register("projectId", task.getValue()[1]);
-                       flowActionHandler.navigate(ShowProjectController.class);
-                   } catch (VetoException e) {
-                       e.printStackTrace();
-                   } catch (FlowException e) {
-                       e.printStackTrace();
-                   }
+                   new Alert(Alert.AlertType.INFORMATION, (String) task.getValue()[2]).show();
+                   ApplicationContext.getInstance().register("projectId", task.getValue()[1]);
+                   DataFxEXceptionHandler.navigateQuietly(flowActionHandler,ShowProjectController.class);
                } else {
                    new Alert(Alert.AlertType.ERROR, (String) task.getValue()[2]).show();
                }
@@ -123,6 +149,9 @@ public class NewProjectController extends BaseController {
 
    }
 
+    /**
+     * Metoda usuwająca datę z DataPickera
+     */
     @ActionMethod("cleanDate")
     public void cleanDate() {
         newProjectDatePicker.setValue(null);

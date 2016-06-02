@@ -210,7 +210,7 @@ public class NewTaskController extends BaseController{
                 if((boolean)task.getValue()[0]) {
                     new Alert(Alert.AlertType.INFORMATION,(String)task.getValue()[1]).show();
                     try {
-                        ApplicationContext.getInstance().register("taskId", (long) task.getValue()[2]);
+                        ApplicationContext.getInstance().register("taskId", task.getValue()[2]);
                         flowActionHandler.navigate(ShowTaskController.class);
                     } catch (VetoException e) {
                         e.printStackTrace();
