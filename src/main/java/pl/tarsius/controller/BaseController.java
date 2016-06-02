@@ -221,11 +221,9 @@ public abstract class BaseController {
 
     /**
      * Metoda otwierająca profil obecnie zalogowanego użytkownika
-     * @throws VetoException
-     * @throws FlowException
      */
     @ActionMethod("OpenProfile")
-    public void OpenProfile() throws VetoException, FlowException {
+    public void OpenProfile() {
         navigateToProfile(null);
     }
 
@@ -235,6 +233,8 @@ public abstract class BaseController {
         HashSet<Long> bucket = (HashSet<Long>) ApplicationContext.getInstance().getRegisteredObject("reportBucket");
         bucket.add(projectId);
         ApplicationContext.getInstance().register("reportBucket", bucket);
+        Platform.runLater(() -> sideBarRaportsCount.setText(""+bucket.size()));
+
     }
 
 
