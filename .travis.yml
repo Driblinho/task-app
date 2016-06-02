@@ -6,6 +6,8 @@ notifications:
 jdk:
     - oraclejdk8
 
+sudo: required
+
 before_install:
    - apt-get update
    - apt-get install -y maven
