@@ -57,19 +57,3 @@
 .bread-crumb-bar .button {
     -fx-background-radius: 3, 2, 2;
 }
-
-
-.pagination{
-    -fx-page-information-visible
-}
-.pagination .pagination-control .bullet-button {
-    -fx-background-color: transparent, #DDF1F8, #0E5D79, white, white;
-}
-
-.pagination .pagination-control .bullet-button:selected {
-    -fx-background-color: transparent, #DDF1F8, #0E5D79, white, #0E5D79;
-}
-
-.pagination .pagination-control .left-arrow, .right-arrow{
-    -fx-background-color: #DDF1F8, #0E5D79;
-}
