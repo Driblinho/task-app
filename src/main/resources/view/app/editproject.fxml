@@ -10,9 +10,8 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import org.controlsfx.control.BreadCrumbBar?>
-<?import org.controlsfx.control.ListSelectionView?>
 
-<StackPane xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <BorderPane fx:id="body" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1170.0">
          <left>
@@ -31,13 +30,11 @@
 
                         <TextField fx:id="editProjectTitleField" layoutX="14.0" layoutY="14.0" prefHeight="25.0" prefWidth="930.0" promptText="Tytuł" />
                         <TextField fx:id="editProjectDescField" layoutX="14.0" layoutY="54.0" prefHeight="100.0" prefWidth="930.0" promptText="Opis" />
+                        <DatePicker fx:id="editProjectDatePicker" editable="false" layoutX="14.0" layoutY="174.0" promptText="Data zakończenia" />
 
-                        <ListSelectionView fx:id="editProjectSelectUser" layoutX="13.0" layoutY="164.0" prefHeight="235.0" prefWidth="547.0" style="-fx-background-color: #fff;" styleClass="shadowBox" />
-                        <DatePicker fx:id="editProjectDatePicker" editable="false" layoutX="14.0" layoutY="421.0" promptText="Data zakończenia" />
-
-                        <Button fx:id="editProjectDatePickerClean" layoutX="221.0" layoutY="421.0" mnemonicParsing="false" text="Usuń datę " />
-                        <Button fx:id="editProjectSave" layoutX="14.0" layoutY="467.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="130.0" styleClass="greenButton" text="Zapisz" />
-                        <Button fx:id="editProjectCancel" layoutX="156.0" layoutY="467.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="130.0" styleClass="redButton" text="Anuluj" />
+                        <Button fx:id="editProjectDatePickerClean" layoutX="221.0" layoutY="174.0" mnemonicParsing="false" text="Usuń datę " />
+                        <Button fx:id="editProjectSave" layoutX="14.0" layoutY="220.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="130.0" styleClass="greenButton" text="Zapisz" />
+                        <Button fx:id="editProjectCancel" layoutX="156.0" layoutY="220.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="130.0" styleClass="redButton" text="Anuluj" />
                      </children>
                   </AnchorPane>
       

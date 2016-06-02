@@ -56,7 +56,7 @@ public class UserAuth {
             if(!resultSet.getBoolean("aktywny")) {
                 value[1] = "Użytkownik nie jest aktywny";
                 return value;
-            };
+            }
             Timestamp lock = resultSet.getTimestamp("blokada");
             if(lock!=null && lock.before(new Timestamp(new Date().getTime()))) {
                 value[1] = "Użytkownik zablokowany do: "+lock.toString();
@@ -66,7 +66,7 @@ public class UserAuth {
 
 
         } catch (SQLException e) {
-            loger.debug(e.getSQLState());
+            loger.debug("create user", e);
             value[1] = "Problem z bazą danych";
             return value;
         }
@@ -169,13 +169,9 @@ public class UserAuth {
                 preparedStatement.setString(i++, token);
                 preparedStatement.setTimestamp(i++, Timestamp.valueOf(tokenTime));
                 preparedStatement.setLong(i++, userId);
-                int up = preparedStatement.executeUpdate();
-
-                Properties properties = new Properties();
+                preparedStatement.executeUpdate();
                 try {
-                    InputStream cfgFile = UserAuth.class.getResourceAsStream("/properties/mail.properties");
-                    properties.load(cfgFile);
-                    Mail mail = new Mail(properties.getProperty("apiKey"),UserAuth.class.getResourceAsStream("/assets/emailtempleate.html"));
+                    Mail mail = new Mail(UserAuth.class.getResourceAsStream("/assets/emailtempleate.html"));
                     mail.setToken(token);
                     mail.setApDomain("mail@taskapp.com");
                     mail.setSubject("Zmiana hasła");

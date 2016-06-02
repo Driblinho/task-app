@@ -13,10 +13,7 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TreeItem;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -25,13 +22,15 @@ import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import org.controlsfx.control.BreadCrumbBar;
 import pl.tarsius.controller.invite.InvitesController;
+import pl.tarsius.controller.project.EditProjectController;
 import pl.tarsius.controller.project.NewProjectController;
-import pl.tarsius.controller.project.ShowProject;
+import pl.tarsius.controller.project.ShowProjectController;
 import pl.tarsius.controller.raport.ReportController;
 import pl.tarsius.controller.task.*;
 import pl.tarsius.controller.users.UsersListController;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.User;
+import pl.tarsius.util.gui.DataFxEXceptionHandler;
 import pl.tarsius.util.gui.MyBread;
 import pl.tarsius.util.gui.ResponsiveDesign;
 
@@ -60,7 +59,6 @@ public abstract class BaseController {
     @FXML public Circle userBarAvatar;
 
     @FXML
-    //@LinkAction(MyProfileController.class)
     @ActionTrigger("OpenProfile")
     public Hyperlink userBarFullName;
 
@@ -101,7 +99,7 @@ public abstract class BaseController {
 
     public TreeItem<MyBread> root = new TreeItem<MyBread>(new MyBread("Home", HomeController.class));
 
-    public TreeItem<MyBread> signalProject = new TreeItem<MyBread>(new MyBread("Projekt",ShowProject.class));
+    public TreeItem<MyBread> signalProject = new TreeItem<MyBread>(new MyBread("Projekt",ShowProjectController.class));
     public TreeItem<MyBread> task = new TreeItem<MyBread>(new MyBread("Zadanie", ShowTaskController.class));
     public TreeItem<MyBread> noweTask = new TreeItem<>(new MyBread("Dodaj task", NewTaskController.class));
     public TreeItem<MyBread> changeTaskStatus = new TreeItem<>(new MyBread("Zmień status", StatusController.class));
@@ -112,9 +110,17 @@ public abstract class BaseController {
     public TreeItem<MyBread> useresManagment = new TreeItem<>(new MyBread("Zarządzanie użytkownikami", UsersListController.class));
     public TreeItem<MyBread> profilView = new TreeItem<>(new MyBread("Profil", MyProfileController.class));
     public TreeItem<MyBread> bucketReport = new TreeItem<>(new MyBread("Raporty", ReportController.class));
+    public TreeItem<MyBread> editProject = new TreeItem<>(new MyBread("Edytuj projekt", EditProjectController.class));
+    public TreeItem<MyBread> about = new TreeItem<>(new MyBread("O programie", AboutController.class));
+    public TreeItem<MyBread> addUserToProject = new TreeItem<>(new MyBread("Dodaj do projektu", ReportController.class));
     public User user;
 
 
+    /**
+     * Setter for property 'userBar'.
+     *
+     * @param user Value to set for property 'userBar'.
+     */
     public void setUserBar(User user) {
         userBarFullName.setText(user.getImie()+" "+user.getNazwisko());
         userBarAvatar.setFill(new ImagePattern(new Image(user.getAvatarUrl())));
@@ -131,13 +137,11 @@ public abstract class BaseController {
 
 
 
-        signalProject.getChildren().addAll(task, noweTask);
+        signalProject.getChildren().addAll(task, noweTask,editProject,addUserToProject);
         task.getChildren().addAll(changeTaskStatus, editTask);
 
-
-        root.getChildren().addAll(signalProject, newProject, myTaskList, myInv, useresManagment, profilView, bucketReport);
+        root.getChildren().addAll(signalProject, newProject, myTaskList, myInv, useresManagment, profilView, bucketReport,about);
         breadCrumb=new BreadCrumbBar(root);
-
 
         Platform.runLater(() -> {
             new ResponsiveDesign((Stage) operationButtons.getParent().getScene().getWindow()).resizeBodyWidth(operationButtons.getParent().getScene().getWindow().getWidth());
@@ -163,6 +167,11 @@ public abstract class BaseController {
                 data.put("zadania", 0L);
                 data.put("zaproszenia", 0L);
                 data.put("raporty", 0L);
+
+                HashSet<Long> bucket = (HashSet<Long>) ApplicationContext.getInstance().getRegisteredObject("reportBucket");
+                if(bucket!=null && bucket.size()>0)
+                    data.put("raporty", (long) bucket.size());
+
                 try {
                     Connection connection = new InitializeConnection().connect();
                     Statement st = connection.createStatement();
@@ -197,7 +206,7 @@ public abstract class BaseController {
                 sideBarProjectCount.setText(""+loc.get("projekty"));
                 sideBarTaskCount.setText(loc.get("zadania") + "");
                 sideBarInvCount.setText(loc.get("zaproszenia") + "");
-                sideBarRaportsCount.setText("1");
+                sideBarRaportsCount.setText(loc.get("raporty") + "");
             });
 
         });
@@ -209,11 +218,15 @@ public abstract class BaseController {
 
     }
 
+
+    /**
+     * Metoda otwierająca profil obecnie zalogowanego użytkownika
+     * @throws VetoException
+     * @throws FlowException
+     */
     @ActionMethod("OpenProfile")
     public void OpenProfile() throws VetoException, FlowException {
-        Long l = null;
-        ApplicationContext.getInstance().register("showUserID", l);
-        flowActionHandler.navigate(MyProfileController.class);
+        navigateToProfile(null);
     }
 
     @ActionMethod("AddToBucket")
@@ -222,7 +235,6 @@ public abstract class BaseController {
         HashSet<Long> bucket = (HashSet<Long>) ApplicationContext.getInstance().getRegisteredObject("reportBucket");
         bucket.add(projectId);
         ApplicationContext.getInstance().register("reportBucket", bucket);
-        System.out.println("KLIKNOLEM DODALEM");
     }
 
 
@@ -230,14 +242,23 @@ public abstract class BaseController {
         return event -> {
             System.out.println(event.getSelectedCrumb().toString());
             MyBread b = (MyBread) event.getSelectedCrumb().getValue();
-            try {
-                flowActionHandler.navigate(b.getLink());
-            } catch (VetoException e) {
-                e.printStackTrace();
-            } catch (FlowException e) {
-                e.printStackTrace();
-            }
+            DataFxEXceptionHandler.navigateQuietly(flowActionHandler,b.getLink());
         };
+    }
+
+    /**
+     * Metoda odpowiada za nawigację do profilu użytkownika
+     * @param profileID ID użytkownika którego profil ma zostać wyświetlony
+     * @throws VetoException
+     * @throws FlowException
+     */
+    public void navigateToProfile(Long profileID) {
+        user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
+        if(profileID!=null && user.getUzytkownikId()==profileID)
+            profileID=null;
+
+        ApplicationContext.getInstance().register("showUserID", profileID); //Usunięcie wartość odpowiadającej za otwieranie profilu niezalogowanego użytkownika
+        DataFxEXceptionHandler.navigateQuietly(flowActionHandler,MyProfileController.class);
     }
 
 

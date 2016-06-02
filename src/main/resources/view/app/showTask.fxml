@@ -106,7 +106,7 @@
                                        </VBox.margin>
                                     </SegmentedButton>
                                     <VBox fx:id="taskCommentList" spacing="10.0" />
-                                    <Pagination fx:id="taskCommentPg" prefHeight="51.0" prefWidth="961.0" />
+                                    <Pagination fx:id="taskCommentPg" pageCount="1" prefHeight="51.0" prefWidth="961.0" visible="false" />
                                  </children>
                                  <padding>
                                     <Insets top="10.0" />

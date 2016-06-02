@@ -40,7 +40,7 @@ import java.util.Properties;
 /**
  * Created by Ireneusz Kuliga on 02.04.16.
  */
-@FXMLController(value = "/view/app/profile.fxml", title = "TaskApp - Moje Dane")
+@FXMLController(value = "/view/app/profile.fxml", title = "Profil użytkownika - Tarsius")
 public class MyProfileController extends BaseController {
 
     private Logger loger;
@@ -309,11 +309,8 @@ public class MyProfileController extends BaseController {
     }
 
     private void infoEmail(String email) {
-        Properties properties = new Properties();
         try {
-            InputStream cfgFile = new FileInputStream(UserAuth.class.getClassLoader().getResource("properties/mail.properties").getFile());
-            properties.load(cfgFile);
-            Mail mail = new Mail(properties.getProperty("apiKey"),UserAuth.class.getResourceAsStream("/assets/emailtempleate.html"));
+            Mail mail = new Mail(UserAuth.class.getResourceAsStream("/assets/emailtempleate.html"));
             mail.setToken("Pozdrowienia");
             mail.setApDomain("mail@taskapp.com");
             mail.setSubject("Zmiana danych profilowych");
@@ -327,6 +324,7 @@ public class MyProfileController extends BaseController {
             loger.debug("Mail Status:" + clientResponse.getStatus());
         } catch (java.io.IOException e) {
             loger.debug("Mail: ",e);
+            new Alert(Alert.AlertType.ERROR,"Błąd podczas wysyłania wiadomości email").show();
         }
     }
 

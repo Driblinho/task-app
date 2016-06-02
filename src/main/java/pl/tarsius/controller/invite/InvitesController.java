@@ -2,36 +2,31 @@ package pl.tarsius.controller.invite;
 
 import io.datafx.controller.FXMLController;
 import io.datafx.controller.context.ApplicationContext;
-import io.datafx.controller.flow.FlowException;
 import io.datafx.controller.flow.context.ActionHandler;
 import io.datafx.controller.flow.context.FlowActionHandler;
-import io.datafx.controller.util.VetoException;
 import io.datafx.io.DataReader;
 import io.datafx.io.JdbcSource;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import javafx.event.WeakEventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.SegmentedButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.tarsius.controller.BaseController;
-import pl.tarsius.controller.project.ShowProject;
+import pl.tarsius.controller.project.ShowProjectController;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.Invite;
 import pl.tarsius.database.Model.Project;
 import pl.tarsius.database.Model.User;
+import pl.tarsius.util.gui.DataFxEXceptionHandler;
 import pl.tarsius.util.gui.StockButtons;
 
 import javax.annotation.PostConstruct;
@@ -39,40 +34,56 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
 
 /**
+ * Kontroler odpowiadający z a wyświetlanie i zarządzanie użytkownikami
  * Created by Ireneusz Kuliga on 19.04.16.
  */
-@FXMLController(value = "/view/app/myInv.fxml", title = "TaskApp - Moje Zaproszenia")
+@FXMLController(value = "/view/app/myInv.fxml", title = "Moje Zaproszenia - Tarsius" )
 public class InvitesController extends BaseController {
+
 
     @FXML private SegmentedButton invFiltr;
     @FXML private SegmentedButton invSort;
 
+    /**
+     * Pole mapujące element FXML odpowiadający za wyświetlanie listy zaproszeń
+     */
+    @FXML private VBox invContent;
 
-    @FXML
-    private VBox invContent;
-
+    /**
+     * Pole mapujące element FXML odpowiadający za stronicowanie zaproszeń
+     */
     @FXML private Pagination invPagination;
 
+    /**
+     * DataFX FlowActionHandler
+     */
     @ActionHandler
     private FlowActionHandler flowActionHandler;
-    private Logger loger;
 
+
+    /**
+     * Loger
+     */
+    private static Logger loger = LoggerFactory.getLogger(InvitesController.class);
+
+    /**
+     * Pole pomagające określić czy filtrować po zaproszeniach od kierownika
+     */
     private boolean isBoss;
 
 
+    /**
+     * Metoda inicjalizująca kontroler Zaproszeń
+     */
     @PostConstruct
     public void init() {
 
         breadCrumb.setSelectedCrumb(myInv);
         breadCrumb.setOnCrumbAction(crumbActionEventEventHandler());
 
-
-        sort="DESC";
         invPagination.setPageCount(1);
-        loger = LoggerFactory.getLogger(getClass());
         User user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
         new StockButtons(operationButtons, flowActionHandler).homeAction();
 
@@ -149,6 +160,11 @@ public class InvitesController extends BaseController {
 
     }
 
+
+    /** Meada zwraca <code>GridPane</code> z zaproszeniem użytkownika
+     * @param invite Obiekt reprezentujący zaproszenie
+     * @return GridPane
+     */
     private GridPane invRow(Invite invite) {
         GridPane gridPane = new GridPane();
         try {
@@ -167,7 +183,7 @@ public class InvitesController extends BaseController {
 
             cancel.setOnAction(event -> {
                 Button b = (Button) event.getSource();
-                Node n = (Node) b.getParent();
+                Node n = b.getParent();
                 Task<Object[]> task = new Task<Object[]>() {
                     @Override
                     protected Object[] call() throws Exception {
@@ -178,13 +194,7 @@ public class InvitesController extends BaseController {
                 task.setOnSucceeded(event1 -> {
                     loading.setVisible(false);
                     if((boolean)task.getValue()[0]) {
-                        try {
-                            flowActionHandler.navigate(InvitesController.class);
-                        } catch (VetoException e) {
-                            loger.debug("Cancdel Inv TaskDb", e);
-                        } catch (FlowException e) {
-                            loger.debug("Cancdel Inv TaskDb", e);
-                        }
+                        DataFxEXceptionHandler.navigateQuietly(flowActionHandler, InvitesController.class);
                     } else {
                         new Alert(Alert.AlertType.INFORMATION,""+task.getValue()[1]).show();
                     }
@@ -209,23 +219,13 @@ public class InvitesController extends BaseController {
                         }
                     };
                     task.setOnSucceeded(event1 -> {
-                        try {
-                            if((boolean)task.getValue()[0]) {
-                                flowActionHandler.navigate(ShowProject.class);
-                            }
-                            loading.setVisible(false);
-                            new Alert(Alert.AlertType.INFORMATION,(String) task.getValue()[1]).show();
-                        } catch (VetoException e) {
-                            e.printStackTrace();
-                        } catch (FlowException e) {
-                            e.printStackTrace();
+                        loading.setVisible(false);
+                        if((boolean)task.getValue()[0]) {
+                            DataFxEXceptionHandler.navigateQuietly(flowActionHandler,ShowProjectController.class);
                         }
+                        new Alert(Alert.AlertType.INFORMATION,(String) task.getValue()[1]).show();
                     });
-
                     new Thread(task).start();
-
-
-
             });
 
             projectName.setText(invite.getNazwaProjektu());
@@ -235,13 +235,20 @@ public class InvitesController extends BaseController {
 
 
         } catch (IOException e) {
-            e.printStackTrace();
+            loger.debug("Szablon zaproszeń", e);
         } finally {
             return gridPane;
         }
 
     }
 
+    /**
+     * Metoda generująca task który wyświetla zaproszenia użytkownika
+     * @param connection Połączenie bazy danych
+     * @param userId Identyfikator użytkownika dla którego mają zastać wyświetlone zaproszenia
+     * @param page Index strony dla stronicowania
+     * @return Task wyświetlający zaproszenia
+     */
     public Task<ObservableList<Invite>> inviteTask(Connection connection, long userId,int page) {
 
         String sql = "select {tpl} " +
@@ -271,7 +278,13 @@ public class InvitesController extends BaseController {
                     ResultSet rs = connection.prepareStatement(sqlCount).executeQuery();
                     rs.next();
                     long count = rs.getLong(1);
-                    Platform.runLater(() -> invPagination.setPageCount((int) Math.ceil((float)count/perPage)));
+                    int pageCount = (int) Math.ceil((float)count/perPage);
+                    Platform.runLater(() -> {
+                        if(pageCount>0) {
+                            invPagination.setVisible(true);
+                            invPagination.setPageCount(pageCount);
+                        }
+                    });
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

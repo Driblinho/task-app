@@ -7,18 +7,30 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="60.0" prefWidth="960.0" style="-fx-background-color: #fff;" xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="60.0" prefWidth="960.0" style="-fx-background-color: #fff;" stylesheets="@../../assets/css/main.css" xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Hyperlink fx:id="taskName" layoutX="14.0" prefHeight="29.0" prefWidth="310.0" styleClass="taskName" text="Jan Kowalski">
+      <Hyperlink fx:id="taskName" focusTraversable="false" layoutX="12.0" prefHeight="29.0" prefWidth="568.0" styleClass="taskName" text="nazwa" textFill="#141414">
          <font>
-            <Font size="18.0" />
+            <Font name="System Bold" size="18.0" />
          </font>
       </Hyperlink>
-      <Label layoutX="333.0" layoutY="24.0" styleClass="taskdateLable" text="Data zakończenia" />
-      <Text layoutX="466.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="taskDate" text="10.10.10" />
-      <Hyperlink layoutX="96.0" layoutY="28.0" prefHeight="24.0" prefWidth="220.0" styleClass="taskUser" text="Name" />
-      <Label layoutX="14.0" layoutY="32.0" styleClass="taskUserL" text="Przypisano:" />
-      <Label layoutX="822.0" layoutY="11.0" prefHeight="41.0" prefWidth="116.0" styleClass="taskStatus" text="STATUS ZADANIA" />
+      <Label layoutX="333.0" layoutY="28.0" styleClass="taskdateLable" text="Data zakończenia">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font></Label>
+      <Text layoutX="466.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="taskDate" text="10.10.10" />
+      <Hyperlink focusTraversable="false" layoutX="101.0" layoutY="28.0" prefHeight="24.0" prefWidth="220.0" style="-fx-text-fill: #6BDCC0;" styleClass="taskUser" text="Name">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font></Hyperlink>
+      <Label layoutX="14.0" layoutY="32.0" styleClass="taskUserL" text="Przypisano:">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font></Label>
+      <Label layoutX="606.0" layoutY="14.0" prefHeight="41.0" prefWidth="142.0" styleClass="taskStatus" text="STATUS ZADANIA">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font></Label>
    </children>
    <styleClass>
       <String fx:value="shadowBox" />

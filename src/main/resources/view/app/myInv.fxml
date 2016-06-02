@@ -23,7 +23,7 @@
                   <fx:include source="../userbar.fxml" />
                   <BreadCrumbBar fx:id="breadCrumb" />
                   <fx:include source="invitation.fxml" />
-                  <Pagination fx:id="invPagination" prefHeight="49.0" prefWidth="960.0" />
+                  <Pagination fx:id="invPagination" prefHeight="49.0" prefWidth="960.0" visible="false" />
                </children>
             </VBox>
          </center>

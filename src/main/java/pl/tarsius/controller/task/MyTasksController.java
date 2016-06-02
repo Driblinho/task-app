@@ -12,10 +12,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
-import javafx.scene.control.Pagination;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -33,10 +30,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-/**
+/** Kontroler odpowiadający za wyświetlanie zadań użytkownika
  * Created by ireq on 30.04.16.
  */
-@FXMLController(value = "/view/app/mytasklist.fxml", title = "TaskApp")
+@FXMLController(value = "/view/app/mytasklist.fxml", title = "Moje zadania - Tarsius")
 public class MyTasksController extends BaseController {
 
     @FXML private CheckBox filtrNew;
@@ -47,7 +44,8 @@ public class MyTasksController extends BaseController {
     @FXML private VBox taskList;
     @FXML private Pagination pagination;
     private static Logger loger = LoggerFactory.getLogger(MyTasksController.class);
-    private User user;
+    private static int PER_PAGE = 8;
+
 
     @PostConstruct
     public void init() {
@@ -70,7 +68,8 @@ public class MyTasksController extends BaseController {
             filtrInProgres.setOnMouseClicked(event -> new Thread(renderTasks(connection,0)).start());
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            loger.debug("Moja lista zadań", e);
+            new Alert(Alert.AlertType.ERROR, "Problem z bazą danych").show();
         }
     }
 
@@ -93,6 +92,9 @@ public class MyTasksController extends BaseController {
             taskStatus.setText(status);
 
             taskName.setText(taskDb.getName());
+
+            taskUser.setOnAction(event -> navigateToProfile(taskDb.getUserId()));
+
             taskName.setOnAction(event -> {
                 try {
                     ApplicationContext.getInstance().register("taskId", taskDb.getId());
@@ -127,7 +129,7 @@ public class MyTasksController extends BaseController {
         String sql = "select {tpl} from Zadania z,Uzytkownicy u where z.uzytkownik_id=u.uzytkownik_id and z.uzytkownik_id="+user.getUzytkownikId();
 
 
-        int perPage=1;
+        int perPage=PER_PAGE;
 
 
 
@@ -151,8 +153,6 @@ public class MyTasksController extends BaseController {
         }
 
         String countSql = sql.replace("{tpl}", "count(*)");
-
-        loger.debug("IN TEST: "+ stan);
         if (!sort.isEmpty()) sql+= " order by data_dodania "+sort;
         sql+= " limit "+page*perPage+","+perPage+"";
         sql=sql.replace("{tpl}", "*");
@@ -167,19 +167,16 @@ public class MyTasksController extends BaseController {
                     ResultSet rs = connection.prepareStatement(countSql).executeQuery();
                     rs.next();
                     long count = rs.getLong(1);
-                    int pageCount = (int) Math.ceil(count/perPage);
+                    int pageCount = (int) Math.ceil(count/(float)perPage);
                     if(pageCount==0) {
                         Platform.runLater(() -> pagination.setVisible(false));
-                        return observableList;
-                    }
-                    else {
+                    } else {
                         Platform.runLater(() -> {
                             pagination.setVisible(true);
                             pagination.setPageCount(pageCount);
                             pagination.setCurrentPageIndex(page);
                         });
                     }
-
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

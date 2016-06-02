@@ -3,12 +3,10 @@ package pl.tarsius.controller.project;
 
 import io.datafx.controller.FXMLController;
 import io.datafx.controller.context.ApplicationContext;
-import io.datafx.controller.flow.FlowException;
 import io.datafx.controller.flow.action.ActionMethod;
 import io.datafx.controller.flow.action.ActionTrigger;
 import io.datafx.controller.flow.context.ActionHandler;
 import io.datafx.controller.flow.context.FlowActionHandler;
-import io.datafx.controller.util.VetoException;
 import io.datafx.io.DataReader;
 import io.datafx.io.JdbcSource;
 import javafx.application.Platform;
@@ -33,6 +31,7 @@ import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.Project;
 import pl.tarsius.database.Model.TaskDb;
 import pl.tarsius.database.Model.User;
+import pl.tarsius.util.gui.DataFxEXceptionHandler;
 import pl.tarsius.util.gui.StockButtons;
 
 import javax.annotation.PostConstruct;
@@ -42,53 +41,148 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Map;
+import java.util.Optional;
 
-/**
+/** Kontroler odpowiadający za Wyświetlanie pojedynczego projektu
  * Created by Ireneusz Kuliga on 15.04.16.
  */
-@FXMLController(value = "/view/app/widokprojektu.fxml", title = "TaskApp")
-public class ShowProject extends BaseController{
+@FXMLController(value = "/view/app/widokprojektu.fxml", title = "Projekt - Tarsius")
+public class ShowProjectController extends BaseController{
 
+    /**
+     * Mapowanie {@link Label} z FXML (Tytuł projektu)
+     */
     @FXML private Label inprojectTitle;
+    /**
+     * Mapowanie {@link Text} z FXML (Opis projektu)
+     */
     @FXML private Text inprojectDesc;
+    /**
+     * Mapowanie {@link Text} z FXML (Data rozpoczęcia projektu)
+     */
     @FXML private Text inprojectDataStart;
+    /**
+     * Mapowanie {@link Text} z FXML (Data zakończenia projektu)
+     */
     @FXML private Text inprojectDataStop;
+    /**
+     * Mapowanie {@link Label} z FXML (Nagłówek zakończenia projektu)
+     */
     @FXML private Label inprojectDataStopLabel;
+    /**
+     * Mapowanie {@link Pagination} z FXML (Stronicowanie uczestników projektu)
+     */
     @FXML private Pagination InProjectMemberPagination;
+    /**
+     * DataFX {@link FlowActionHandler}
+     */
     @ActionHandler
     private FlowActionHandler flowActionHandler;
 
+    /**
+     * {@link Hyperlink} obsługujący wyświetlanie profilu użytkownika projektu
+     */
     @FXML
     @ActionTrigger("showAuthorProfile")
     private Hyperlink inprojectAuthor;
 
+    /**
+     * {@link VBox} na uczestników projektu
+     */
     @FXML
     private VBox userInProject;
 
+    /**
+     * Pole na dane otwartego projektu
+     */
     private Project project;
 
+    /**
+     * Sortowanie użytkowników
+     */
     @FXML private SegmentedButton sortProjectUsers;
+
+    /**
+     * Sortowanie Zadań
+     */
     @FXML private SegmentedButton sortProjectTask;
+
+    /**
+     * {@link VBox} na zadania w projekcie
+     */
     @FXML private VBox taskInProject;
+    /**
+     * Stronicowanie zadań
+     */
     @FXML private Pagination inProjectTaskPg;
 
+    /**
+     * Zakładka użytkownicy
+     */
     @FXML private Tab userTab;
+    /**
+     * Zakładka zadania
+     */
     @FXML private Tab taskTab;
 
+    /**
+     * {@link CheckBox} na filtr (Nowe zadania)
+     */
     @FXML private CheckBox filtrNew;
+    /**
+     * {@link CheckBox} na filtr (Do sprawdzenia)
+     */
     @FXML private CheckBox filtrForTest;
+    /**
+     * {@link CheckBox} na filtr (Zakończone)
+     */
     @FXML private CheckBox filtrEnd;
+    /**
+     * {@link CheckBox} na filtr (W trakcie)
+     */
     @FXML private CheckBox filtrInProgres;
+    /**
+     * {@link CheckBox} na filtr (Moje zadania)
+     */
+    @FXML private CheckBox filtrOnlyMy;
 
+    /**
+     * {@link Text} na ilość zadań nowych
+     */
     @FXML Text taskCountNew;
+    /**
+     * {@link Text} na ilość zadań w trakcie
+     */
     @FXML Text taskCountInProgress;
+    /**
+     * {@link Text} na ilość zadań do sprawdzenia
+     */
     @FXML Text taskCountForTest;
+    /**
+     * {@link Text} na ilość zadań zakończonych
+     */
     @FXML Text taskCountEnd;
 
-    @FXML @ActionTrigger("AddToBucket") private Button addToReportBucket;
 
-    private static Logger loger = LoggerFactory.getLogger(ShowProject.class);
+    /**
+     * {@link Button} obsługujący dodawanie projektu do koszyka
+     */
+    @FXML
+    @ActionTrigger("AddToBucket") private Button addToReportBucket;
 
+    /**
+     * {@link Logger}
+     */
+    private static Logger loger = LoggerFactory.getLogger(ShowProjectController.class);
+
+    /**
+     * Ilość użytkowników i zadań na stronie
+     */
+    private static final int USER_AND_TASK_PER_PAGE = 6;
+
+    /**
+     * Metoda inicjalizująca kontroler
+     */
     @PostConstruct
     public void init(){
 
@@ -112,6 +206,7 @@ public class ShowProject extends BaseController{
         sortProjectTask.getButtons().addAll(ascTask,descTask);
 
         project = Project.getProject((long)ApplicationContext.getInstance().getRegisteredObject("projectId"));
+        user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
         ApplicationContext.getInstance().register("projectModel", project);
         new StockButtons(operationButtons, flowActionHandler).inProjectButton();
         ApplicationContext.getInstance().register("projectLider", project.getLider());
@@ -166,6 +261,8 @@ public class ShowProject extends BaseController{
             });
 
 
+
+
             InProjectMemberPagination.currentPageIndexProperty().addListener((observable, oldValue, newValue) -> {
                 new Thread(renderUser(connection,newValue.intValue())).start();
             });
@@ -178,6 +275,7 @@ public class ShowProject extends BaseController{
             filtrForTest.setOnMouseClicked(event -> new Thread(renderTasks(connection,0)).start());
             filtrEnd.setOnMouseClicked(event -> new Thread(renderTasks(connection,0)).start());
             filtrInProgres.setOnMouseClicked(event -> new Thread(renderTasks(connection,0)).start());
+            filtrOnlyMy.setOnMouseClicked(event -> new Thread(renderTasks(connection,0)).start());
 
 
             Task<Map<TaskDb.Status,Long>> countTask = new Task<Map<TaskDb.Status, Long>>() {
@@ -203,22 +301,54 @@ public class ShowProject extends BaseController{
 
     }
 
+    /**
+     * Metoda obsługująca przechodzenie do profilu lider projektu
+     */
     @ActionMethod("showAuthorProfile")
-    public void showAuthorProfile() throws VetoException, FlowException {
-        System.out.println("OOOPEN"+project.getLider());
-        // TODO: 29.05.16 Otwieranie profilu
+    public void showAuthorProfile() {
+        navigateToProfile(project.getLider());
     }
 
 
-    private AnchorPane inProjectUser(User user){
+    /**
+     * Metoda generująca pojedynczy wiersz z użytkownikami uczestniczącymi w projekcie
+     * @param userData Obiekt reprezentujący dane użytkownika
+     * @return AnchorPane - wiersz z użytkownikiem
+     */
+    private AnchorPane inProjectUser(User userData){
         try {
             AnchorPane anchorPane  = FXMLLoader.load(getClass().getClassLoader().getResource("view/app/userInProjectTPL.fxml"));
             Circle avatar = (Circle) anchorPane.lookup(".userInProjectAvatar");
             Hyperlink name = (Hyperlink) anchorPane.lookup(".userInProjectName");
             Text task = (Text) anchorPane.lookup(".userInProjectTaskCount");
             Text endTask = (Text) anchorPane.lookup(".userInProjectTaskEndCount");
-            avatar.setFill(new ImagePattern(new Image(user.getAvatarUrl())));
-            name.setText(user.getImieNazwisko());
+            Button removeBtn = (Button) anchorPane.lookup(".removeUserFormProject");
+
+            if((project.getLider()==user.getUzytkownikId() || user.isAdmin()) && userData.getUzytkownikId()!=project.getLider() )
+                removeBtn.setVisible(true);
+
+            removeBtn.setOnAction(event -> {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Usuwanie użytkownika z projektu");
+                alert.setHeaderText("LUsuwasz użytkownika");
+                alert.setContentText("Na pewno usunąć użytkownika?");
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    Object[] msg = Project.removeUserFormProject(userData.getUzytkownikId(), project.getProjekt_id());
+                    Alert infoAlert = new Alert(Alert.AlertType.INFORMATION, (String) msg[1]);
+                    if((boolean)msg[0]) {
+                        infoAlert.show();
+                        DataFxEXceptionHandler.navigateQuietly(flowActionHandler,getClass());
+                    } else {
+                        infoAlert.setAlertType(Alert.AlertType.ERROR);
+                        infoAlert.show();
+                    }
+                }
+            });
+
+            avatar.setFill(new ImagePattern(new Image(userData.getAvatarUrl())));
+            name.setOnAction(event -> navigateToProfile(userData.getUzytkownikId()));
+            name.setText(userData.getImieNazwisko());
             task.setText(""+0);
             endTask.setText("0");
             return anchorPane;
@@ -228,7 +358,11 @@ public class ShowProject extends BaseController{
         }
 
     }
-
+    /**
+     * Metoda generująca pojedynczy wiersz z użytkownikami uczestniczącymi w projekcie
+     * @param taskDb Obiekt reprezentujący dane zadania
+     * @return AnchorPane - wiersz z zadaniem
+     */
     private AnchorPane inProjectTask(TaskDb taskDb) {
         try {
             AnchorPane anchorPane  = FXMLLoader.load(getClass().getClassLoader().getResource("view/app/taskInProjectTPL.fxml"));
@@ -238,6 +372,8 @@ public class ShowProject extends BaseController{
             Label taskdateLable = (Label) anchorPane.lookup(".taskdateLable");
             Text taskDate = (Text) anchorPane.lookup(".taskDate");
             Label taskStatus = (Label) anchorPane.lookup(".taskStatus");
+
+            taskUser.setOnAction(event -> navigateToProfile(taskDb.getUserId()));
 
             String status = "Zakończone";
             switch (taskDb.getStatus()) {
@@ -249,14 +385,8 @@ public class ShowProject extends BaseController{
 
             taskName.setText(taskDb.getName());
             taskName.setOnAction(event -> {
-                try {
-                    ApplicationContext.getInstance().register("taskId", taskDb.getId());
-                    flowActionHandler.navigate(ShowTaskController.class);
-                } catch (VetoException e) {
-                    e.printStackTrace();
-                } catch (FlowException e) {
-                    e.printStackTrace();
-                }
+                ApplicationContext.getInstance().register("taskId", taskDb.getId());
+                DataFxEXceptionHandler.navigateQuietly(flowActionHandler,ShowTaskController.class);
             });
 
 
@@ -273,19 +403,24 @@ public class ShowProject extends BaseController{
             } else taskDate.setText(taskDb.getEndDate().toString());
             return anchorPane;
         } catch (IOException e) {
-            e.printStackTrace();
+            loger.debug("Brak szablonu projektu", e);
             return null;
         }
     }
 
 
+    /** Metoda generująca task wyświetlający zadania
+     * @param connection Połączeni z bazą danych
+     * @param page Strona na jaką ma zostać ustawione stronicowanie
+     * @return Task wyświetlający listę zadań
+     */
     private Task<ObservableList<TaskDb>> renderTasks(Connection connection,int page){
         String sql = "select {tpl} from (select z.*,u.imie,u.nazwisko from Zadania z,Uzytkownicy u where z.uzytkownik_id=u.uzytkownik_id and z.projekt_id="+project.getProjekt_id()+"\n" +
                 "union \n" +
                 "select *,null,null from Zadania where uzytkownik_id is null and projekt_id="+project.getProjekt_id()+") Z";
 
 
-        int perPage=1;
+        int perPage=USER_AND_TASK_PER_PAGE;
 
 
 
@@ -308,6 +443,14 @@ public class ShowProject extends BaseController{
             sql+=" where stan in ("+stan+")";
         }
 
+        if(filtrOnlyMy.isSelected()) {
+            if(stan.isEmpty())
+                sql+=" where";
+            else sql+=" and";
+            sql+=" uzytkownik_id="+user.getUzytkownikId();
+        }
+
+
         String countSql = sql.replace("{tpl}", "count(*)");
 
         loger.debug("IN TEST: "+ stan);
@@ -326,18 +469,10 @@ public class ShowProject extends BaseController{
                     rs.next();
                     long count = rs.getLong(1);
                     int pageCount = (int) Math.ceil(count/perPage);
-                    if(pageCount==0) {
-                        Platform.runLater(() -> inProjectTaskPg.setVisible(false));
-                        return observableList;
-                    }
-                    else {
-                        Platform.runLater(() -> {
-                            inProjectTaskPg.setVisible(true);
+                    Platform.runLater(() -> {
                             inProjectTaskPg.setPageCount(pageCount);
                             inProjectTaskPg.setCurrentPageIndex(page);
                         });
-                    }
-
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -352,12 +487,16 @@ public class ShowProject extends BaseController{
         });
         return task;
     }
-
+    /** Metoda generująca task wyświetlający użytkowników
+     * @param connection Połączeni z bazą danych
+     * @param page Strona na jaką ma zostać ustawione stronicowanie
+     * @return Task wyświetlający listę użytkowników
+     */
     private Task<ObservableList<User>> renderUser(Connection connection,int page) {
         String sql = "SELECT {tpl} FROM ProjektyUzytkownicy pu,Uzytkownicy u WHERE projekt_id="+project.getProjekt_id()+" and u.uzytkownik_id=pu.uzytkownik_id";
 
         if (sort.length()>0) sql+= " order by pu.projekt_uzytkownik "+sort;
-        int perPage=1;
+        int perPage=USER_AND_TASK_PER_PAGE;
         String countSql = sql.replace("{tpl}", "count(*)");
         sql+= " limit "+page*perPage+","+perPage+"";
         String exc = sql.replace("{tpl}", "u.uzytkownik_id,u.imie,u.nazwisko,u.avatar_id,u.email");

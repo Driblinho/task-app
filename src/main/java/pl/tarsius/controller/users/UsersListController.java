@@ -35,7 +35,7 @@ import java.util.Optional;
 /**
  * Created by Ireneusz Kuliga on 20.04.16.
  */
-@FXMLController(value = "/view/app/usersList.fxml", title = "TaskApp")
+@FXMLController(value = "/view/app/usersList.fxml", title = "Zarządzaj użytkownikami- Tarsius")
 public class UsersListController extends BaseController {
     @FXML
     private TableView userTable;

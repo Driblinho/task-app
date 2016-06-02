@@ -13,9 +13,9 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.layout.VBox;
 import pl.tarsius.controller.HomeController;
 import pl.tarsius.controller.project.AddToProjectController;
-import pl.tarsius.controller.project.EditProject;
+import pl.tarsius.controller.project.EditProjectController;
 import pl.tarsius.controller.project.NewProjectController;
-import pl.tarsius.controller.project.ShowProject;
+import pl.tarsius.controller.project.ShowProjectController;
 import pl.tarsius.controller.task.EditTaskController;
 import pl.tarsius.controller.task.NewTaskController;
 import pl.tarsius.controller.task.StatusController;
@@ -30,11 +30,18 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 /**
+ * Klasa obsługująca nawigację w spersonalizowaną dla użytkowników (Sidebar -> Akcje)
  * Created by Ireneusz Kuliga on 15.04.16.
  */
 public class StockButtons {
 
+    /**
+     * {@link VBox} na Akcje
+     */
     @FXML private VBox container;
+    /**
+     * DataFX {@link FlowActionHandler}
+     */
     @ActionHandler
     private FlowActionHandler flowActionHandler;
 
@@ -43,22 +50,35 @@ public class StockButtons {
         this.flowActionHandler = flowActionHandler;
     }
 
+    /** Konstruktor inicjalizująca
+     * @param container Kontener na akcje
+     */
     public StockButtons(VBox container) {
         this.container = container;
     }
 
+    /** Metoda generująca buton Akcji
+     * @param name
+     * @return
+     */
     private Button stockButton(String name) {
         Button b = new Button(name);
         b.getStyleClass().add("stock-button");
         return b;
     }
 
+    /**
+     * Podstawowe akcje
+     */
     public void homeAction() {
         Button b = this.stockButton("Nowy projekt");
         container.getChildren().add(b);
         flowActionHandler.attachLinkEventHandler(b, NewProjectController.class);
     }
 
+    /**
+     * Akcje dla projektu
+     */
     public void inProjectButton() {
         Button user = this.stockButton("Dodaj uczestnika");
         Button task = this.stockButton("Dodaj zadanie");
@@ -71,7 +91,7 @@ public class StockButtons {
 
         if(curUser.isAdmin() || project.getLider()==curUser.getUzytkownikId()) {
             container.getChildren().addAll(user, task, edit);
-            flowActionHandler.attachLinkEventHandler(edit, EditProject.class);
+            flowActionHandler.attachLinkEventHandler(edit, EditProjectController.class);
             flowActionHandler.attachLinkEventHandler(user, AddToProjectController.class);
             flowActionHandler.attachLinkEventHandler(task, NewTaskController.class);
 
@@ -108,6 +128,9 @@ public class StockButtons {
 
     }
 
+    /**
+     * Akcje dla zadań
+     */
     public void inTask() {
         Button edit = this.stockButton("Edytuj");
         Button remove = this.stockButton("Usuń");
@@ -133,7 +156,7 @@ public class StockButtons {
                 if((boolean) msg[0]) {
                     new Alert(Alert.AlertType.INFORMATION,""+msg[1]).show();
                     try {
-                        flowActionHandler.navigate(ShowProject.class);
+                        flowActionHandler.navigate(ShowProjectController.class);
                     } catch (VetoException e) {
                         e.printStackTrace();
                     } catch (FlowException e) {
@@ -155,7 +178,7 @@ public class StockButtons {
                 if((boolean) msg[0]) {
                     new Alert(Alert.AlertType.INFORMATION,""+msg[1]).show();
                     try {
-                        flowActionHandler.navigate(ShowProject.class);
+                        flowActionHandler.navigate(ShowProjectController.class);
                     } catch (VetoException e) {
                         e.printStackTrace();
                     } catch (FlowException e) {
@@ -175,6 +198,9 @@ public class StockButtons {
 
     }
 
+    /**
+     * Akcje w zamkniętym zadaniu
+     */
     public void inCloseTask() {
         this.inTask();
         container.getChildren().remove(2);

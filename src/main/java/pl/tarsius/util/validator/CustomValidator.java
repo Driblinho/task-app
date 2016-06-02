@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 
 /**
+ * Klasa dostarczająca {@link Validator} dla systemu
  * Created by Ireneusz Kuliga on 31.03.16.
  */
 public class CustomValidator {
@@ -80,30 +81,65 @@ public class CustomValidator {
         return createMinSizeValidator(msg, minSize, Severity.ERROR);
     }
 
+    /** Metoda generująca {@link Validator<String>} dla imienia
+     * @param msg Wiadomość
+     * @param severity {@link Severity}
+     * @return Validator
+     */
     public static Validator<String> createFirstNameValidator(String msg, Severity severity) {
         return Validator.createRegexValidator(msg, "^\\p{L}+[\\p{L}\\p{Z}\\p{P}]{0,}", severity);
     }
 
+    /** Metoda generująca {@link Validator<String>} dla imienia
+     * @param msg Wiadomość
+     * @return Validator
+     */
     public static Validator<String> createFirstNameValidator(String msg) {
         return createFirstNameValidator(msg,Severity.ERROR);
     }
 
+    /**
+     * Metoda generująca {@link Validator<String>}
+     * @param msg
+     * @param severity
+     * @return
+     */
     public static Validator<String> createLastNameValidator(String msg, Severity severity) {
         return Validator.createRegexValidator(msg, "^\\p{L}+[\\p{L}\\p{Z}\\p{P}]{0,}", severity);
     }
 
+    /**
+     * Metoda generująca {@link Validator<String>}
+     * @param msg
+     * @return
+     */
     public static Validator<String> createLastNameValidator(String msg) {
         return createLastNameValidator(msg,Severity.ERROR);
     }
 
+    /** Metoda generująca {@link Validator<String>}
+     * @param msg
+     * @param severity
+     * @return
+     */
     public static Validator<String> createPhoneValidator(String msg, Severity severity) {
         return Validator.createRegexValidator(msg, "^\\+(?:[0-9] ?){6,14}[0-9]$", severity);
     }
 
+    /** Metoda generująca {@link Validator<String>}
+     * @param msg
+     * @return
+     */
     public static Validator<String> createPhoneValidator(String msg) {
         return createPhoneValidator(msg,Severity.ERROR);
     }
 
+    /**
+     * Metoda generująca {@link Validator<String>}
+     * @param msg
+     * @param severity
+     * @return
+     */
     public static Validator<String> createPESELValidator(String msg, Severity severity) {
         return (control, value) -> {
             PeselValidator peselValidator = new PeselValidator(value);
@@ -111,34 +147,70 @@ public class CustomValidator {
         };
     }
 
+    /**
+     * Metoda generująca {@link Validator<String>}
+     * @param msg
+     * @return
+     */
     public static Validator<String> createPESELValidator(String msg) {
         return createPESELValidator(msg,Severity.ERROR);
     }
 
+    /**
+     * Metoda generująca {@link Validator<String>}
+     * @param msg
+     * @param severity
+     * @return
+     */
     public static Validator<String> createCityValidator(String msg, Severity severity) {
         return Validator.createRegexValidator(msg, "^([a-zA-Z\\u0080-\\u024F]+(?:(\\. )|-| |'))*[a-zA-Z\\u0080-\\u024F]*$", severity);
     }
 
+    /**
+     * Metoda generująca {@link Validator<String>}
+     * @param msg
+     * @return
+     */
     public static Validator<String> createCityValidator(String msg) {
         return createCityValidator(msg,Severity.ERROR);
     }
 
+    /**
+     * Metoda generująca {@link Validator<String>}
+     * @param msg
+     * @param severity
+     * @return
+     */
     public static Validator<String> createZpiCodeValidator(String msg, Severity severity) {
         return Validator.createRegexValidator(msg, "[0-9]{2}-[0-9]{3}", severity);
     }
 
+    /**
+     * Metoda generująca {@link Validator<String>}
+     * @param msg
+     * @return
+     */
     public static Validator<String> createZpiCodeValidator(String msg) {
         return createZpiCodeValidator(msg,Severity.ERROR);
     }
 
+    /**
+     * Metoda generująca {@link Validator<String>}
+     * @param msg
+     * @param severity
+     * @return
+     */
     public static Validator<String> createPasswordValidator(String msg, Severity severity) {
         return Validator.createRegexValidator(msg, "^[^\\s]+$", severity);
     }
 
+    /**
+     * Metoda generująca {@link Validator<String>}
+     * @param msg
+     * @return
+     */
     public static Validator<String> createPasswordValidator(String msg) {
         return createPasswordValidator(msg,Severity.ERROR);
     }
-
-
 
 }

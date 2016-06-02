@@ -24,17 +24,15 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import org.controlsfx.control.ListSelectionView;
 import org.controlsfx.validation.ValidationSupport;
-import org.controlsfx.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.tarsius.controller.BaseController;
-import pl.tarsius.controller.project.ShowProject;
+import pl.tarsius.controller.project.ShowProjectController;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.TaskDb;
 import pl.tarsius.database.Model.User;
 import pl.tarsius.util.gui.BlockDatePicker;
 import pl.tarsius.util.gui.StockButtons;
-import pl.tarsius.util.validator.CustomValidator;
 import pl.tarsius.util.validator.form.TaskFormValidator;
 
 import javax.annotation.PostConstruct;
@@ -47,7 +45,7 @@ import java.sql.SQLException;
 /**
  * Created by ireq on 30.04.16.
  */
-@FXMLController(value = "/view/app/newtask.fxml", title = "TaskApp")
+@FXMLController(value = "/view/app/newtask.fxml", title = "Dodaj zadanie - Tarsius")
 public class NewTaskController extends BaseController{
 
     @FXML private TextField taskName;
@@ -65,7 +63,7 @@ public class NewTaskController extends BaseController{
     private Button taskSave;
 
     @FXML
-    @LinkAction(ShowProject.class)
+    @LinkAction(ShowProjectController.class)
     private Button taskCancel;
 
     @FXML private FlowPane taskUserList;
@@ -76,6 +74,8 @@ public class NewTaskController extends BaseController{
     private Button taskClearUser;
 
     @FXML private Pagination taskUserListpPag;
+
+    private final int USER_PER_PAGE = 4;
 
 
     private static Logger loger = LoggerFactory.getLogger(NewTaskController.class);
@@ -142,7 +142,7 @@ public class NewTaskController extends BaseController{
             sql = sql.replace("{tpl}", "u.*");
 
             loger.debug("SQL :"+sql);
-            int perPage = 1;
+            int perPage = USER_PER_PAGE;
             sql+= " limit "+page*perPage+","+perPage+"";
             DataReader<User> dr = new JdbcSource<>(connection, sql, User.jdbcConverter());
 
@@ -196,7 +196,6 @@ public class NewTaskController extends BaseController{
                 protected Object[] call() throws Exception {
                     if(toggleGroup.getSelectedToggle()!=null) {
                         User user = (User) toggleGroup.getSelectedToggle().getUserData();
-                        // TODO: 03.05.16 FIX SETTER
                         taskDb.setStatus(TaskDb.Status.INPROGRES.getValue());
                         return TaskDb.insertWithUser(taskDb, user.getUzytkownikId());
                     }
@@ -211,7 +210,7 @@ public class NewTaskController extends BaseController{
                 if((boolean)task.getValue()[0]) {
                     new Alert(Alert.AlertType.INFORMATION,(String)task.getValue()[1]).show();
                     try {
-                        ApplicationContext.getInstance().register("taskId", (long) task.getValue()[2]);
+                        ApplicationContext.getInstance().register("taskId", task.getValue()[2]);
                         flowActionHandler.navigate(ShowTaskController.class);
                     } catch (VetoException e) {
                         e.printStackTrace();

@@ -6,24 +6,31 @@ import impl.org.controlsfx.skin.DecorationPane;
 import io.datafx.controller.FXMLController;
 import io.datafx.controller.context.ApplicationContext;
 import io.datafx.controller.context.FXMLApplicationContext;
+import io.datafx.controller.context.Metadata;
+import io.datafx.controller.context.ViewMetadata;
 import io.datafx.controller.flow.FlowException;
 import io.datafx.controller.flow.action.ActionMethod;
 import io.datafx.controller.flow.action.ActionTrigger;
 import io.datafx.controller.flow.context.ActionHandler;
+import io.datafx.controller.flow.context.FXMLViewFlowContext;
 import io.datafx.controller.flow.context.FlowActionHandler;
+import io.datafx.controller.flow.context.ViewFlowContext;
 import io.datafx.controller.util.VetoException;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.tarsius.database.Model.User;
 import pl.tarsius.util.UserAuth;
+import pl.tarsius.util.gui.ResponsiveDesign;
 import pl.tarsius.util.validator.PeselValidator;
 import pl.tarsius.util.validator.form.UserFormValidator;
 
@@ -33,7 +40,7 @@ import java.util.ArrayList;
 /**
  * Created by Ireneusz Kuliga on 25.03.16.
  */
-@FXMLController(value = "/view/startup/welcome.fxml", title = "TaskApp")
+@FXMLController(value = "/view/startup/welcome.fxml", title = "Tarsius")
 public class StartupController {
 
     private Logger loger;
@@ -110,7 +117,6 @@ public class StartupController {
     private Hyperlink topMsgClose;
 
 
-
     private ValidationSupport validationSupportLogin;
     private ValidationSupport validationSupportReg;
     private ValidationSupport validationSupportForg;
@@ -126,8 +132,15 @@ public class StartupController {
     @PostConstruct
     public void init() {
 
-        //logInEmail.setText("");
-        //logInPassword.setText("");
+
+        Platform.runLater(() -> {
+            new ResponsiveDesign((Stage) change.getParent().getScene().getWindow()).resizeBodyWidth(change.getParent().getScene().getWindow().getWidth());
+            //-3.48% HACK
+            double h = change.getParent().getScene().getWindow().getHeight();
+            //h = h-h*0.0348;
+            h = h-h*0.0248;
+            new ResponsiveDesign((Stage) change.getParent().getScene().getWindow()).resizeBodyHeight(h);
+        });
 
         validationSupportLogin = new ValidationSupport();
         validationSupportLogin.registerValidator(logInEmail, true, UserFormValidator.getEmail());

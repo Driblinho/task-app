@@ -2,9 +2,8 @@ package pl.tarsius.controller.task;
 
 import io.datafx.controller.FXMLController;
 import io.datafx.controller.context.ApplicationContext;
-import io.datafx.controller.flow.FlowException;
 import io.datafx.controller.flow.action.ActionMethod;
-import io.datafx.controller.util.VetoException;
+import io.datafx.controller.flow.action.ActionTrigger;
 import io.datafx.io.DataReader;
 import io.datafx.io.JdbcSource;
 import javafx.application.Platform;
@@ -20,7 +19,6 @@ import javafx.scene.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.tarsius.controller.BaseController;
-import pl.tarsius.controller.project.ShowProject;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.TaskComment;
 import pl.tarsius.database.Model.TaskDb;
@@ -31,18 +29,19 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Optional;
 
 /**
  * Created by ireq on 30.04.16.
  */
-@FXMLController(value = "/view/app/showTask.fxml", title = "TaskApp")
+@FXMLController(value = "/view/app/showTask.fxml", title = "Zadanie - Tarsius")
 public class ShowTaskController extends BaseController {
     @FXML private Text taskDesc;
     @FXML private Label taskTitle;
     @FXML private Label taskEndL;
     @FXML private Text taskEnd;
-    @FXML private Hyperlink taskProjectAuthor;
+    @FXML
+    @ActionTrigger("showTaskOwnerProfile")
+    private Hyperlink taskProjectAuthor;
     @FXML private Text taskStatus;
     private TaskDb taskDb;
 
@@ -95,6 +94,12 @@ public class ShowTaskController extends BaseController {
 
     }
 
+    @ActionMethod("showTaskOwnerProfile")
+    public void showTaskOwnerProfile() {
+        navigateToProfile(taskDb.getUserId());
+    }
+
+
     private AnchorPane inTaskComment(TaskComment taskComment) {
         try {
             AnchorPane anchorPane  = FXMLLoader.load(getClass().getClassLoader().getResource("view/app/taskCommentTpl.fxml"));
@@ -130,8 +135,12 @@ public class ShowTaskController extends BaseController {
                     long count = rs.getLong(1);
                     int pageCount = (int) Math.ceil(count/perPage);
                     Platform.runLater(() -> {
-                        taskCommentPg.setPageCount(pageCount);
-                        taskCommentPg.setCurrentPageIndex(page);
+                        if(pageCount>0) {
+                            taskCommentPg.setVisible(true);
+                            taskCommentPg.setPageCount(pageCount);
+                            taskCommentPg.setCurrentPageIndex(page);
+                        }
+
                     });
                 } catch (SQLException e) {
                     e.printStackTrace();

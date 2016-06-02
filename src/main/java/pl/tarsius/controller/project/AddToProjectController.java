@@ -1,6 +1,5 @@
 package pl.tarsius.controller.project;
 
-import com.sun.istack.internal.Nullable;
 import io.datafx.controller.FXMLController;
 import io.datafx.controller.context.ApplicationContext;
 import io.datafx.controller.flow.FlowException;
@@ -28,6 +27,7 @@ import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.Invite;
 import pl.tarsius.database.Model.Project;
 import pl.tarsius.database.Model.User;
+import pl.tarsius.util.gui.DataFxEXceptionHandler;
 import pl.tarsius.util.gui.StockButtons;
 
 import javax.annotation.PostConstruct;
@@ -39,43 +39,92 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
+ * Kontroler odpowiadający za dodawanie użytkowników do projektu
  * Created by Ireneusz Kuliga on 18.04.16.
  */
-@FXMLController(value = "/view/app/addUserToProject.fxml", title = "TaskApp - Dodaj uczestników do projektu")
+@FXMLController(value = "/view/app/addUserToProject.fxml", title = "Dodaj uczestników do projektu - Tarsius")
 public class AddToProjectController extends BaseController {
-    @FXML
-    @BackAction
-    private Button cancelUser;
 
-    @FXML
-    @ActionTrigger("addToProject")
+    /**
+     * Pole mapujące przycisk FXML odpowiadający za cofanie formularza (Do cofania używana adnotacja DataFX <code>@BackAction</code>)
+     */
+    @FXML @BackAction private Button cancelUser;
+
+    /**
+     * Pole odpowiadające za akcje zapisu formularza
+     */
+    @FXML @ActionTrigger("addToProject")
     private Button saveUser;
 
+    /**
+     * DataFX FlowActionHandler
+     */
     @ActionHandler
     private FlowActionHandler flowActionHandler;
 
+    /**
+     * Pole na użytkowników których można dodać do projektu
+     */
     private ObservableList<TableUserModel> users;
     ObservableList<TableUserModel> selected;
 
+    /**
+     * Tabela na użytkowników możliwych do dodania
+     */
     @FXML private TableView userList;
+    /**
+     * Tabela na wybranych do dodania użytkowników
+     */
     @FXML private TableView selectedUser;
 
+    /**
+     * Kolumna na Imię i Nazwisko użytkownika możliwego do dodania
+     */
     private TableColumn name;
+    /**
+     * Kolumna na adres email użytkownika możliwego do dodania
+     */
     private TableColumn email;
 
+    /**
+     * Kolumna na Imię i Nazwisko wybranego użytkownika
+     */
     private TableColumn nameSelected;
+    /**
+     *
+     * Kolumna na Email wybranego użytkownika
+     */
     private TableColumn emailSelected;
 
+    /**
+     * Button kopcujący użytkowników do tabeli
+     */
     @FXML private Button addSelected;
+    /**
+     * Button odpowiadający za usunięcie wybranych użytkowników
+     */
     @FXML private Button removeSelected;
 
+    /**
+     * Stronicowanie
+     */
     @FXML private Pagination pagination;
 
+    /**
+     * CheckBox określający czy wysłać zaproszenia czy od razu dodać użytkowników do projektu
+     */
     @FXML private CheckBox insertUserToProject;
 
+    /**
+     * Metoda inicjalizująca kontroler Zaproszeń
+     */
     @PostConstruct
     public void init() {
         new StockButtons(operationButtons,flowActionHandler).inProjectButton();
+
+        breadCrumb.setSelectedCrumb(addUserToProject);
+        breadCrumb.setOnCrumbAction(crumbActionEventEventHandler());
+
         InitializeConnection initializeConnection = new InitializeConnection();
         saveUser.setDisable(true);
         user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
@@ -147,6 +196,12 @@ public class AddToProjectController extends BaseController {
     }
 
 
+    /**
+     * Metoda zwracająca Task dodający do ObservableList użytkowników do dodania
+     * @param connection Połączenie z bazą danych
+     * @param page Określa która strona ma zostać ustawiona
+     * @return Task
+     */
     private Task userListTask(Connection connection,int page) {
 
         Project projectM = (Project) ApplicationContext.getInstance().getRegisteredObject("projectModel");
@@ -198,6 +253,10 @@ public class AddToProjectController extends BaseController {
 
     }
 
+    /**
+     * Metoda obsługująca akcje dodawania użytkowników do projektu
+     * Wyświetla informacyjny oraz gdy użytkownicy zostali poprawnie dodani przekierowuje na stronę projektu
+     */
     @ActionMethod("addToProject")
     public void addToProject() throws VetoException, FlowException {
         long pId = (long) ApplicationContext.getInstance().getRegisteredObject("projectId");
@@ -216,38 +275,74 @@ public class AddToProjectController extends BaseController {
 
         Alert.AlertType a = ((boolean)ms[0])?Alert.AlertType.INFORMATION: Alert.AlertType.ERROR;
         new Alert(a,""+ms[1]).show();
-        if((boolean)ms[0]) flowActionHandler.navigate(ShowProject.class);
+        if((boolean)ms[0]) DataFxEXceptionHandler.navigateQuietly(flowActionHandler,ShowProjectController.class);
     }
 
 
+    /**
+     * Klasa reprezentująca model tabeli dla TableView
+     */
     public static class TableUserModel {
+        /**
+         * Identyfikator użytkownika
+         */
         private final ObservableValue<Long> id;
+        /**
+         * Adres email imię i nazwisko użytkownika
+         */
         private final SimpleStringProperty name;
+        /**
+         * Adres email użytkownika
+         */
         private final SimpleStringProperty email;
 
+        /**
+         * Konstruktor idealizujący pola klasy
+         * @param id
+         * @param name
+         * @param email
+         */
         public TableUserModel(long id, String name, String email) {
             this.id = new SimpleObjectProperty<>(id);
             this.name = new SimpleStringProperty(name);
             this.email = new SimpleStringProperty(email);
         }
 
+
+        /**
+         * Getter for property 'id'.
+         *
+         * @return Value for property 'id'.
+         */
         public Long getId() {
             return this.id.getValue();
         }
 
+        /**
+         * Getter for property 'name'.
+         *
+         * @return Value for property 'name'.
+         */
         public String getName() {
             return this.name.get();
         }
 
+        /**
+         * Getter for property 'email'.
+         *
+         * @return Value for property 'email'.
+         */
         public String getEmail() {
             return email.get();
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean equals(Object obj) {
             return (obj instanceof TableUserModel) && (((TableUserModel) obj).getName()).equals(this.getName());
         }
 
+        /** {@inheritDoc} */
         @Override
         public int hashCode() {
             return id.getValue().hashCode();

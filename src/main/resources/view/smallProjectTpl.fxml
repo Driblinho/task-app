@@ -6,48 +6,63 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="312.0" prefWidth="314.0" xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="289.0" prefWidth="309.0" xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <AnchorPane layoutX="14.0" layoutY="11.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="290.0" prefWidth="283.0" style="-fx-background-color: #fff;" styleClass="shadowBox">
+      <AnchorPane layoutX="14.0" layoutY="11.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="269.0" prefWidth="283.0" style="-fx-background-color: #fff;" styleClass="shadowBox">
          <children>
-            <Hyperlink alignment="TOP_LEFT" layoutX="14.0" layoutY="14.0" prefHeight="97.0" prefWidth="265.0" styleClass="smallProjectTitle" text="Hyperlink" textOverrun="CLIP" wrapText="true" />
-            <AnchorPane layoutY="90.0" prefHeight="53.0" prefWidth="290.0">
+            <Hyperlink alignment="TOP_LEFT" focusTraversable="false" layoutX="14.0" layoutY="14.0" prefHeight="53.0" prefWidth="265.0" styleClass="smallProjectTitle" text="Hyperlink" textFill="#616161" textOverrun="CLIP" wrapText="true">
+               <font>
+                  <Font size="18.0" />
+               </font></Hyperlink>
+            <AnchorPane layoutY="71.0" prefHeight="53.0" prefWidth="283.0" style="-fx-border-color: #D4D4D4 transparent #D4D4D4 #D70060; -fx-border-width: 1px 0 1px 5px;" styleClass="shadowBox">
                <children>
                   <Label layoutX="8.0" layoutY="8.0" text="Autor: ">
                      <font>
                         <Font size="10.0" />
                      </font>
                   </Label>
-                  <Label layoutX="14.0" layoutY="32.0" prefHeight="14.0" prefWidth="43.0" styleClass="smallProjectDateEndLabel" text="Koniec:">
+                  <Label layoutX="10.0" layoutY="31.0" prefHeight="14.0" prefWidth="43.0" styleClass="smallProjectDateEndLabel" text="Koniec:">
                      <font>
                         <Font size="10.0" />
                      </font>
                   </Label>
-                  <Hyperlink layoutX="39.0" layoutY="5.0" styleClass="smallProjectAuthor" text="Hyperlink">
+                  <Hyperlink focusTraversable="false" layoutX="39.0" layoutY="5.0" prefHeight="20.0" prefWidth="144.0" styleClass="smallProjectAuthor" text="Hyperlink" textFill="#1b1a1a">
                      <font>
-                        <Font size="10.0" />
+                        <Font name="System Bold" size="10.0" />
                      </font>
                   </Hyperlink>
-                  <Text layoutX="56.0" layoutY="44.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="smallProjectDateEnd" text="Text">
+                  <Text layoutX="52.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="smallProjectDateEnd" text="Text">
                      <font>
                         <Font size="10.0" />
                      </font>
                   </Text>
                </children>
             </AnchorPane>
-            <AnchorPane layoutY="143.0" prefHeight="97.0" prefWidth="290.0">
+            <AnchorPane layoutY="124.0" prefHeight="90.0" prefWidth="283.0" style="-fx-background-color: #E9E9E9;">
                <children>
-                  <Text layoutX="14.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="smallProjectDesc" text="Text" wrappingWidth="214.7294921875" />
+                  <Text fill="#3c3c3c" layoutX="14.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="smallProjectDesc" text="Text" wrappingWidth="214.7294921875" />
                </children>
             </AnchorPane>
-            <Label layoutX="131.0" layoutY="258.0" text="Zakończone:" />
-            <Label layoutY="255.0" text="Do sprawdzenia: " />
-            <Label layoutY="232.0" text="Nowe:" />
-            <Label layoutX="65.0" layoutY="233.0" text="W trakcie: " />
-            <Text layoutX="43.0" layoutY="246.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="smallProjectNewCount" text="0" />
-            <Text layoutX="135.0" layoutY="247.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="smallProjectInProgresCount" text="0" />
-            <Text layoutX="112.0" layoutY="270.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="smallProjectForTestCount" text="0" />
-            <Text layoutX="220.0" layoutY="273.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="smallProjectEndCount" text="0" />
+            <Label layoutX="145.0" layoutY="242.0" text="Zakończone:">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font></Label>
+            <Label layoutX="3.0" layoutY="240.0" text="Do sprawdzenia: ">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font></Label>
+            <Label layoutX="3.0" layoutY="218.0" text="Nowe:">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font></Label>
+            <Label layoutX="71.0" layoutY="219.0" text="W trakcie: ">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font></Label>
+            <Text layoutX="53.0" layoutY="233.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="smallProjectNewCount" text="0" />
+            <Text layoutX="148.0" layoutY="233.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="smallProjectInProgresCount" text="0" />
+            <Text layoutX="128.0" layoutY="254.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="smallProjectForTestCount" text="0" />
+            <Text layoutX="241.0" layoutY="256.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="smallProjectEndCount" text="0" />
          </children>
       </AnchorPane>
    </children>

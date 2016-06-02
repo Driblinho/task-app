@@ -1,5 +1,6 @@
 package pl.tarsius.util.pdf;
 
+import io.datafx.controller.context.ApplicationContext;
 import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.concurrent.Service;
@@ -22,11 +23,13 @@ import org.jfree.data.general.DefaultPieDataset;
 import pl.tarsius.Main;
 import pl.tarsius.database.Model.ReportProject;
 import pl.tarsius.database.Model.ReportTasks;
+import pl.tarsius.database.Model.User;
 
 import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -37,7 +40,7 @@ import java.util.List;
 public class GenReportService extends Service<Void>{
 
     private final PDRectangle PAGE_SIZE = PDRectangle.A4;
-
+    public static String tmpName;
     //Table configuration
     // Page configuration
     private final float MARGIN = 20;
@@ -103,6 +106,9 @@ public class GenReportService extends Service<Void>{
         reportProjectsesList.forEach(report -> {
             // Create a simple pie chart
             DefaultPieDataset pieDataset = new DefaultPieDataset();
+
+
+            System.out.println(report.getNewTask()+" "+report.getInProgressTask());
 
             if(report.getNewTask()>0) pieDataset.setValue("Nowe", report.getNewTask());
             if(report.getInProgressTask()>0) pieDataset.setValue("Wykonywane", report.getInProgressTask());
@@ -183,10 +189,13 @@ public class GenReportService extends Service<Void>{
                     content.showText("Data dodania: "+report.getStart().toString()+endDate);
                     content.endText();
 
+
+                    String name = (String) ApplicationContext.getInstance().getRegisteredObject("appName");
+                    String ver = (String) ApplicationContext.getInstance().getRegisteredObject("version");
                     content.beginText();
                     content.setFont(PDType1Font.TIMES_ITALIC, 12);
                     content.newLineAtOffset(rect.getWidth()-150, rect.getHeight()-20);
-                    content.showText("Nazwa aplikacji Ver:01");
+                    content.showText(name+" Ver:"+ver);
                     content.endText();
 
                     content.close();
@@ -217,7 +226,8 @@ public class GenReportService extends Service<Void>{
             }
         });
         try {
-            doc.save("tmp.pdf");
+            tmpName = new Timestamp(new java.util.Date().getTime()).toString()+"_tmp.pdf";
+            doc.save(tmpName);
             doc.close();
             System.out.println("CLOSE PDF");
         } catch (IOException e) {
@@ -270,26 +280,20 @@ public class GenReportService extends Service<Void>{
                     content.showText("Raport z wykonywanych zadań");
                     content.endText();
 
-
+                    User user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
                     //Tytuł projektu
                     content.beginText();
                     content.setFont(font, 16);
                     content.newLineAtOffset(50, rect.getHeight() - 80);
-                    content.showText("Zadania użytkownika:");
+                    content.showText("Zadania użytkownika: "+user.getImieNazwisko());
                     content.endText();
 
-                    content.beginText();
-                    content.setFont(font, 11);
-                    content.newLineAtOffset(50, rect.getHeight() - 210);
-                    content.showText("Status projektu: ");
-                    content.endText();
-
-
-
+                    String name = (String) ApplicationContext.getInstance().getRegisteredObject("appName");
+                    String ver = (String) ApplicationContext.getInstance().getRegisteredObject("version");
                     content.beginText();
                     content.setFont(PDType1Font.TIMES_ITALIC, 12);
                     content.newLineAtOffset(rect.getWidth()-150, rect.getHeight()-20);
-                    content.showText("Nazwa aplikacji Ver:01");
+                    content.showText(name+" Ver: "+ver);
                     content.endText();
                     content.close();
 
@@ -318,7 +322,8 @@ public class GenReportService extends Service<Void>{
             }
 
         try {
-            doc.save("tmp.pdf");
+            tmpName = new Timestamp(new java.util.Date().getTime()).toString()+"_tmp.pdf";
+            doc.save(tmpName);
             doc.close();
             System.out.println("CLOSE PDF");
         } catch (IOException e) {
@@ -339,7 +344,7 @@ public class GenReportService extends Service<Void>{
         String[][] content = new String[1][1];
         content = userList.toArray(content);
 
-        float tableHeight = IS_LANDSCAPE ? PAGE_SIZE.getWidth() - (2 * MARGIN) : PAGE_SIZE.getHeight() - (2 * MARGIN);
+        float tableHeight = PAGE_SIZE.getWidth() - 2 * MARGIN;
 
         Table table = new TableBuilder()
                 .setCellMargin(CELL_MARGIN)
@@ -366,9 +371,9 @@ public class GenReportService extends Service<Void>{
         String[][] content = new String[1][1];
         content = userList.toArray(content);
 
-        float tableHeight = IS_LANDSCAPE ? PAGE_SIZE.getWidth() - (2 * MARGIN) : PAGE_SIZE.getHeight() - (2 * MARGIN);
+        float tableHeight = PAGE_SIZE.getWidth() - 2 * MARGIN;
 
-        Table table = new TableBuilder()
+        return new TableBuilder()
                 .setCellMargin(CELL_MARGIN)
                 .setColumns(columns)
                 .setContent(content)
@@ -381,7 +386,6 @@ public class GenReportService extends Service<Void>{
                 .setTextFont(font)
                 .setFontSize(FONT_SIZE)
                 .build();
-        return table;
     }
 
 
@@ -437,14 +441,25 @@ public class GenReportService extends Service<Void>{
         return new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                Platform.runLater(() -> new Alert(Alert.AlertType.INFORMATION, "Raport jest obecnie generowany po zakończeniu zostaniesz o tym poinformowany").show());
+                final Alert[] al = new Alert[1];
+                Platform.runLater(() -> {
+                    al[0] = new Alert(Alert.AlertType.INFORMATION, "Raport jest obecnie generowany po zakończeniu zostaniesz o tym poinformowany");
+                    al[0].getDialogPane().setPrefWidth(600);
+                    al[0].setHeaderText("Generowanie raportu");
+                    al[0].show();
+                });
                 if(isTaskReport())
                     genTaskReport();
                 else
                     genProjectReport();
-                Platform.runLater(() -> new Alert(Alert.AlertType.INFORMATION,"Raport został wygenerowany").show());
+                Platform.runLater(() -> {
+                    al[0].close();
+                    al[0].setContentText("Raport został wygenerowany");
+                    al[0].setHeaderText("Wygenerowano raport");
+                    al[0].show();
+                });
                 if(hostServices!=null)
-                    hostServices.showDocument("./tmp.pdf");
+                    hostServices.showDocument(tmpName);
                 return null;
             }
         };

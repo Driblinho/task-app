@@ -5,7 +5,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-/**
+/** Klasa skalująca elementy GUI
  * Created by Ireneusz Kuliga on 02.04.16.
  */
 public class ResponsiveDesign {
@@ -21,6 +21,10 @@ public class ResponsiveDesign {
     private ImageView logoImageView;
     private GridPane userBar;
     private GridPane inviteItem;
+
+    /** Inicjalizacja klasy pobierającej {@link Stage} aplikacji
+     * @param stage
+     */
     public ResponsiveDesign(Stage stage) {
         this.stage = stage;
         this.bodyBorderPane = (BorderPane) stage.getScene().lookup(bodyBorderPaneName);
@@ -30,7 +34,10 @@ public class ResponsiveDesign {
         this.topMsgContent = (GridPane) stage.getScene().lookup(alertTopMsg);
         this.inviteItem = (GridPane) stage.getScene().lookup(".inviteItem");
     }
-    
+
+    /** Skalowanie szerokości aplikacji
+     * @param width
+     */
     public void resizeBodyWidth(Double width) {
         stage.getScene().getRoot().prefWidth(width);
         resizeStartUpLogoWidth(width);
@@ -51,6 +58,9 @@ public class ResponsiveDesign {
 
     }
 
+    /** Skalowanie wysokości aplikacji
+     * @param height
+     */
     public void resizeBodyHeight(Double height) {
         stage.getScene().getRoot().prefHeight(height);
         if (bodyBorderPane !=null) {
@@ -61,6 +71,10 @@ public class ResponsiveDesign {
         }
     }
 
+    /**
+     * Skalowanie startowego loga aplikacji
+     * @param width
+     */
     private void resizeStartUpLogoWidth(Double width) {
         if (logoImageView!=null) {
             logoImageView.setFitWidth(width);
@@ -70,7 +84,4 @@ public class ResponsiveDesign {
         }
     }
 
-    private void resizeStartUpLogoHeight(Double height) {
-        // TODO: 02.04.16 Skalowanie wysokości loga startowego
-    }
 }

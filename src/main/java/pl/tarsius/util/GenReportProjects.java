@@ -278,7 +278,7 @@ public class GenReportProjects implements Runnable {
 
        content = userList.toArray(content);
 
-        float tableHeight = IS_LANDSCAPE ? PAGE_SIZE.getWidth() - (2 * MARGIN) : PAGE_SIZE.getHeight() - (2 * MARGIN);
+        float tableHeight = PAGE_SIZE.getWidth() - 2 * MARGIN;
 
         Table table = new TableBuilder()
                 .setCellMargin(CELL_MARGIN)
@@ -308,7 +308,7 @@ public class GenReportProjects implements Runnable {
 
         content = userList.toArray(content);
 
-        float tableHeight = IS_LANDSCAPE ? PAGE_SIZE.getWidth() - (2 * MARGIN) : PAGE_SIZE.getHeight() - (2 * MARGIN);
+        float tableHeight = PAGE_SIZE.getWidth() - 2 * MARGIN;
 
         Table table = new TableBuilder()
                 .setCellMargin(CELL_MARGIN)
