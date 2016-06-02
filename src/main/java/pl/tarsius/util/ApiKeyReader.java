@@ -12,24 +12,52 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 
-/**
+/** Klasa obsługująca pobieranie kluczy api z bazy danych
  * Created by ireq on 30.05.16.
  */
 public class ApiKeyReader {
+    /**
+     * Pole na {@link Logger}
+     */
     private static Logger loger = LoggerFactory.getLogger(ApiKeyReader.class);
+    /**
+     * Pole na
+     */
     private String mailApiKey;
+    /**
+     * Pole na Cloudinary Api Key
+     */
     private String cloudinaryApiKey;
+    /**
+     * Pole na Cloudinary Api Secret
+     */
     private String cloudinaryApiSecret;
+    /**
+     * Pole na nazwę Cloudinary
+     */
     private String cloudinaryCloudNam;
 
+
+    /** Konstruktor idealizujący konfiguracje API
+     * @param mailApiKey Klucz API dla Milgun
+     * @param cloudinaryCloudNam Cloudinary nazwa
+     * @param cloudinaryApiKey Cloudinary Api Key
+     * @param cloudinaryApiSecret Cloudinary Api Secret
+     */
     public ApiKeyReader(String mailApiKey, String cloudinaryCloudNam, String cloudinaryApiKey, String cloudinaryApiSecret) {
         this.cloudinaryCloudNam = cloudinaryCloudNam;
         this.mailApiKey = mailApiKey;
         this.cloudinaryApiKey = cloudinaryApiKey;
         this.cloudinaryApiSecret = cloudinaryApiSecret;
     }
+
+    /** Konstruktor domyślny */
     public ApiKeyReader() {}
 
+
+    /** Metoda zwraca Obiekt {@link ApiKeyReader} z wczytanymi z bazy kluczami
+     * @return Obiekt z wczytaną z bazy konfiguracją.
+     */
     public ApiKeyReader load() {
         Connection connection = null;
         Statement st = null;
