@@ -45,30 +45,33 @@
                         <Insets right="20.0" top="5.0" />
                      </padding>
                   </HBox>
-                  <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="638.0" prefWidth="960.0">
-                     <content>
-                        <StackPane>
-                           <children>
+                  <StackPane>
+                     <VBox.margin>
+                        <Insets right="10.0" />
+                     </VBox.margin>
+                     <children>
+                        <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="638.0" prefWidth="960.0">
+                           <content>
                               <FlowPane fx:id="contentFlow" prefHeight="200.0" prefWidth="200.0" />
-                              <GridPane fx:id="projectListLoading" alignment="TOP_CENTER" StackPane.alignment="CENTER">
-                                 <columnConstraints>
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                                 </columnConstraints>
-                                 <rowConstraints>
-                                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                                 </rowConstraints>
-                                 <children>
-                                    <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
-                                       <image>
-                                          <Image url="@../../assets/img/cube_loading.gif" />
-                                       </image>
-                                    </ImageView>
-                                 </children>
-                              </GridPane>
+                           </content>
+                        </ScrollPane>
+                        <GridPane fx:id="projectListLoading" alignment="TOP_CENTER">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                                 <image>
+                                    <Image url="@../../assets/img/cube_loading.gif" />
+                                 </image>
+                              </ImageView>
                            </children>
-                        </StackPane>
-                     </content>
-                  </ScrollPane>
+                        </GridPane>
+                     </children>
+                  </StackPane>
                   <Pagination fx:id="pagination" pageCount="1" prefHeight="52.0" prefWidth="960.0" />
                </children>
             </VBox>
