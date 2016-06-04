@@ -13,13 +13,13 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import org.controlsfx.control.SegmentedButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.tarsius.controller.BaseController;
+import pl.tarsius.controller.project.ShowProjectController;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.TaskDb;
 import pl.tarsius.database.Model.User;
@@ -73,56 +73,8 @@ public class MyTasksController extends BaseController {
         }
     }
 
-    private AnchorPane inProjectTask(TaskDb taskDb) {
-        try {
-            AnchorPane anchorPane  = FXMLLoader.load(getClass().getClassLoader().getResource("view/app/taskInProjectTPL.fxml"));
-            Hyperlink taskName = (Hyperlink) anchorPane.lookup(".taskName");
-            Hyperlink taskUser = (Hyperlink) anchorPane.lookup(".taskUser");
-            Label taskUserL = (Label) anchorPane.lookup(".taskUserL");
-            Label taskdateLable = (Label) anchorPane.lookup(".taskdateLable");
-            Text taskDate = (Text) anchorPane.lookup(".taskDate");
-            Label taskStatus = (Label) anchorPane.lookup(".taskStatus");
-
-            String status = "Zakończone";
-            switch (taskDb.getStatus()) {
-                case 1: status="nowe";break;
-                case 2: status = "W trakcie";break;
-                case 3: status="Do sprawdzenia";break;
-            }
-            taskStatus.setText(status);
-
-            taskName.setText(taskDb.getName());
-
-            taskUser.setOnAction(event -> navigateToProfile(taskDb.getUserId()));
-
-            taskName.setOnAction(event -> {
-                try {
-                    ApplicationContext.getInstance().register("taskId", taskDb.getId());
-                    flowActionHandler.navigate(ShowTaskController.class);
-                } catch (VetoException e) {
-                    e.printStackTrace();
-                } catch (FlowException e) {
-                    e.printStackTrace();
-                }
-            });
-
-
-            if(taskDb.getUserName().isEmpty()) {
-                taskUser.setVisible(false);
-                taskUserL.setVisible(false);
-            } else taskUser.setText(taskDb.getUserName());
-
-
-
-            if(taskDb.getEndDate()==null) {
-                taskdateLable.setVisible(false);
-                taskDate.setVisible(false);
-            } else taskDate.setText(taskDb.getEndDate().toString());
-            return anchorPane;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+    private GridPane inProjectTask(TaskDb taskDb) {
+        return ShowProjectController.inProjectTaskTpl(taskDb,flowActionHandler);
     }
 
     private Task<ObservableList<TaskDb>> renderTasks(Connection connection, int page){
