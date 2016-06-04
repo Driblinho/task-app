@@ -43,7 +43,7 @@ public class NewProjectController extends BaseController {
     /**
      * Pole mapujące TextField na opis projektu
      */
-    @FXML private TextField newProjectDescField;
+    @FXML private TextArea newProjectDescField;
     /**
      * Pole mapujące DataPicker na date zakończenia projektu
      */
