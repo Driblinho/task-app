@@ -73,6 +73,8 @@ public class InvitesController extends BaseController {
      */
     private boolean isBoss;
 
+    private static final int PER_PAGE = 10;
+
 
     /**
      * Metoda inicjalizująca kontroler Zaproszeń
@@ -264,7 +266,7 @@ public class InvitesController extends BaseController {
         sql=sql.replace("{tpl}", "z.uzytkownik_id,z.zaproszenie_id,p.projekt_id,p.nazwa,p.data_zakonczenia,lider,u.imie,u.nazwisko,z.data_dodania");
         if (sort.length()>0) sql+= " order by z.data_dodania "+sort;
         //if(search!=null) sql+= " and u.imie like '%"+search+"%'";
-        int perPage = 1;
+        int perPage = PER_PAGE;
         sql+= " limit "+page*perPage+","+perPage+"";
 
         DataReader<Invite> dataReader = new JdbcSource<>(connection, sql, Invite.jdbcConverter());
