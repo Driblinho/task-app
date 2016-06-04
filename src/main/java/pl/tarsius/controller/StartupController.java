@@ -134,12 +134,12 @@ public class StartupController {
 
 
         Platform.runLater(() -> {
-            new ResponsiveDesign((Stage) change.getParent().getScene().getWindow()).resizeBodyWidth(change.getParent().getScene().getWindow().getWidth());
+            new ResponsiveDesign((Stage) forgotPassword.getParent().getScene().getWindow()).resizeBodyWidth(forgotPassword.getParent().getScene().getWindow().getWidth());
             //-3.48% HACK
             double h = change.getParent().getScene().getWindow().getHeight();
             //h = h-h*0.0348;
             h = h-h*0.0248;
-            new ResponsiveDesign((Stage) change.getParent().getScene().getWindow()).resizeBodyHeight(h);
+            new ResponsiveDesign((Stage) forgotPassword.getParent().getScene().getWindow()).resizeBodyHeight(h);
         });
 
         validationSupportLogin = new ValidationSupport();
