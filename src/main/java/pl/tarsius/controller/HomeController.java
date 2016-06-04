@@ -19,10 +19,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import org.controlsfx.control.SegmentedButton;
+import org.controlsfx.control.spreadsheet.Grid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.tarsius.controller.project.ShowProjectController;
@@ -80,10 +82,12 @@ public class HomeController extends BaseController{
     @FXML private CheckBox collProjects;
     @FXML private CheckBox managerProjects;
 
+    @FXML private GridPane projectListLoading;
+
     @PostConstruct
     public void init() throws VetoException, FlowException {
 
-        contentFlow.setPrefHeight(400.0);
+        //contentFlow.setPrefHeight(400.0);
 
         isBoss = false;
         showMyproject = false;
@@ -279,17 +283,15 @@ public class HomeController extends BaseController{
                     @Override
                     protected ObservableList<Project> call() throws InterruptedException, IOException {
                         ObservableList<Project> observableList = FXCollections.observableArrayList();
-                        do {
-                            Project i = dataReader.get();
-                            observableList.add(i);
-                            Thread.sleep(500);
-                        } while (dataReader.next());
+                        dataReader.forEach(project -> observableList.add(project));
                         return observableList;
                     }
                 };
+                task.setOnRunning(event -> projectListLoading.setVisible(true));
                 task.setOnSucceeded(event -> {
                     contentFlow.getChildren().clear();
                     task.getValue().forEach(project -> createLis(project));
+                    projectListLoading.setVisible(false);
                 });
                 return task;
             }
