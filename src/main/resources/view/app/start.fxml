@@ -5,9 +5,14 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Pagination?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import org.controlsfx.control.BreadCrumbBar?>
@@ -22,7 +27,7 @@
          <center>
             <VBox prefHeight="784.0" prefWidth="962.0" spacing="10.0">
                <padding>
-                  <Insets left="10.0" top="10.0" />
+                  <Insets bottom="15.0" left="10.0" top="10.0" />
                </padding>
                <children>
                   <fx:include source="../userbar.fxml" />
@@ -42,10 +47,29 @@
                   </HBox>
                   <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="638.0" prefWidth="960.0">
                      <content>
-                        <FlowPane fx:id="contentFlow" prefHeight="600.0" prefWidth="958.0" />
+                        <StackPane>
+                           <children>
+                              <FlowPane fx:id="contentFlow" prefHeight="200.0" prefWidth="200.0" />
+                              <GridPane fx:id="projectListLoading" alignment="TOP_CENTER" StackPane.alignment="CENTER">
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                                 <children>
+                                    <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                                       <image>
+                                          <Image url="@../../assets/img/cube_loading.gif" />
+                                       </image>
+                                    </ImageView>
+                                 </children>
+                              </GridPane>
+                           </children>
+                        </StackPane>
                      </content>
                   </ScrollPane>
-                  <Pagination fx:id="pagination" prefHeight="52.0" prefWidth="960.0" />
+                  <Pagination fx:id="pagination" pageCount="1" prefHeight="52.0" prefWidth="960.0" />
                </children>
             </VBox>
          </center>

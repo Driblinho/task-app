@@ -53,13 +53,16 @@
                                     <Font name="System Bold" size="22.0" />
                                  </font>
                                  <GridPane.margin>
-                                    <Insets left="6.0" />
+                                    <Insets left="15.0" />
                                  </GridPane.margin>
                               </Label>
                               <ButtonBar GridPane.columnIndex="1">
                                  <buttons>
                                     <Button fx:id="addToReportBucket" mnemonicParsing="false" styleClass="greenButton" text="Dodaj do raportów" />
                                  </buttons>
+                                 <padding>
+                                    <Insets right="5.0" top="5.0" />
+                                 </padding>
                               </ButtonBar>
                            </children>
                         </GridPane>
@@ -68,7 +71,7 @@
                               <Font size="14.0" />
                            </font>
                            <VBox.margin>
-                              <Insets left="5.0" />
+                              <Insets left="15.0" />
                            </VBox.margin>
                         </Text>
                         <GridPane prefHeight="47.0" prefWidth="950.0">
@@ -134,12 +137,18 @@
                            <content>
                               <VBox alignment="TOP_RIGHT">
                                  <children>
-                                    <SegmentedButton fx:id="sortProjectUsers" prefHeight="26.0" prefWidth="180.0">
+                                    <HBox alignment="TOP_RIGHT" prefHeight="26.0" prefWidth="939.0">
                                        <VBox.margin>
                                           <Insets bottom="10.0" right="20.0" />
                                        </VBox.margin>
-                                    </SegmentedButton>
-                                    <VBox fx:id="userInProject" spacing="10.0" />
+                                       <children>
+                                          <SegmentedButton fx:id="sortProjectUsers" prefHeight="26.0" prefWidth="160.0" />
+                                       </children>
+                                    </HBox>
+                                    <VBox fx:id="userInProject" spacing="10.0">
+                                       <padding>
+                                          <Insets right="10.0" />
+                                       </padding></VBox>
                                     <Pagination fx:id="InProjectMemberPagination" pageCount="1" prefHeight="51.0" prefWidth="961.0" />
                                  </children>
                                  <padding>
@@ -156,26 +165,26 @@
                                        <children>
                                           <CheckBox fx:id="filtrOnlyMy" layoutX="382.0" layoutY="10.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="97.0" text="Tylko moje">
                                              <HBox.margin>
-                                                <Insets bottom="10.0" />
+                                                <Insets bottom="10.0" top="10.0" />
                                              </HBox.margin></CheckBox>
                                           <CheckBox fx:id="filtrNew" mnemonicParsing="false" text="Nowe">
                                              <HBox.margin>
-                                                <Insets bottom="10.0" />
+                                                <Insets bottom="10.0" top="10.0" />
                                              </HBox.margin>
                                           </CheckBox>
                                           <CheckBox fx:id="filtrForTest" layoutX="728.0" layoutY="10.0" mnemonicParsing="false" text="Do sprawdzenia">
                                              <HBox.margin>
-                                                <Insets bottom="10.0" />
+                                                <Insets bottom="10.0" top="10.0" />
                                              </HBox.margin>
                                           </CheckBox>
                                           <CheckBox fx:id="filtrInProgres" layoutX="686.0" layoutY="14.0" mnemonicParsing="false" text="W trakcie">
                                              <HBox.margin>
-                                                <Insets bottom="10.0" />
+                                                <Insets bottom="10.0" top="10.0" />
                                              </HBox.margin>
                                           </CheckBox>
                                           <CheckBox fx:id="filtrEnd" layoutX="661.0" layoutY="10.0" mnemonicParsing="false" text="Zakończone">
                                              <HBox.margin>
-                                                <Insets bottom="10.0" />
+                                                <Insets bottom="10.0" top="10.0" />
                                              </HBox.margin>
                                           </CheckBox>
                                           <SegmentedButton fx:id="sortProjectTask" prefHeight="26.0" prefWidth="180.0" />
@@ -184,7 +193,10 @@
                                           <Insets bottom="10.0" />
                                        </VBox.margin>
                                     </HBox>
-                                    <VBox fx:id="taskInProject" prefHeight="81.0" prefWidth="950.0" spacing="10.0" />
+                                    <VBox fx:id="taskInProject" spacing="10.0">
+                                       <padding>
+                                          <Insets right="10.0" />
+                                       </padding></VBox>
                                     <Pagination fx:id="inProjectTaskPg" pageCount="1" prefHeight="51.0" prefWidth="961.0" />
                                  </children>
                                  <padding>
