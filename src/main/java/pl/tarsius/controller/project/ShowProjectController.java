@@ -17,8 +17,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
@@ -358,14 +357,19 @@ public class ShowProjectController extends BaseController{
         }
 
     }
+
+    private GridPane inProjectTask(TaskDb taskDb) {
+        return inProjectTaskTpl(taskDb,flowActionHandler);
+    }
+
     /**
      * Metoda generująca pojedynczy wiersz z użytkownikami uczestniczącymi w projekcie
      * @param taskDb Obiekt reprezentujący dane zadania
      * @return AnchorPane - wiersz z zadaniem
      */
-    private AnchorPane inProjectTask(TaskDb taskDb) {
+    public static GridPane inProjectTaskTpl(TaskDb taskDb, FlowActionHandler flowActionHandler) {
         try {
-            AnchorPane anchorPane  = FXMLLoader.load(getClass().getClassLoader().getResource("view/app/taskInProjectTPL.fxml"));
+            GridPane anchorPane  = FXMLLoader.load(ShowProjectController.class.getClassLoader().getResource("view/app/taskInProjectTPL.fxml"));
             Hyperlink taskName = (Hyperlink) anchorPane.lookup(".taskName");
             Hyperlink taskUser = (Hyperlink) anchorPane.lookup(".taskUser");
             Label taskUserL = (Label) anchorPane.lookup(".taskUserL");
@@ -373,7 +377,7 @@ public class ShowProjectController extends BaseController{
             Text taskDate = (Text) anchorPane.lookup(".taskDate");
             Label taskStatus = (Label) anchorPane.lookup(".taskStatus");
 
-            taskUser.setOnAction(event -> navigateToProfile(taskDb.getUserId()));
+            taskUser.setOnAction(event -> new ShowProjectController().navigateToProfile(taskDb.getUserId()));
 
             String status = "Zakończone";
             switch (taskDb.getStatus()) {
@@ -385,6 +389,7 @@ public class ShowProjectController extends BaseController{
 
             taskName.setText(taskDb.getName());
             taskName.setOnAction(event -> {
+                ApplicationContext.getInstance().register("projectId", taskDb.getProjectId());
                 ApplicationContext.getInstance().register("taskId", taskDb.getId());
                 DataFxEXceptionHandler.navigateQuietly(flowActionHandler,ShowTaskController.class);
             });
