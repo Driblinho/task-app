@@ -39,6 +39,7 @@ public class ShowTaskController extends BaseController {
     @FXML private Label taskTitle;
     @FXML private Label taskEndL;
     @FXML private Text taskEnd;
+    @FXML private Text taskStart;
     @FXML
     @ActionTrigger("showTaskOwnerProfile")
     private Hyperlink taskProjectAuthor;
@@ -70,9 +71,9 @@ public class ShowTaskController extends BaseController {
         taskDesc.setText(taskDb.getDesc());
         taskProjectAuthor.setText(taskDb.getUserName());
 
-        String status = "Zakonczone";
+        String status = "Zakończone";
         switch (taskDb.getStatus()) {
-            case 1: status="nowe";break;
+            case 1: status="Nowe";break;
             case 2: status = "W trakcie";break;
             case 3: status= "Do sprawdzenia";break;
         }
@@ -86,7 +87,9 @@ public class ShowTaskController extends BaseController {
             });
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            loger.debug("Komentarze Zadanie", e);
+            Alert al = new Alert(Alert.AlertType.ERROR, "Błąd podczas wykonywania zapytania");
+            al.show();
         }
 
 
@@ -109,7 +112,7 @@ public class ShowTaskController extends BaseController {
             taskCommentDesc.setText(taskComment.getDesc());
             return anchorPane;
         } catch (IOException e) {
-            e.printStackTrace();
+            loger.debug("Ładowanie szablonu komentarzy zadań", e);
             return null;
         }
     }
