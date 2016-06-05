@@ -1,5 +1,6 @@
 package pl.tarsius.util.gui;
 
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -53,9 +54,6 @@ public class ResponsiveDesign {
         if(inviteItem != null ) {
             inviteItem.setPrefWidth(width-240.0);
         }
-
-
-
     }
 
     /** Skalowanie wysokości aplikacji
@@ -82,6 +80,16 @@ public class ResponsiveDesign {
         if(topMsgContent != null) {
             topMsgContent.setPrefWidth(width);
         }
+    }
+
+    public static void scaleGUI(Node node) {
+        Platform.runLater(() -> {
+            new ResponsiveDesign((Stage) node.getParent().getScene().getWindow()).resizeBodyWidth(node.getParent().getScene().getWindow().getWidth());
+            //-3.48% HACK
+            double h = node.getParent().getScene().getWindow().getHeight();
+            h = h-h*0.0248;
+            new ResponsiveDesign((Stage) node.getParent().getScene().getWindow()).resizeBodyHeight(h);
+        });
     }
 
 }

@@ -143,14 +143,7 @@ public abstract class BaseController {
         root.getChildren().addAll(signalProject, newProject, myTaskList, myInv, useresManagment, profilView, bucketReport,about);
         breadCrumb=new BreadCrumbBar(root);
 
-        Platform.runLater(() -> {
-            new ResponsiveDesign((Stage) operationButtons.getParent().getScene().getWindow()).resizeBodyWidth(operationButtons.getParent().getScene().getWindow().getWidth());
-            //-3.48% HACK
-            double h = operationButtons.getParent().getScene().getWindow().getHeight();
-            //h = h-h*0.0348;
-            h = h-h*0.0248;
-            new ResponsiveDesign((Stage) sideBarProject.getParent().getScene().getWindow()).resizeBodyHeight(h);
-        });
+        ResponsiveDesign.scaleGUI(sideBarProject);
 
         new Thread(countSidebar()).start();
 
