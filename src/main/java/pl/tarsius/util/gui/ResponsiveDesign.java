@@ -51,9 +51,6 @@ public class ResponsiveDesign {
         if(userBar != null ) {
             userBar.setPrefWidth(width-220.0);
         }
-        if(inviteItem != null ) {
-            inviteItem.setPrefWidth(width-240.0);
-        }
     }
 
     /** Skalowanie wysokości aplikacji
@@ -71,7 +68,7 @@ public class ResponsiveDesign {
 
     /**
      * Skalowanie startowego loga aplikacji
-     * @param width
+     * @param width Szerokość dla skalowanego elementu
      */
     private void resizeStartUpLogoWidth(Double width) {
         if (logoImageView!=null) {
@@ -82,6 +79,10 @@ public class ResponsiveDesign {
         }
     }
 
+    /**
+     * Skalowanie wysokości i szerokości aplikacji podczas przełączania kontrolera
+     * @param Node do z widoku potrzebne do pobrania {@link Stage} oraz szerokości i wysokości
+     */
     public static void scaleGUI(Node node) {
         Platform.runLater(() -> {
             new ResponsiveDesign((Stage) node.getParent().getScene().getWindow()).resizeBodyWidth(node.getParent().getScene().getWindow().getWidth());
