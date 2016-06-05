@@ -4,7 +4,7 @@
 .manageOptions:hover Hyperlink > Glyph,.manageOptions:hover > Hyperlink { -fx-text-fill: #fff;-fx-underline:false;}
 #profileCard Label {-fx-font-weight:Bold;-fx-font-size: 13;}
 
-.text-field {
+.text-field, .text-area {
     -fx-background-color: #fff;
     -fx-prompt-text-fill: rgba(97, 97, 97, 0.5) ;
     -fx-effect: dropshadow(three-pass-box, rgb(0,0,0,0.1), 4, 0, 1, 1);

@@ -23,6 +23,11 @@
     -fx-effect: dropshadow(three-pass-box, rgb(0,0,0,0.1), 4, 0, 1, 1);
 }
 
+.squareButtonRang
+{
+    -fx-background-color: #ccc;
+}
+
 .squareButton:hover
 {
     -fx-background-color: #f8f8f8;
