@@ -64,7 +64,7 @@
                         </Label>
                         <TableView fx:id="selectedUser" prefHeight="185.0">
                            <columns>
-                              <TableColumn fx:id="name1" prefWidth="269.0" text="Imie i Nazwisko" />
+                              <TableColumn fx:id="name1" prefWidth="269.0" text="Imię i Nazwisko" />
                               <TableColumn fx:id="email1" minWidth="0.0" prefWidth="304.0" text="Email" />
                            </columns>
                         </TableView>
