@@ -2,11 +2,14 @@
 
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Pagination?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import org.controlsfx.control.BreadCrumbBar?>
+<?import org.controlsfx.control.SegmentedButton?>
 
 <StackPane alignment="TOP_CENTER" prefHeight="800.0" prefWidth="1170.0" xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1">
    <children>
@@ -22,7 +25,27 @@
                <children>
                   <fx:include source="../userbar.fxml" />
                   <BreadCrumbBar fx:id="breadCrumb" />
-                  <fx:include source="invitation.fxml" />
+                  <HBox alignment="TOP_RIGHT" prefHeight="33.0" spacing="5.0">
+                     <children>
+                        <Label prefHeight="22.0" prefWidth="30.0" text="Filtr:" />
+                        <SegmentedButton fx:id="invFiltr" />
+                        <SegmentedButton fx:id="invSort" />
+                     </children>
+                     <padding>
+                        <Insets right="20.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets right="20.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <VBox fx:id="invContent" prefHeight="200.0" spacing="10.0">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <padding>
+                        <Insets right="40.0" />
+                     </padding>
+                  </VBox>
                   <Pagination fx:id="invPagination" prefHeight="49.0" prefWidth="960.0" visible="false" />
                </children>
             </VBox>
