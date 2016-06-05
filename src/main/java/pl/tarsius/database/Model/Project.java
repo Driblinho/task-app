@@ -217,7 +217,7 @@ public class Project {
                 ps.setLong(2,projectId);
                 ps.addBatch();
             }
-            ps.executeUpdate();
+            ps.executeBatch();
             connection.createStatement().executeUpdate("delete from Zaproszenia where projekt_id = "+projectId+" and uzytkownik_id in ("+users.toString().replace("[","").replace("]","")+")");
             connection.commit();
             msg = new Object[]{true,"Użytkownicy zostali dodani do projektu"};
