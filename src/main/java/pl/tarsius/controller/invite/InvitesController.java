@@ -43,7 +43,13 @@ import java.sql.SQLException;
 public class InvitesController extends BaseController {
 
 
+    /**
+     * {@link SegmentedButton} na filtrowanie zaproszeń
+     */
     @FXML private SegmentedButton invFiltr;
+    /**
+     * {@link SegmentedButton} na sortowanie zaproszeń
+     */
     @FXML private SegmentedButton invSort;
 
     /**
@@ -57,14 +63,14 @@ public class InvitesController extends BaseController {
     @FXML private Pagination invPagination;
 
     /**
-     * DataFX FlowActionHandler
+     * DataFX {@link FlowActionHandler} obsługuje nawigacje między kontrolerami
      */
     @ActionHandler
     private FlowActionHandler flowActionHandler;
 
 
     /**
-     * Loger
+     * {@link Logger}
      */
     private static Logger loger = LoggerFactory.getLogger(InvitesController.class);
 
@@ -171,7 +177,6 @@ public class InvitesController extends BaseController {
         GridPane gridPane = new GridPane();
         try {
             gridPane = FXMLLoader.load(getClass().getClassLoader().getResource("view/app/invitationUserTPL.fxml"));
-            gridPane.setPrefWidth(invContent.getScene().widthProperty().getValue()-230.0);
             Label projectName = (Label) gridPane.lookup(".invProjectName");
             Hyperlink author = (Hyperlink) gridPane.lookup(".invAuthor");
             Label endDL = (Label) gridPane.lookup(".invDescDateEnd");
@@ -185,7 +190,6 @@ public class InvitesController extends BaseController {
 
             cancel.setOnAction(event -> {
                 Button b = (Button) event.getSource();
-                Node n = b.getParent();
                 Task<Object[]> task = new Task<Object[]>() {
                     @Override
                     protected Object[] call() throws Exception {
@@ -278,8 +282,9 @@ public class InvitesController extends BaseController {
 
                 try {
                     ResultSet rs = connection.prepareStatement(sqlCount).executeQuery();
-                    rs.next();
-                    long count = rs.getLong(1);
+                    long count;
+                    if(rs.next()) count = rs.getLong(1);
+                    else return observableList;
                     int pageCount = (int) Math.ceil((float)count/perPage);
                     Platform.runLater(() -> {
                         if(pageCount>0) {
@@ -291,17 +296,13 @@ public class InvitesController extends BaseController {
                     e.printStackTrace();
                 }
 
-                do {
-                    Invite i = dataReader.get();
-                    observableList.add(i);
-                    Thread.sleep(500);
-                } while (dataReader.next());
+                dataReader.forEach(invite -> observableList.add(invite));
                 return observableList;
             }
         };
         task.setOnSucceeded(event -> {
             invContent.getChildren().clear();
-            if(task.getValue().get(0)!=null)
+            if(task.getValue().size()>0)
                 task.getValue().forEach(invite -> invContent.getChildren().add(invRow(invite)));
         });
         return task;
