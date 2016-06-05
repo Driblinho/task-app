@@ -57,3 +57,7 @@
 .bread-crumb-bar .button {
     -fx-background-radius: 3, 2, 2;
 }
+
+.scroll-pane > .viewport {
+   -fx-background-color: transparent;
+}
