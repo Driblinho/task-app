@@ -136,7 +136,7 @@ public class StartupController {
         Platform.runLater(() -> {
             new ResponsiveDesign((Stage) forgotPassword.getParent().getScene().getWindow()).resizeBodyWidth(forgotPassword.getParent().getScene().getWindow().getWidth());
             //-3.48% HACK
-            double h = change.getParent().getScene().getWindow().getHeight();
+            double h = forgotPassword.getParent().getScene().getWindow().getHeight();
             //h = h-h*0.0348;
             h = h-h*0.0248;
             new ResponsiveDesign((Stage) forgotPassword.getParent().getScene().getWindow()).resizeBodyHeight(h);
