@@ -225,7 +225,7 @@ public class AddToProjectController extends BaseController {
             e.printStackTrace();
         }
 
-        sql= sql.replace("{tpl}", "u.uzytkownik_id,u.imie,u.nazwisko,u.avatar_id,u.email");
+        sql= sql.replace("{tpl}", "u.*");
 
         if(search!=null && search.length()>0) sql+= " and u.imie like '%"+search+"%' or u.nazwisko like '%"+search+"%' or u.email like '%"+search+"%'";
         //if(searchProperty!=null && !searchProperty.isEmpty().getValue()) sql+= " and u.imie like '%"+searchProperty.getValue()+"%'";

@@ -504,7 +504,7 @@ public class ShowProjectController extends BaseController{
         int perPage=USER_AND_TASK_PER_PAGE;
         String countSql = sql.replace("{tpl}", "count(*)");
         sql+= " limit "+page*perPage+","+perPage+"";
-        String exc = sql.replace("{tpl}", "u.uzytkownik_id,u.imie,u.nazwisko,u.avatar_id,u.email");
+        String exc = sql.replace("{tpl}", "u.*");
         DataReader<User> dataReader = new JdbcSource<>(connection, exc, User.jdbcConverter());
         Task<ObservableList<User>> task = new Task<ObservableList<User>>() {
             @Override
