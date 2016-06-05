@@ -186,11 +186,13 @@ public class User {
             public User convertOneRow(ResultSet resultSet) {
                 User user = new User();
                 try {
-                     user.setUzytkownikId(resultSet.getLong("uzytkownik_id"));
-                     user.setImie(resultSet.getString("imie"));
-                     user.setNazwisko(resultSet.getString("nazwisko"));
-                     if(resultSet.getString("avatar_id")!=null) user.setAvatarId(resultSet.getString("avatar_id"));
-                     user.setEmail(resultSet.getString("email"));
+                    user.setUzytkownikId(resultSet.getLong("uzytkownik_id"));
+                    user.setImie(resultSet.getString("imie"));
+                    user.setNazwisko(resultSet.getString("nazwisko"));
+                    if (resultSet.getString("avatar_id") != null) user.setAvatarId(resultSet.getString("avatar_id"));
+                    user.setEmail(resultSet.getString("email"));
+                    user.setAktywny(resultSet.getBoolean("aktywny"));
+                    user.setTyp(resultSet.getInt("typ"));
                     return user;
                 } catch (SQLException e) {
                     // TODO: 21.04.16 LOG
@@ -201,5 +203,4 @@ public class User {
             }
         };
     }
-
 }
