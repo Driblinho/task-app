@@ -129,6 +129,7 @@ public class MyProfileController extends BaseController {
         showId = (Long) ApplicationContext.getInstance().getRegisteredObject("showUserID");
         if(showId!=null) {
             user = UserAuth.userByID(showId);
+
         } else user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
         setProfileCard(user);
 
@@ -187,6 +188,11 @@ public class MyProfileController extends BaseController {
         profileDataName.setText(user.getImie());
         profileDataSurname.setText(user.getNazwisko());
         profileDataPesel.setText(user.getPesel());
+
+        User session = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
+        if(showId!=null && !(session.isAdmin() || session.isManager()))
+            profileDataPesel.setText("Nie można wyświetlić");
+
         profileDataBirthday.setText(user.getDataUrodzenia().toString());
         profileDataTel.setText(user.getTelefon());
         profileDataCity.setText(user.getMiasto());
@@ -196,51 +202,55 @@ public class MyProfileController extends BaseController {
 
     @ActionMethod("editProfile")
     public void editProfile() {
-        profileCard.setVisible(false);
-        newPasswordForm.setVisible(false);
-        profileEdit.setVisible(true);
-        editProfile.setDisable(true);
-        changePassword.setDisable(false);
+        User session = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
+        if(showId==null || session.isAdmin()) {
+            profileCard.setVisible(false);
+            newPasswordForm.setVisible(false);
+            profileEdit.setVisible(true);
+            editProfile.setDisable(true);
+            changePassword.setDisable(false);
+        }
     }
 
     @ActionMethod("newPassword")
     public void newPassword() {
-        profileCard.setVisible(false);
-        profileEdit.setVisible(false);
-        newPasswordForm.setVisible(true);
-        editProfile.setDisable(false);
-        changePassword.setDisable(true);
-
+        User session = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
+        if(showId==null || session.isAdmin()) {
+            profileCard.setVisible(false);
+            profileEdit.setVisible(false);
+            newPasswordForm.setVisible(true);
+            editProfile.setDisable(false);
+            changePassword.setDisable(true);
+        }
     }
 
     @ActionMethod("changeAvatar")
-    public void changeAvatar() throws VetoException, FlowException {
+    public void changeAvatar() {
+        User session = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
+        if(showId==null || session.isAdmin()) {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Open Resource File");
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("JPG", "*.jpg"),
+                    new FileChooser.ExtensionFilter("PNG", "*.png")
+            );
+            File file = fileChooser.showOpenDialog(profileDataAvatar.getScene().getWindow());
+            if (file != null) {
 
-
-        new StockButtons(operationButtons, flowActionHandler).homeAction();
-        User user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Resource File");
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("JPG", "*.jpg"),
-                new FileChooser.ExtensionFilter("PNG", "*.png")
-        );
-        File file = fileChooser.showOpenDialog(profileDataAvatar.getScene().getWindow());
-        if(file != null) {
-
-            final String[] msg = new String[1];
-            Task<Boolean> task = new Task<Boolean>() {
-                @Override
-                protected Boolean call() {
-                    Object[] userAuth = UserAuth.setAvatar(file.getAbsolutePath(), user.getUzytkownikId());
-                    msg[0] = (String) userAuth[1];
-                    return (boolean) userAuth[0];
-                }
-            };
-            task.setOnRunning(event -> loading.setVisible(true));
-            task.setOnFailed(event -> new Alert(Alert.AlertType.ERROR,msg[0]));
-            task.setOnSucceeded(event -> loading.setVisible(false));
-            new Thread(task).start();
+                final String[] msg = new String[1];
+                Task<Boolean> task = new Task<Boolean>() {
+                    @Override
+                    protected Boolean call() {
+                        Object[] userAuth = UserAuth.setAvatar(file.getAbsolutePath(), session.getUzytkownikId());
+                        msg[0] = (String) userAuth[1];
+                        return (boolean) userAuth[0];
+                    }
+                };
+                task.setOnRunning(event -> loading.setVisible(true));
+                task.setOnFailed(event -> new Alert(Alert.AlertType.ERROR, msg[0]));
+                task.setOnSucceeded(event -> loading.setVisible(false));
+                new Thread(task).start();
+            }
         }
     }
 
