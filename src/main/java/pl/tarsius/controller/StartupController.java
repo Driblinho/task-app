@@ -45,9 +45,6 @@ public class StartupController {
 
     private Logger loger;
 
-    @FXMLApplicationContext
-    private ApplicationContext appContext;
-
     @FXML
     private Label topMsg;
 
@@ -132,15 +129,7 @@ public class StartupController {
     @PostConstruct
     public void init() {
 
-
-        Platform.runLater(() -> {
-            new ResponsiveDesign((Stage) forgotPassword.getParent().getScene().getWindow()).resizeBodyWidth(forgotPassword.getParent().getScene().getWindow().getWidth());
-            //-3.48% HACK
-            double h = forgotPassword.getParent().getScene().getWindow().getHeight();
-            //h = h-h*0.0348;
-            h = h-h*0.0248;
-            new ResponsiveDesign((Stage) forgotPassword.getParent().getScene().getWindow()).resizeBodyHeight(h);
-        });
+        ResponsiveDesign.scaleGUI(topMsg);
 
         validationSupportLogin = new ValidationSupport();
         validationSupportLogin.registerValidator(logInEmail, true, UserFormValidator.getEmail());
@@ -172,7 +161,6 @@ public class StartupController {
 
         Validator validatorToken = Validator.combine(Validator.createEmptyValidator("Token jest wymagany"));
 
-        // TODO: 03.04.16 Ulepszyć
         ArrayList<String> fp1 = new ArrayList<>();
         fp1.add(forgPassword.textProperty().toString());
 

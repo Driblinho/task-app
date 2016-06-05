@@ -5,6 +5,10 @@ import io.datafx.controller.context.ApplicationContext;
 import io.datafx.controller.flow.FlowException;
 import io.datafx.controller.flow.context.FlowActionHandler;
 import io.datafx.controller.util.VetoException;
+import io.datafx.io.DataReader;
+import io.datafx.io.JdbcSource;
+import javafx.application.Platform;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -24,12 +28,16 @@ import pl.tarsius.controller.MyProfileController;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.User;
 import pl.tarsius.util.UserAuth;
+import pl.tarsius.util.gui.DataFxEXceptionHandler;
 import pl.tarsius.util.gui.StockButtons;
 
 import javax.annotation.PostConstruct;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -39,6 +47,14 @@ import java.util.Optional;
 public class UsersListController extends BaseController {
     @FXML
     private TableView userTable;
+
+    private ObservableList<Person> data;
+
+    @FXML
+    private Pagination pagination;
+
+    private static int PER_PAGE = 10;
+
     @PostConstruct
     public void init() {
 
@@ -56,7 +72,7 @@ public class UsersListController extends BaseController {
 
         userTable.getColumns().setAll(idCol,imieCol,nazwiskoCol,emailCol,rangaCol,statusCol,akcjaCol);
 
-        final ObservableList<Person> data = FXCollections.observableArrayList();
+        data = FXCollections.observableArrayList();
 
         idCol.setCellValueFactory(
                 new PropertyValueFactory<>("id"));
@@ -66,13 +82,26 @@ public class UsersListController extends BaseController {
                 new PropertyValueFactory<>("nazwisko"));
         emailCol.setCellValueFactory(
                 new PropertyValueFactory<>("email"));
+
+        emailCol.setPrefWidth(200);
+
         rangaCol.setCellValueFactory(
-                new PropertyValueFactory<>("ranga"));
+                new PropertyValueFactory<>("typ"));
+
+        rangaCol.setPrefWidth(150);
+
         statusCol.setCellValueFactory(
                 new PropertyValueFactory<>("status"));
 
+        statusCol.setPrefWidth(100);
+
         akcjaCol.setCellValueFactory(
                 new PropertyValueFactory<>("action"));
+
+        akcjaCol.setSortable(false);
+
+        akcjaCol.setPrefWidth(150);
+
         userTable.setItems(data);
 
 
@@ -80,12 +109,19 @@ public class UsersListController extends BaseController {
 
         try {
             Connection conn = ic.connect();
-            updateTable(null,conn,data);
+            Task<List<Person>> tx = updateTable(userBarSearch.getText().trim(), conn, 0);
+            new Thread(tx).start();
 
             userBarSearch.setOnKeyPressed(event -> {
                 if(event.getCode().equals(KeyCode.ENTER)) {
-                    updateTable(userBarSearch.getText().trim(),conn,data);
+                    Task<List<Person>> t = updateTable(userBarSearch.getText().trim(), conn, 0);
+                    new Thread(t).start();
                 }
+            });
+
+            pagination.currentPageIndexProperty().addListener((observable, oldValue, newValue) -> {
+                Task<List<Person>> t = updateTable(userBarSearch.getText().trim(), conn, newValue.intValue());
+                new Thread(t).start();
             });
 
         } catch (SQLException e) {
@@ -95,33 +131,49 @@ public class UsersListController extends BaseController {
 
     }
 
-    public void updateTable(String search, Connection c, ObservableList<Person> data) {
+    public  Task<List<Person>> updateTable(String search, Connection c, int page) {
 
-            Connection connection = c;
+        int perPage = PER_PAGE;
+        String sql = "select * from Uzytkownicy";
+        String sqlCount = sql.replace("*", "count(*)");
+
 
         try {
-            String sql = "select * from Uzytkownicy";
-            if(search!=null)
+
+            Statement st = c.createStatement();
+
+            if(search!=null && search.length()>0)
                 sql+=" where imie like '%"+search+"%' or nazwisko like '%"+search+"%' or email like '%"+search+"%'";
+            sql+= " limit "+page*perPage+","+perPage+"";
+
             System.out.println(sql);
-            ResultSet rs =  connection.prepareStatement(sql).executeQuery();
-            Task<Void> task = new Task<Void>() {
+            DataReader<User> dr = new JdbcSource<>(c, sql, User.jdbcConverter());
+            Task<List<Person>> task = new Task<List<Person>>() {
                 @Override
-                protected Void call() throws Exception {
-                    data.clear();
-                    while (rs.next()) {
-                        data.add(new Person(rs.getLong("uzytkownik_id"),rs.getString("imie"),rs.getString("nazwisko"),rs.getString("email"),rs.getInt("typ"),rs.getInt("aktywny"),flowActionHandler,loading));
-                        Thread.sleep(500);
-                    }
-                    return null;
+                protected List<Person> call() throws Exception {
+                    List<Person> tmp = new ArrayList<>();
+
+                    ResultSet rs = st.executeQuery(sqlCount);
+                    long count = 0;
+                    if(rs.next()) count = rs.getLong(1);
+                    int pageCount = (int) Math.ceil(count/perPage);
+                    Platform.runLater(() -> pagination.setPageCount(pageCount));
+                    dr.forEach(u -> tmp.add(new Person(u.getUzytkownikId(),u.getImie(),u.getNazwisko(),u.getEmail(),u.getTyp(),u.isAktywny(),flowActionHandler,loading)));
+                    return tmp;
                 }
             };
-            new Thread(task).start();
+
+            task.setOnSucceeded(event -> {
+                data.clear();
+                data.addAll(task.getValue());
+            });
+
+            return task;
 
         } catch (SQLException e) {
             e.printStackTrace();
+            return null;
         }
-
     }
 
     public static class Person {
@@ -130,20 +182,20 @@ public class UsersListController extends BaseController {
         private final SimpleStringProperty imie;
         private final SimpleStringProperty nazwisko;
         private final SimpleStringProperty email;
-        private final SimpleIntegerProperty ranga;
-        private final SimpleIntegerProperty status;
+        private final SimpleIntegerProperty typ;
+        private final SimpleBooleanProperty status;
         private final SimpleObjectProperty<HBox> action;
 
         private FlowActionHandler flowActionHandler;
         private StackPane loading;
 
-        public Person(Long id, String imie, String nazwisko, String email, int ranga, int status,FlowActionHandler flowActionHandler,StackPane loading) {
+        public Person(Long id, String imie, String nazwisko, String email, int typ, boolean status, FlowActionHandler flowActionHandler, StackPane loading) {
             this.id = new SimpleObjectProperty<>(id);
             this.imie = new SimpleStringProperty(imie);
             this.nazwisko = new SimpleStringProperty(nazwisko);
             this.email = new SimpleStringProperty(email);
-            this.ranga = new SimpleIntegerProperty(ranga);
-            this.status = new SimpleIntegerProperty(status);
+            this.typ = new SimpleIntegerProperty(typ);
+            this.status = new SimpleBooleanProperty(status);
             this.action = new SimpleObjectProperty<>(new HBox());
             this.flowActionHandler = flowActionHandler;
             this.loading = loading;
@@ -183,19 +235,20 @@ public class UsersListController extends BaseController {
             return email;
         }
 
-        public int getRanga() {
-            return ranga.get();
+        public int getTyp() {
+            return typ.get();
         }
 
-        public SimpleObjectProperty<Button> rangaProperty() {
+        public SimpleObjectProperty<Button> typProperty() {
             String r;
-            switch (ranga.get()) {
+            switch (typ.get()) {
                 case 1: r="Pracownik"; break;
                 case 2: r="Kierownik"; break;
                 default: r="Admin";
             }
 
             Button b = new Button(r);
+            b.getStyleClass().addAll("squareButton", "squareButtonRang");
             b.setOnAction(event -> {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Zmiana Rangi");
@@ -248,13 +301,19 @@ public class UsersListController extends BaseController {
             return new SimpleObjectProperty<>(b);
         }
 
-        public int getStatus() {
+        public boolean getStatus() {
             return status.get();
         }
 
         public SimpleObjectProperty<Button> statusProperty() {
-            String r = (status.get()==1)?"Aktywny":"Nieaktywny";
+            String r = (status.get())?"Aktywny":"Nieaktywny";
             Button b =new Button(r);
+
+            if(status.get())
+                b.getStyleClass().add("greenButton");
+            else
+                b.getStyleClass().add("redButton");
+
             b.setOnAction(event -> {
                 Alert a = new Alert(Alert.AlertType.CONFIRMATION, "Zmienić status użytkownika?");
                 Optional<ButtonType> op = a.showAndWait();
@@ -262,7 +321,7 @@ public class UsersListController extends BaseController {
                     Task<Object[]> task = new Task<Object[]>() {
                         @Override
                         protected Object[] call() throws Exception {
-                            int s = (getStatus()==1)?0:1;
+                            int s = (getStatus())?0:1;
                             return UserAuth.updateStatus(s,getId());
                         }
                     };
@@ -270,13 +329,7 @@ public class UsersListController extends BaseController {
                     task.setOnSucceeded(event1 -> {
                         loading.setVisible(false);
                         if((boolean)task.getValue()[0]) {
-                            try {
-                                flowActionHandler.navigate(UsersListController.class);
-                            } catch (VetoException e) {
-                                e.printStackTrace();
-                            } catch (FlowException e) {
-                                e.printStackTrace();
-                            }
+                            DataFxEXceptionHandler.navigateQuietly(flowActionHandler, UsersListController.class);
                         } else new Alert(Alert.AlertType.ERROR,""+task.getValue()[1]).show();
                     });
                     new Thread(task).start();
@@ -300,14 +353,8 @@ public class UsersListController extends BaseController {
             edytuj.getStyleClass().setAll("greenButton");
 
             edytuj.setOnAction(event -> {
-                try {
-                    ApplicationContext.getInstance().register("showUserID", getId());
-                    flowActionHandler.navigate(MyProfileController.class);
-                } catch (VetoException e) {
-                    e.printStackTrace();
-                } catch (FlowException e) {
-                    e.printStackTrace();
-                }
+                ApplicationContext.getInstance().register("showUserID", getId());
+                DataFxEXceptionHandler.navigateQuietly(flowActionHandler, MyProfileController.class);
             });
             del.setOnAction(event -> {
                 Alert a = new Alert(Alert.AlertType.CONFIRMATION, "Usunąć użytkownika?");
@@ -322,13 +369,7 @@ public class UsersListController extends BaseController {
                 task.setOnSucceeded(event1 -> {
                     loading.setVisible(false);
                     if((boolean)task.getValue()[0]) {
-                        try {
-                            flowActionHandler.navigate(UsersListController.class);
-                        } catch (VetoException e) {
-                            e.printStackTrace();
-                        } catch (FlowException e) {
-                            e.printStackTrace();
-                        }
+                        DataFxEXceptionHandler.navigateQuietly(flowActionHandler,UsersListController.class);
                     } else {
                         new Alert(Alert.AlertType.ERROR,""+task.getValue()[1]).show();
                     }
