@@ -242,8 +242,6 @@ public abstract class BaseController {
     /**
      * Metoda odpowiada za nawigację do profilu użytkownika
      * @param profileID ID użytkownika którego profil ma zostać wyświetlony
-     * @throws VetoException
-     * @throws FlowException
      */
     public void navigateToProfile(Long profileID) {
         user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");

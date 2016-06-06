@@ -5,7 +5,6 @@ import io.datafx.controller.context.ApplicationContext;
 import io.datafx.controller.flow.action.ActionMethod;
 import io.datafx.controller.flow.action.ActionTrigger;
 import io.datafx.controller.flow.action.BackAction;
-import io.datafx.controller.flow.action.LinkAction;
 import io.datafx.controller.flow.context.ActionHandler;
 import io.datafx.controller.flow.context.FlowActionHandler;
 import javafx.concurrent.Task;
@@ -14,7 +13,6 @@ import javafx.scene.control.*;
 import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
 import pl.tarsius.controller.BaseController;
-import pl.tarsius.controller.HomeController;
 import pl.tarsius.database.Model.Project;
 import pl.tarsius.util.gui.BlockDatePicker;
 import pl.tarsius.util.gui.DataFxEXceptionHandler;
@@ -88,8 +86,8 @@ public class EditProjectController extends BaseController {
         newProjectDatePicker.setDayCellFactory(new BlockDatePicker());
         newProjectTitleField.setText(project.getNazwa());
         newProjectDescField.setText(project.getOpis());
-        if(project.getData_zakonczenia()!=null)
-        newProjectDatePicker.setValue(project.getData_zakonczenia().toLocalDateTime().toLocalDate());
+        if(project.getDataZakonczenia()!=null)
+        newProjectDatePicker.setValue(project.getDataZakonczenia().toLocalDateTime().toLocalDate());
         validationSupport = new ValidationSupport();
         validationSupport.registerValidator(newProjectTitleField, Validator.combine(
                 Validator.createEmptyValidator("Tytuł jest wymagany"),
@@ -111,10 +109,10 @@ public class EditProjectController extends BaseController {
             }
             Project p = new Project();
             Project projectM = (Project) ApplicationContext.getInstance().getRegisteredObject("projectModel");
-            p.setProjekt_id(projectM.getProjekt_id());
+            p.setProjektId(projectM.getProjektId());
             p.setNazwa(newProjectTitleField.getText());
             p.setOpis(newProjectDescField.getText());
-            p.setData_zakonczenia(dz);
+            p.setDataZakonczenia(dz);
             Task<Object[]> task = new Task<Object[]>() {
                 @Override
                 protected Object[] call() throws Exception {

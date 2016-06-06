@@ -24,7 +24,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import org.controlsfx.control.SegmentedButton;
-import org.controlsfx.control.spreadsheet.Grid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.tarsius.controller.project.ShowProjectController;
@@ -176,12 +175,12 @@ public class HomeController extends BaseController{
 
             desc.setText(project.getOpis());
             title.setText(project.getNazwa());
-            title.setUserData(project.getProjekt_id());
+            title.setUserData(project.getProjektId());
 
-            if(project.getData_zakonczenia()==null) {
+            if(project.getDataZakonczenia()==null) {
                 end.setVisible(false);
                 endL.setVisible(false);
-            } else end.setText(project.getData_zakonczenia().toString());
+            } else end.setText(project.getDataZakonczenia().toString());
 
 
             title.setOnAction(event -> {
@@ -194,7 +193,7 @@ public class HomeController extends BaseController{
             Task<Map<TaskDb.Status,Long>> countTask = new Task<Map<TaskDb.Status, Long>>() {
                 @Override
                 protected Map<TaskDb.Status, Long> call() throws Exception {
-                    return Project.getStatistic(project.getProjekt_id());
+                    return Project.getStatistic(project.getProjektId());
                 }
             };
             countTask.setOnSucceeded(event -> {

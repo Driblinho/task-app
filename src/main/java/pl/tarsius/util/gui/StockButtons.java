@@ -30,7 +30,7 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 /**
- * Klasa obsługująca nawigację w spersonalizowaną dla użytkowników (Sidebar -> Akcje)
+ * Klasa obsługująca nawigację w spersonalizowaną dla użytkowników (Sidebar:Akcje)
  * Created by Ireneusz Kuliga on 15.04.16.
  */
 public class StockButtons {

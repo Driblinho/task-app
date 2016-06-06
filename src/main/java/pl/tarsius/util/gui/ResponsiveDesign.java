@@ -6,25 +6,58 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-/** Klasa skalująca elementy GUI
+/**
+ * Klasa skalująca elementy GUI
  * Created by Ireneusz Kuliga on 02.04.16.
  */
 public class ResponsiveDesign {
+    /**
+     * Pole na referencje so {@link Stage} aplikacji
+     */
     private final Stage stage;
+    /**
+     * Pole na referencje do startowych wiadomości
+     */
     private final GridPane topMsgContent;
+    /**
+     * ID loga startowego
+     */
     private String startUpLogoName = "#logo";
+    /**
+     * ID ciała aplikacji
+     */
     private String bodyBorderPaneName = "#body";
+    /**
+     * ID Loadingu
+     */
     private String loadingName = "#loading";
+    /**
+     * ID Paska użytkownika
+     */
     private String userBarName = "#userBar";
+    /**
+     * ID Wiadomości: ekran startowy
+     */
     private String alertTopMsg = "#topMsgContent";
+    /**
+     * Pole na referencje {@link StackPane} loadingu
+     */
     private StackPane loadingStackPane;
+    /**
+     * Pole na referencje ciała aplikacji
+     */
     private BorderPane bodyBorderPane;
+    /**
+     * Pole na referencje loga startowego
+     */
     private ImageView logoImageView;
+    /**
+     * Pole na referencje paska użytkownika
+     */
     private GridPane userBar;
-    private GridPane inviteItem;
 
     /** Inicjalizacja klasy pobierającej {@link Stage} aplikacji
-     * @param stage
+     * @param stage {@link Stage} potrzebny do skalowania GUI
      */
     public ResponsiveDesign(Stage stage) {
         this.stage = stage;
@@ -33,11 +66,10 @@ public class ResponsiveDesign {
         this.loadingStackPane = (StackPane) stage.getScene().lookup(loadingName);
         this.userBar = (GridPane) stage.getScene().lookup(userBarName);
         this.topMsgContent = (GridPane) stage.getScene().lookup(alertTopMsg);
-        this.inviteItem = (GridPane) stage.getScene().lookup(".inviteItem");
     }
 
     /** Skalowanie szerokości aplikacji
-     * @param width
+     * @param width szerokość do której GUI ma być skalowane
      */
     public void resizeBodyWidth(Double width) {
         stage.getScene().getRoot().prefWidth(width);
@@ -54,7 +86,7 @@ public class ResponsiveDesign {
     }
 
     /** Skalowanie wysokości aplikacji
-     * @param height
+     * @param height Wysokość do której GUI ma być skalowane
      */
     public void resizeBodyHeight(Double height) {
         stage.getScene().getRoot().prefHeight(height);
@@ -81,7 +113,7 @@ public class ResponsiveDesign {
 
     /**
      * Skalowanie wysokości i szerokości aplikacji podczas przełączania kontrolera
-     * @param Node do z widoku potrzebne do pobrania {@link Stage} oraz szerokości i wysokości
+     * @param node {@link Node} do z widoku potrzebne do pobrania {@link Stage} oraz szerokości i wysokości
      */
     public static void scaleGUI(Node node) {
         Platform.runLater(() -> {

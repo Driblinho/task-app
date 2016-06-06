@@ -156,7 +156,7 @@ public class GenReportService extends Service<Void>{
                     content.endText();
 
                     //Opis projektu
-                    generateMultiLineText(content,font, report.getDesc());
+                    generateMultiLineText(content,font, report.getDesc().replaceAll("[\\t\\n\\r]"," "));
 
                     content.beginText();
                     content.setFont(font, 11);

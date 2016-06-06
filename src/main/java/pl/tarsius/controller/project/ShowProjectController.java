@@ -211,9 +211,9 @@ public class ShowProjectController extends BaseController{
         ApplicationContext.getInstance().register("projectLider", project.getLider());
             inprojectTitle.setText(project.getNazwa());
             inprojectDesc.setText(project.getOpis());
-            inprojectDataStart.setText(project.getData_dodania().toString());
+            inprojectDataStart.setText(project.getDataDodania().toString());
             inprojectAuthor.setText(project.getLiderImieNazwisko());
-            Timestamp dz = project.getData_zakonczenia();
+            Timestamp dz = project.getDataZakonczenia();
             if(dz!=null) {
                 inprojectDataStop.setText(dz.toString());
             } else {
@@ -280,7 +280,7 @@ public class ShowProjectController extends BaseController{
             Task<Map<TaskDb.Status,Long>> countTask = new Task<Map<TaskDb.Status, Long>>() {
                 @Override
                 protected Map<TaskDb.Status, Long> call() throws Exception {
-                    return Project.getStatistic(project.getProjekt_id());
+                    return Project.getStatistic(project.getProjektId());
                 }
             };
             countTask.setOnSucceeded(event -> {
@@ -333,7 +333,7 @@ public class ShowProjectController extends BaseController{
                 alert.setContentText("Na pewno usunąć użytkownika?");
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
-                    Object[] msg = Project.removeUserFormProject(userData.getUzytkownikId(), project.getProjekt_id());
+                    Object[] msg = Project.removeUserFormProject(userData.getUzytkownikId(), project.getProjektId());
                     Alert infoAlert = new Alert(Alert.AlertType.INFORMATION, (String) msg[1]);
                     if((boolean)msg[0]) {
                         infoAlert.show();
@@ -358,14 +358,20 @@ public class ShowProjectController extends BaseController{
 
     }
 
+    /**
+     * Nakładka na metodę statyczną generującą szablon zadania
+     * @param taskDb Obiekt reprezentujący dane zadania
+     * @return Wiersz z zadaniem
+     */
     private GridPane inProjectTask(TaskDb taskDb) {
         return inProjectTaskTpl(taskDb,flowActionHandler);
     }
 
     /**
-     * Metoda generująca pojedynczy wiersz z użytkownikami uczestniczącymi w projekcie
+     * Metoda generująca pojedynczy wiersz z zadaniem dostępne statycznie dla innych kontrolerów
      * @param taskDb Obiekt reprezentujący dane zadania
-     * @return AnchorPane - wiersz z zadaniem
+     * @param flowActionHandler {@link FlowActionHandler} DataFX
+     * @return wiersz z zadaniem
      */
     public static GridPane inProjectTaskTpl(TaskDb taskDb, FlowActionHandler flowActionHandler) {
         try {
@@ -420,9 +426,9 @@ public class ShowProjectController extends BaseController{
      * @return Task wyświetlający listę zadań
      */
     private Task<ObservableList<TaskDb>> renderTasks(Connection connection,int page){
-        String sql = "select {tpl} from (select z.*,u.imie,u.nazwisko from Zadania z,Uzytkownicy u where z.uzytkownik_id=u.uzytkownik_id and z.projekt_id="+project.getProjekt_id()+"\n" +
+        String sql = "select {tpl} from (select z.*,u.imie,u.nazwisko from Zadania z,Uzytkownicy u where z.uzytkownik_id=u.uzytkownik_id and z.projekt_id="+project.getProjektId()+"\n" +
                 "union \n" +
-                "select *,null,null from Zadania where uzytkownik_id is null and projekt_id="+project.getProjekt_id()+") Z";
+                "select *,null,null from Zadania where uzytkownik_id is null and projekt_id="+project.getProjektId()+") Z";
 
 
         int perPage=USER_AND_TASK_PER_PAGE;
@@ -498,7 +504,7 @@ public class ShowProjectController extends BaseController{
      * @return Task wyświetlający listę użytkowników
      */
     private Task<ObservableList<User>> renderUser(Connection connection,int page) {
-        String sql = "SELECT {tpl} FROM ProjektyUzytkownicy pu,Uzytkownicy u WHERE projekt_id="+project.getProjekt_id()+" and u.uzytkownik_id=pu.uzytkownik_id";
+        String sql = "SELECT {tpl} FROM ProjektyUzytkownicy pu,Uzytkownicy u WHERE projekt_id="+project.getProjektId()+" and u.uzytkownik_id=pu.uzytkownik_id";
 
         if (sort.length()>0) sql+= " order by pu.projekt_uzytkownik "+sort;
         int perPage=USER_AND_TASK_PER_PAGE;

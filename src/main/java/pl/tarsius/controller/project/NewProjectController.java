@@ -105,7 +105,7 @@ public class NewProjectController extends BaseController {
      * Metoda zapisująca nowy  projekt do bazy
      */
    @ActionMethod("saveProject")
-   public void saveProject() throws VetoException, FlowException {
+   public void saveProject() {
 
        if(validationSupport.isInvalid()) {
         validationSupport.initInitialDecoration();

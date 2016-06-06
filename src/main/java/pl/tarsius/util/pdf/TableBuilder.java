@@ -5,14 +5,21 @@ import java.util.List;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 
+/**
+ * Builder Tabeli
+ */
 public class TableBuilder {
 
+    /**
+     * Tabela do zbudowania
+     */
     private Table table = new Table();
 
+
     /**
-     * Setter for property 'height'.
-     *
-     * @param height Value to set for property 'height'.
+     * Ustawia wysokość tabeli
+     * @param height wysokość
+     * @return referencja do samej siebie
      */
     public TableBuilder setHeight(float height) {
         table.setHeight(height);
@@ -20,9 +27,9 @@ public class TableBuilder {
     }
 
     /**
-     * Setter for property 'numberOfRows'.
-     *
-     * @param numberOfRows Value to set for property 'numberOfRows'.
+     * Ustawia ilość wierszy
+     * @param numberOfRows  Ilość wierszy
+     * @return referencja do samej siebie
      */
     public TableBuilder setNumberOfRows(Integer numberOfRows) {
         table.setNumberOfRows(numberOfRows);
@@ -30,9 +37,9 @@ public class TableBuilder {
     }
 
     /**
-     * Setter for property 'rowHeight'.
-     *
-     * @param rowHeight Value to set for property 'rowHeight'.
+     * Ustawia wysokość wiersza
+     * @param rowHeight wysokość wiersza
+     * @return referencja do samej siebie
      */
     public TableBuilder setRowHeight(float rowHeight) {
         table.setRowHeight(rowHeight);
@@ -40,9 +47,9 @@ public class TableBuilder {
     }
 
     /**
-     * Setter for property 'content'.
-     *
-     * @param content Value to set for property 'content'.
+     * Ustawia treść tabeli
+     * @param content Tablica {@link String} z treścią tabeli
+     * @return referencja do samej siebie
      */
     public TableBuilder setContent(String[][] content) {
         table.setContent(content);
@@ -50,9 +57,9 @@ public class TableBuilder {
     }
 
     /**
-     * Setter for property 'columns'.
-     *
-     * @param columns Value to set for property 'columns'.
+     * Ustawia kolumny
+     * @param columns Lista kolumn typu {@link Column}
+     * @return referencja do samej siebie
      */
     public TableBuilder setColumns(List<Column> columns) {
         table.setColumns(columns);
@@ -60,9 +67,9 @@ public class TableBuilder {
     }
 
     /**
-     * Setter for property 'cellMargin'.
-     *
-     * @param cellMargin Value to set for property 'cellMargin'.
+     * Ustawia margines komórki
+     * @param cellMargin rozmiar marginesu
+     * @return referencja do samej siebie
      */
     public TableBuilder setCellMargin(float cellMargin) {
         table.setCellMargin(cellMargin);
@@ -70,9 +77,9 @@ public class TableBuilder {
     }
 
     /**
-     * Setter for property 'margin'.
-     *
-     * @param margin Value to set for property 'margin'.
+     * ustawia marginesy
+     * @param margin rozmiar marginesu
+     * @return referencja do samej siebie
      */
     public TableBuilder setMargin(float margin) {
         table.setMargin(margin);
@@ -80,9 +87,9 @@ public class TableBuilder {
     }
 
     /**
-     * Setter for property 'pageSize'.
-     *
-     * @param pageSize Value to set for property 'pageSize'.
+     * Ustawia rozmiar strony
+     * @param pageSize rozmiar strony {@link PDRectangle}
+     * @return referencja do samej siebie
      */
     public TableBuilder setPageSize(PDRectangle pageSize) {
         table.setPageSize(pageSize);
@@ -90,29 +97,27 @@ public class TableBuilder {
     }
 
     /**
-     * Setter for property 'landscape'.
-     *
-     * @param landscape Value to set for property 'landscape'.
+     * Określa tryb Landscape
+     * @param landscape Parametr logiczny
+     * @return referencja do samej siebie
      */
     public TableBuilder setLandscape(boolean landscape) {
         table.setLandscape(landscape);
         return this;
     }
 
-    /**
-     * Setter for property 'textFont'.
-     *
-     * @param textFont Value to set for property 'textFont'.
+    /** Ustawia czcionkę
+     * @param textFont Czcionka {@link PDFont}
+     * @return referencja do samej siebie
      */
     public TableBuilder setTextFont(PDFont textFont) {
         table.setTextFont(textFont);
         return this;
     }
 
-    /**
-     * Setter for property 'fontSize'.
-     *
-     * @param fontSize Value to set for property 'fontSize'.
+    /** Ustawia rozmiar czcionki
+     * @param fontSize rozmiar czcionki
+     * @return referencja do samej siebie
      */
     public TableBuilder setFontSize(float fontSize) {
         table.setFontSize(fontSize);
@@ -120,7 +125,7 @@ public class TableBuilder {
     }
 
     /**
-     * Metoda budująca obiekt
+     * Metoda budująca obiekt {@link Table}
      * @return Table
      */
     public Table build() {

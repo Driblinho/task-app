@@ -206,7 +206,7 @@ public class AddToProjectController extends BaseController {
 
         Project projectM = (Project) ApplicationContext.getInstance().getRegisteredObject("projectModel");
         String sql = "select {tpl} from Uzytkownicy u \n" +
-                "where uzytkownik_id not in (select uzytkownik_id from ProjektyUzytkownicy where projekt_id="+projectM.getProjekt_id()+") ";
+                "where uzytkownik_id not in (select uzytkownik_id from ProjektyUzytkownicy where projekt_id="+projectM.getProjektId()+") ";
         String countSql = sql.replace("{tpl}", "count(*)");
         int perPage=6;
         try {
@@ -258,7 +258,7 @@ public class AddToProjectController extends BaseController {
      * Wyświetla informacyjny oraz gdy użytkownicy zostali poprawnie dodani przekierowuje na stronę projektu
      */
     @ActionMethod("addToProject")
-    public void addToProject() throws VetoException, FlowException {
+    public void addToProject() {
         long pId = (long) ApplicationContext.getInstance().getRegisteredObject("projectId");
 
         List<Invite> i = new ArrayList<>();
@@ -298,9 +298,9 @@ public class AddToProjectController extends BaseController {
 
         /**
          * Konstruktor idealizujący pola klasy
-         * @param id
-         * @param name
-         * @param email
+         * @param id Identyfikator użytkownika
+         * @param name Imię i Nazwisko użytkownika
+         * @param email adres email użytkownika
          */
         public TableUserModel(long id, String name, String email) {
             this.id = new SimpleObjectProperty<>(id);

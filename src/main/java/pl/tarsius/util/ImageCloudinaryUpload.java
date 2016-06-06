@@ -31,9 +31,9 @@ public class ImageCloudinaryUpload {
 
     /**
      * Konstruktor pobierający konfigurację API
-     * @param cloudNam
-     * @param apiSecret
-     * @param apiKey
+     * @param cloudNam nazwa
+     * @param apiSecret secret key
+     * @param apiKey api key
      */
     public ImageCloudinaryUpload(String cloudNam, String apiSecret, String apiKey) {
 
@@ -46,9 +46,9 @@ public class ImageCloudinaryUpload {
 
     /**
      * Metoda wysyłająca zdjęcie
-     * @param imagePath
-     * @return
-     * @throws IOException
+     * @param imagePath położenie obrazka
+     * @return Mapa z odpowiedzią API
+     * @throws IOException błąd podczas ładowania obrazka
      */
     public Map<String,Object> send(String imagePath) throws IOException {
 

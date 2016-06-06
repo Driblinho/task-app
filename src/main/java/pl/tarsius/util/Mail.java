@@ -37,7 +37,7 @@ public class Mail {
     }
 
     /** Konstruktor pobierający szablon Email
-     * @param emailTemplate
+     * @param emailTemplate {@link InputStream} z szablonem Email
      */
     public Mail(InputStream emailTemplate) {
         ApiKeyReader key = new ApiKeyReader().load();
@@ -193,7 +193,7 @@ public class Mail {
 
     /** Metoda odpowiedzialna za wysyłanie przygotowanego maila
      * @return ClientResponse
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException Brak pliku
      */
     public ClientResponse send() throws FileNotFoundException {
 
