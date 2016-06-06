@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
+ * Klasa reprezentująca raport z projektów
  * Created by ireq on 17.05.16.
  */
 public class ReportProject {
@@ -36,8 +37,16 @@ public class ReportProject {
     private List<String[]> taskTab;
     private List<String[]> userTab;
 
+    /**
+     * Domyślny konstruktor
+     */
     public ReportProject() {}
 
+    /**
+     * Metoda generująca dane raportowe dla listy projektów
+     * @param selectedProject zbiór ID projektów
+     * @return Lista z wybranymi projektami
+     */
     public ArrayList<ReportProject> genProjects(HashSet<Long> selectedProject){
         ArrayList<ReportProject> reportProjectses = new ArrayList<>();
 
@@ -157,6 +166,11 @@ public class ReportProject {
         DbUtils.closeQuietly(null,ps,rs);
     }
 
+    /**
+     * Metoda generuje ID projektów użytkownika
+     * @param userId ID użytkownika
+     * @return Zbiór id projektów
+     */
     public HashSet<Long> getUserProject(long userId) {
         HashSet<Long>  set = new HashSet<>();
         Connection connection = null;

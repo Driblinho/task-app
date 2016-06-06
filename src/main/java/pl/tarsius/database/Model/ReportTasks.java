@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
+/** Klasa reprezentująca raport z zadań
  * Created by ireq on 17.05.16.
  */
 public class ReportTasks {
@@ -21,7 +21,11 @@ public class ReportTasks {
     private List<String[]> taskTab;
 
 
-
+    /**
+     * Metoda generując raport z zadań na bazie ID użytkownika
+     * @param userId ID użytkownika
+     * @return Przygotowane dane do raportu
+     */
     public ReportTasks getTaskReport(long userId) {
         Connection connection = null;
         PreparedStatement ps = null;
