@@ -364,7 +364,7 @@ public class User {
     }
 
     /** JdbcConverter DataFx dla pobieranych danych użytkownika
-     * @return
+     * @return JdbcConverter
      */
     public static JdbcConverter<User> jdbcConverter() {
         return new JdbcConverter<User>() {
