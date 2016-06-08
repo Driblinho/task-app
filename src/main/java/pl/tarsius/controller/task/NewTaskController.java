@@ -81,6 +81,9 @@ public class NewTaskController extends BaseController{
     private static Logger loger = LoggerFactory.getLogger(NewTaskController.class);
     private ValidationSupport validationSupport;
 
+    /**
+     * Inicjalizacja kontrolera
+     */
     @PostConstruct
     public void init() {
         new StockButtons(operationButtons, flowActionHandler).inProjectButton();
@@ -113,6 +116,11 @@ public class NewTaskController extends BaseController{
 
     }
 
+    /**
+     * Metoda przygotowująca szablon pojedynczego użytkownika
+     * @param user Dane użytkownika
+     * @return Szablon wypełniony danymi
+     */
     public AnchorPane userItem(User user) {
         try {
             AnchorPane root = FXMLLoader.load(getClass().getClassLoader().getResource("view/app/userListItemTPL.fxml"));
@@ -131,6 +139,12 @@ public class NewTaskController extends BaseController{
     }
 
 
+    /**
+     * Task generujący listę użytkowników
+     * @param projectId ID projektu
+     * @param page Strona na którą ma zostać ustawione stronicowanie
+     * @return Task
+     */
     private Task<ObservableList<User>> renderUsers(long projectId,int page){
 
         try {
@@ -179,6 +193,9 @@ public class NewTaskController extends BaseController{
         }
     }
 
+    /**
+     * Zapisywanie zadania do bazy
+     */
     @ActionMethod("saveTask")
     public void saveTask() {
         if(validationSupport.isInvalid()) {
@@ -223,10 +240,16 @@ public class NewTaskController extends BaseController{
         }
     }
 
+    /**
+     * Metoda czyszcząca datę
+     */
     @ActionMethod("cleanDate")
     public void cleanDate(){ taskEndDatePicker.setValue(null);
     }
 
+    /**
+     * Metoda usuwająca zaznaczonych użytkowników
+     */
     @ActionMethod("clearSelectedUser")
     public void clearSelectedUser() {
         if(toggleGroup.getSelectedToggle()!=null)

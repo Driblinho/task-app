@@ -14,6 +14,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.slf4j.Logger;
@@ -30,7 +31,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-/**
+/** Kontroler wyświetlający pojedyncze zadanie
  * Created by ireq on 30.04.16.
  */
 @FXMLController(value = "/view/app/showTask.fxml", title = "Zadanie - Tarsius")
@@ -46,13 +47,17 @@ public class ShowTaskController extends BaseController {
     @FXML private Text taskStatus;
     private TaskDb taskDb;
 
-    @FXML private VBox taskCommentList;
+    @FXML private FlowPane taskCommentList;
     @FXML private Pagination taskCommentPg;
 
     private static Logger loger = LoggerFactory.getLogger(ShowTaskController.class);
 
+    /**
+     *  Metoda inicjalizująca kontroler
+     */
     @PostConstruct
     public void init() {
+        Platform.runLater(() -> userBarSearch.setDisable(true));
         breadCrumb.setSelectedCrumb(task);
         breadCrumb.setOnCrumbAction(crumbActionEventEventHandler());
 
@@ -97,19 +102,30 @@ public class ShowTaskController extends BaseController {
 
     }
 
+    /**
+     * Metoda przekierowuje do profilu właściciela projektu
+     */
     @ActionMethod("showTaskOwnerProfile")
     public void showTaskOwnerProfile() {
         navigateToProfile(taskDb.getUserId());
     }
 
 
+    /**
+     * Generuje szablon komentarzy
+     * @param taskComment  Reprezentacja pojedynczego komentarza
+     * @return
+     */
     private AnchorPane inTaskComment(TaskComment taskComment) {
         try {
             AnchorPane anchorPane  = FXMLLoader.load(getClass().getClassLoader().getResource("view/app/taskCommentTpl.fxml"));
-            Text taskCommentDate = (Text) anchorPane.lookup(".taskCommentDate");
-            Text taskCommentDesc = (Text) anchorPane.lookup(".taskCommentDesc");
-            taskCommentDate.setText(taskComment.getAddDate().toString());
-            taskCommentDesc.setText(taskComment.getDesc());
+            Platform.runLater(() -> {
+                Text taskCommentDate = (Text) anchorPane.lookup(".taskCommentDate");
+                Text taskCommentDesc = (Text) anchorPane.lookup(".taskCommentDesc");
+                taskCommentDate.setText(taskComment.getAddDate().toString());
+                taskCommentDesc.setText(taskComment.getDesc());
+            });
+
             return anchorPane;
         } catch (IOException e) {
             loger.debug("Ładowanie szablonu komentarzy zadań", e);
@@ -117,6 +133,12 @@ public class ShowTaskController extends BaseController {
         }
     }
 
+    /**
+     * Metoda zwraca task wyświetlający listę komentarzy
+     * @param connection Połączenie do bazy
+     * @param page strona na którą ma zostać ustawione stronicowanie
+     * @return Task
+     */
     private Task<ObservableList<TaskComment>> renderComment(Connection connection,int page) {
         String sql = "select {tpl} from ZadaniaKomentarze where zadanie_id="+taskDb.getId();
         if (sort.length()>0) sql+= " order by data_dodania "+sort;

@@ -38,6 +38,7 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 
 /**
+ * Klasa obsługująca rejestracje i logowanie
  * Created by Ireneusz Kuliga on 25.03.16.
  */
 @FXMLController(value = "/view/startup/welcome.fxml", title = "Tarsius")
@@ -122,10 +123,14 @@ public class StartupController {
 
     private ValidationSupport validationSupportTokenSend = new ValidationSupport();
 
+
     public StartupController() {
         loger = LoggerFactory.getLogger(getClass());
     }
 
+    /**
+     * Inicjalizacja kontrolera
+     */
     @PostConstruct
     public void init() {
 
@@ -177,6 +182,9 @@ public class StartupController {
         validationSupportTokenSend.registerValidator(forgEmail,UserFormValidator.getEmail());
     }
 
+    /**
+     * Formularz przywracania hasła
+     */
     @ActionMethod("showForgetForm")
     public void showForgetForm() {
         logInForm.setVisible(false);
@@ -184,6 +192,9 @@ public class StartupController {
         logInTab.setText("Odzyskiwanie hasła");
     }
 
+    /**
+     * Formularz logowania
+     */
     @ActionMethod("showLogInForm")
     public void showLogInForm() {
         logInForm.setVisible(true);
@@ -191,6 +202,11 @@ public class StartupController {
         logInTab.setText("Logowanie");
     }
 
+    /**
+     * Obsługa logowania
+     * @throws VetoException DataFX
+     * @throws FlowException DataFX
+     */
     @ActionMethod("validateLogin")
     public void validateLogin() throws VetoException, FlowException {
         if(validationSupportLogin.isInvalid()) {
@@ -228,6 +244,11 @@ public class StartupController {
         }
     }
 
+    /**
+     * Walidacja rejestracji
+     * @throws VetoException DataFX
+     * @throws FlowException DataFX
+     */
     @ActionMethod("validateReg")
     public void validateReg() throws VetoException, FlowException {
         if(validationSupportReg.isInvalid()) {
@@ -275,6 +296,9 @@ public class StartupController {
 
     }
 
+    /**
+     * Wysyłanie tokenu do przywracania hasła
+     */
     @ActionMethod("sendTokenToEmail")
     public void sendTokenToEmail() {
         if(validationSupportTokenSend.isInvalid()) {
@@ -301,6 +325,11 @@ public class StartupController {
         }
     }
 
+    /**
+     * Zapis nowego hasła
+     * @throws VetoException DataFX
+     * @throws FlowException DataFX
+     */
     @ActionMethod("saveNewPassword")
     public void saveNewPassword() throws VetoException, FlowException {
         if(validationSupportForg.isInvalid()) {
@@ -314,6 +343,9 @@ public class StartupController {
         }
     }
 
+    /**
+     * Zamykanie alertu
+     */
     @ActionMethod("closeAlert")
     public void closeAlert() {
         topMsgContent.setVisible(false);
@@ -330,6 +362,9 @@ public class StartupController {
         }
     }
 
+    /**
+     * Ukrywanie alertu
+     */
     private void hideAlert() { topMsgContent.setVisible(false); }
 
 

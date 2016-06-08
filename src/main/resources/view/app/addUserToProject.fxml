@@ -54,7 +54,7 @@
                               <Insets bottom="5.0" top="5.0" />
                            </VBox.margin>
                         </HBox>
-                        <Label text="Użytkownicy do dodania">
+                        <Label fx:id="selectedUserLabel" text="Użytkownicy do dodania">
                            <font>
                               <Font name="System Bold" size="16.0" />
                            </font>

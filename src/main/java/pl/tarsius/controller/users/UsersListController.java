@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
+ * Klasa do zarządzania użytkownikami: usuwanie, aktywacja, zmiana, rangi
  * Created by Ireneusz Kuliga on 20.04.16.
  */
 @FXMLController(value = "/view/app/usersList.fxml", title = "Zarządzaj użytkownikami- Tarsius")
@@ -55,6 +56,9 @@ public class UsersListController extends BaseController {
 
     private static int PER_PAGE = 10;
 
+    /**
+     * Inicjalizacja kontrolera
+     */
     @PostConstruct
     public void init() {
 
@@ -131,6 +135,13 @@ public class UsersListController extends BaseController {
 
     }
 
+    /**
+     * Task wypełniający tabelę użytkownikami
+     * @param search parametr wyszukiwania
+     * @param c połączenia z bazą
+     * @param page aktualna strona w stronicowaniu
+     * @return Task
+     */
     public  Task<List<Person>> updateTable(String search, Connection c, int page) {
 
         int perPage = PER_PAGE;
@@ -176,6 +187,9 @@ public class UsersListController extends BaseController {
         }
     }
 
+    /**
+     * Klasa reprezentująca {@link TableView} model dla użytkowników
+     */
     public static class Person {
 
         private final ObservableValue<Long> id;
@@ -189,6 +203,17 @@ public class UsersListController extends BaseController {
         private FlowActionHandler flowActionHandler;
         private StackPane loading;
 
+        /**
+         * Konstruktor inicjalizujący model
+         * @param id ID użytkownika
+         * @param imie Imię
+         * @param nazwisko Nazwisko
+         * @param email Email
+         * @param typ Typ użytkownika
+         * @param status Status użytkownika
+         * @param flowActionHandler DataFX flowActionHandler
+         * @param loading referencja do loadingu
+         */
         public Person(Long id, String imie, String nazwisko, String email, int typ, boolean status, FlowActionHandler flowActionHandler, StackPane loading) {
             this.id = new SimpleObjectProperty<>(id);
             this.imie = new SimpleStringProperty(imie);
@@ -203,6 +228,11 @@ public class UsersListController extends BaseController {
 
 
 
+        /**
+         * Getter for property 'id'.
+         *
+         * @return Value for property 'id'.
+         */
         public Long getId() {
             return id.getValue();
         }
@@ -211,6 +241,11 @@ public class UsersListController extends BaseController {
             return id;
         }
 
+        /**
+         * Getter for property 'imie'.
+         *
+         * @return Value for property 'imie'.
+         */
         public String getImie() {
             return imie.get();
         }
@@ -219,6 +254,11 @@ public class UsersListController extends BaseController {
             return imie;
         }
 
+        /**
+         * Getter for property 'nazwisko'.
+         *
+         * @return Value for property 'nazwisko'.
+         */
         public String getNazwisko() {
             return nazwisko.get();
         }
@@ -227,6 +267,11 @@ public class UsersListController extends BaseController {
             return nazwisko;
         }
 
+        /**
+         * Getter for property 'email'.
+         *
+         * @return Value for property 'email'.
+         */
         public String getEmail() {
             return email.get();
         }
@@ -235,10 +280,19 @@ public class UsersListController extends BaseController {
             return email;
         }
 
+        /**
+         * Getter for property 'typ'.
+         *
+         * @return Value for property 'typ'.
+         */
         public int getTyp() {
             return typ.get();
         }
 
+        /**
+         * Konwertuje typ z bay na string
+         * @return Button z obsługą zmiany typu użytkownika
+         */
         public SimpleObjectProperty<Button> typProperty() {
             String r;
             switch (typ.get()) {
@@ -301,6 +355,11 @@ public class UsersListController extends BaseController {
             return new SimpleObjectProperty<>(b);
         }
 
+        /**
+         * Getter for property 'status'.
+         *
+         * @return Value for property 'status'.
+         */
         public boolean getStatus() {
             return status.get();
         }
@@ -339,6 +398,11 @@ public class UsersListController extends BaseController {
             return new SimpleObjectProperty<>(b);
         }
 
+        /**
+         * Getter for property 'action'.
+         *
+         * @return Value for property 'action'.
+         */
         public HBox getAction() {
             return action.get();
         }

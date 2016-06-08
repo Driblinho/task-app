@@ -90,6 +90,7 @@ public class InvitesController extends BaseController {
 
         breadCrumb.setSelectedCrumb(myInv);
         breadCrumb.setOnCrumbAction(crumbActionEventEventHandler());
+        Platform.runLater(() -> userBarSearch.setDisable(true));
 
         invPagination.setPageCount(1);
         User user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");

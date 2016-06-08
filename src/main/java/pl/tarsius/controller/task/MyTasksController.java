@@ -23,6 +23,7 @@ import pl.tarsius.controller.project.ShowProjectController;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.TaskDb;
 import pl.tarsius.database.Model.User;
+import pl.tarsius.util.gui.StockButtons;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -47,11 +48,15 @@ public class MyTasksController extends BaseController {
     private static int PER_PAGE = 8;
 
 
+    /**
+     * Inicjalizacja kontrolera
+     */
     @PostConstruct
     public void init() {
 
         breadCrumb.setSelectedCrumb(myTaskList);
         breadCrumb.setOnCrumbAction(crumbActionEventEventHandler());
+        new StockButtons(operationButtons,flowActionHandler).homeAction();
 
         user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
         try {
@@ -73,10 +78,21 @@ public class MyTasksController extends BaseController {
         }
     }
 
+    /**
+     * Metoda zwracająca szablon zadania
+     * @param taskDb Reprezentacja pojedynczego zadania
+     * @return wypełniony szablon
+     */
     private GridPane inProjectTask(TaskDb taskDb) {
         return ShowProjectController.inProjectTaskTpl(taskDb,flowActionHandler);
     }
 
+    /**
+     * Metoda wyświetlająca listę zadań
+     * @param connection Połączenie z bazą
+     * @param page strona na którą ma zostać ustawione stronicowanie
+     * @return Task
+     */
     private Task<ObservableList<TaskDb>> renderTasks(Connection connection, int page){
         String sql = "select {tpl} from Zadania z,Uzytkownicy u where z.uzytkownik_id=u.uzytkownik_id and z.uzytkownik_id="+user.getUzytkownikId();
 

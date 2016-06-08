@@ -275,6 +275,7 @@ public class TaskDb {
                     String un="";
                     if(resultSet.getString("imie")!=null)
                         un=resultSet.getString("imie")+" "+resultSet.getString("nazwisko");
+                    Long uid = (resultSet.getLong("uzytkownik_id")==0)?null:resultSet.getLong("uzytkownik_id");
                     return new TaskDb(
                             resultSet.getLong("zadanie_id"),
                             resultSet.getString("nazwa"),
@@ -283,7 +284,7 @@ public class TaskDb {
                             resultSet.getLong("projekt_id"),
                             resultSet.getDate("data_zakonczenia"),
                             un,
-                            resultSet.getLong("uzytkownik_id")
+                            uid
                     );
                 } catch (SQLException e) {
                     loger.debug("JDBCConverter", e);

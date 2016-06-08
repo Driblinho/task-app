@@ -43,6 +43,7 @@ import java.sql.SQLException;
 import java.util.Map;
 
 /**
+ * Klasa startowa po zalogowaniu
  * Created by Ireneusz Kuliga on 02.04.16.
  */
 @FXMLController(value = "/view/app/start.fxml", title = "Projekty - Tarsius")
@@ -83,10 +84,11 @@ public class HomeController extends BaseController{
 
     @FXML private GridPane projectListLoading;
 
+    /**
+     * Inicjalizacja kontroler
+     */
     @PostConstruct
-    public void init() throws VetoException, FlowException {
-
-        //contentFlow.setPrefHeight(400.0);
+    public void init() {
 
         isBoss = false;
         showMyproject = false;
@@ -152,6 +154,10 @@ public class HomeController extends BaseController{
     }
 
 
+    /**
+     * Metoda tworząca listę projektów
+     * @param project Obiekt {@link Project}
+     */
     private void createLis(Project project) {
         if(project==null) return;
         try {
@@ -173,7 +179,9 @@ public class HomeController extends BaseController{
 
             author.setOnAction(event -> navigateToProfile(project.getLider()));
 
-            desc.setText(project.getOpis());
+            String s = project.getOpis().replaceAll("[\\t\\n\\r]"," ");
+            try {s=s.substring(0,150);} catch (IndexOutOfBoundsException e) {}
+            desc.setText(s);
             title.setText(project.getNazwa());
             title.setUserData(project.getProjektId());
 
@@ -217,6 +225,13 @@ public class HomeController extends BaseController{
     }
 
 
+    /**
+     * Metoda dostarczająca {@link Service}
+     * @param search parametr wyszukiwania
+     * @param page obecna strona projektów
+     * @param connection połączenie z bazą
+     * @return Service wyświetlający projekty
+     */
     private Service<ObservableList<Project>> renderProject(String search, int page, Connection connection) {
 
 
@@ -299,6 +314,10 @@ public class HomeController extends BaseController{
         return service;
     }
 
+    /**
+     * Metoda przeładowująca listę projektów
+     * @param connection połączenia z bazą
+     */
     private void reloadProject(Connection connection) {
         if(renderService.isRunning()) renderService.cancel();
         renderService = renderProject(search,0,connection);

@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import pl.tarsius.controller.BaseController;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.ReportItem;
+import pl.tarsius.database.Model.User;
 import pl.tarsius.util.gui.DataFxEXceptionHandler;
 import pl.tarsius.util.gui.StockButtons;
 import pl.tarsius.util.pdf.GenReportService;
@@ -32,6 +33,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.HashSet;
 
 /**
@@ -91,9 +93,11 @@ public class ReportController extends BaseController {
     @PostConstruct
     public void  init() {
         new StockButtons(operationButtons, flowActionHandler).homeAction();
+        Platform.runLater(() -> userBarSearch.setDisable(true));
         breadCrumb.setSelectedCrumb(bucketReport);
         breadCrumb.setOnCrumbAction(crumbActionEventEventHandler());
         projectBucket = (HashSet<Long>) ApplicationContext.getInstance().getRegisteredObject("reportBucket");
+        user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
         Platform.runLater(() -> {
             clearReportList.setVisible(false);
             genSelectReport.setVisible(false);
@@ -103,6 +107,21 @@ public class ReportController extends BaseController {
         try {
 
             Connection connection = new InitializeConnection().connect();
+
+            new Thread(() -> {
+                ResultSet rs = null;
+                try {
+                    rs = connection.createStatement().executeQuery("select count(*) from ProjektyUzytkownicy where uzytkownik_id=" + user.getUzytkownikId());
+                    if(rs.next() && rs.getLong(1)>0)
+                        Platform.runLater(() -> genAllMyReport.setDisable(false));
+                    else Platform.runLater(() -> genAllMyReport.setDisable(true));
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    new Alert(Alert.AlertType.ERROR,"Błąd bazy danych").show();
+                }
+
+            }).start();
+
             if(projectBucket.size()>0) {
                 Platform.runLater(() ->{
                     pagination.setVisible(true);
@@ -136,11 +155,21 @@ public class ReportController extends BaseController {
             Hyperlink tasksCount = (Hyperlink) node.lookup(".reportNumberTask");
             Hyperlink usersCount = (Hyperlink) node.lookup(".reportNumberUser");
             Button remove = (Button) node.lookup(".delOnReportList");
+            Button genone = (Button) node.lookup(".genOnReport");
 
             remove.setOnAction(event -> {
                 projectBucket.remove(row.getProjectId());
                 ApplicationContext.getInstance().register("reportBucket", projectBucket);
                 DataFxEXceptionHandler.navigateQuietly(flowActionHandler,ReportController.class);
+            });
+
+            genone.setOnAction(event -> {
+                cancelService();
+                service = new GenReportService(new HashSet<Long>(Arrays.asList(row.getProjectId())));
+                if(!service.isRunning()) {
+                    service.reset();
+                    service.start();
+                }
             });
 
             projectAutor.setOnAction(event -> navigateToProfile(row.getAuthorId()));

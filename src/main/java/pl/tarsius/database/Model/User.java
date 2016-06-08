@@ -1,6 +1,7 @@
 package pl.tarsius.database.Model;
 
 import io.datafx.io.converter.JdbcConverter;
+import pl.tarsius.controller.BaseController;
 import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.util.ImageCloudinaryUpload;
 import pl.tarsius.util.validator.PeselValidator;
@@ -327,7 +328,13 @@ public class User {
      * @return Value for property 'avatarUrl'.
      */
     public String getAvatarUrl() {
-        return (this.getAvatarId() != null) ? "" + new ImageCloudinaryUpload().getUrl(this.getAvatarId()) : "assets/img/avatar.png";
+        if(this.getAvatarId() != null) {
+            String img = new ImageCloudinaryUpload().getUrl(this.getAvatarId());
+
+            if (ImageCloudinaryUpload.exists(img)) return img;
+        }
+        return  "assets/img/avatar.png";
+
     }
 
     /**

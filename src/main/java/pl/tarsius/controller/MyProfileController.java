@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 /**
+ * Klasa wyświetlająca profil użytkownika
  * Created by Ireneusz Kuliga on 02.04.16.
  */
 @FXMLController(value = "/view/app/profile.fxml", title = "Profil użytkownika - Tarsius")
@@ -115,6 +116,9 @@ public class MyProfileController extends BaseController {
     private Long showId;
     private User user;
 
+    /**
+     * Inicjalizacja kontrolera
+     */
     @PostConstruct
     public void init() {
 
@@ -172,6 +176,10 @@ public class MyProfileController extends BaseController {
 
     }
 
+    /**
+     * Ustawia pasek użytkownik
+     * @param user Dane użytkownika
+     */
     private void setProfileCard(User user) {
 
         profileDataAvatar.setFill(new ImagePattern(new Image(user.getAvatarUrl())));
@@ -200,6 +208,9 @@ public class MyProfileController extends BaseController {
         profileDataZip.setText(user.getKodPocztowy());
     }
 
+    /**
+     * Metoda obsługująca wyświetlanie formularza edycji profilu
+     */
     @ActionMethod("editProfile")
     public void editProfile() {
         User session = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
@@ -212,6 +223,9 @@ public class MyProfileController extends BaseController {
         }
     }
 
+    /**
+     * Metoda obsługująca wyświetlenie formularza zmiany hasła
+     */
     @ActionMethod("newPassword")
     public void newPassword() {
         User session = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
@@ -224,6 +238,9 @@ public class MyProfileController extends BaseController {
         }
     }
 
+    /**
+     * Metoda obsługująca zmianę avatara
+     */
     @ActionMethod("changeAvatar")
     public void changeAvatar() {
         User session = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
@@ -247,13 +264,19 @@ public class MyProfileController extends BaseController {
                     }
                 };
                 task.setOnRunning(event -> loading.setVisible(true));
-                task.setOnFailed(event -> new Alert(Alert.AlertType.ERROR, msg[0]));
-                task.setOnSucceeded(event -> loading.setVisible(false));
+                task.setOnFailed(event -> new Alert(Alert.AlertType.ERROR, "Problem podczas wykonywana zadania"));
+                task.setOnSucceeded(event -> {
+                    loading.setVisible(false);
+                    if(!task.getValue()) new Alert(Alert.AlertType.ERROR, msg[0]).show();
+                });
                 new Thread(task).start();
             }
         }
     }
 
+    /**
+     * Metoda obsługuje ukrywanie formularzy
+     */
     @ActionMethod("formCancel")
     public void formCancel() {
         editProfile.setDisable(false);
@@ -263,6 +286,11 @@ public class MyProfileController extends BaseController {
         newPasswordForm.setVisible(false);
     }
 
+    /**
+     * Metoda aktualizująca hasło
+     * @throws VetoException DataFX
+     * @throws FlowException DataFX
+     */
     @ActionMethod("updatePassword")
     public void updatePassword() throws VetoException, FlowException {
 
@@ -290,6 +318,12 @@ public class MyProfileController extends BaseController {
             }
         }
     }
+
+    /**
+     * Aktualizacja danych użytkownika
+     * @throws VetoException DataFX
+     * @throws FlowException DataFX
+     */
     @ActionMethod("updateUserData")
     public void updateUserData() throws VetoException, FlowException {
         if(validationSupportNewData.isInvalid()) {
@@ -318,6 +352,10 @@ public class MyProfileController extends BaseController {
         }
     }
 
+    /**
+     * Informacja o edycji profilu
+     * @param email adres email gdzie ma zostać wysłana informacja
+     */
     private void infoEmail(String email) {
         try {
             Mail mail = new Mail(UserAuth.class.getResourceAsStream("/assets/emailtempleate.html"));

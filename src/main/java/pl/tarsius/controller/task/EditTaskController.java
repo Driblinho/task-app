@@ -125,6 +125,8 @@ public class EditTaskController extends BaseController {
      */
     private TaskDb taskDbModel;
 
+    private Long selectedUser = 0L;
+
     /**
      * Metoda inicjalizująca Kontroler
      */
@@ -182,6 +184,8 @@ public class EditTaskController extends BaseController {
             Label username = (Label) root.lookup(".userName");
             RadioButton radio = (RadioButton) root.lookup(".userRadio");
             radio.setUserData(user);
+            if(user.getUzytkownikId()==selectedUser) radio.setSelected(true);
+            radio.setOnAction(event -> selectedUser=user.getUzytkownikId());
             radio.setToggleGroup(toggleGroup);
             avatar.setFill(new ImagePattern(new Image(user.getAvatarUrl())));
             username.setText(user.getImieNazwisko());
@@ -210,7 +214,7 @@ public class EditTaskController extends BaseController {
             sql = sql.replace("{tpl}", "u.*");
 
             loger.debug("SQL :"+sql);
-            int perPage = 1;
+            int perPage = 4;
             sql+= " limit "+page*perPage+","+perPage+"";
             DataReader<User> dr = new JdbcSource<>(connection, sql, User.jdbcConverter());
 
@@ -266,21 +270,27 @@ public class EditTaskController extends BaseController {
                 @Override
                 protected Object[] call() throws Exception {
                     taskDb.setStatus(taskDbModel.getStatus());
-                    if(toggleGroup.getSelectedToggle().isSelected()) {
+                    if(toggleGroup.getSelectedToggle()!=null && toggleGroup.getSelectedToggle().isSelected()) {
                         User user = (User) toggleGroup.getSelectedToggle().getUserData();
                         // TODO: 03.05.16 FIX SETTER
                         taskDb.setStatus(TaskDb.Status.INPROGRES.getValue());
                         return TaskDb.updateTask(taskDb,user.getUzytkownikId(),taskDbModel.getId());
                     }
 
-                    if(taskRemoveUser.isSelected()) taskDb.setStatus(TaskDb.Status.NEW.getValue());
-                    return TaskDb.updateTask(taskDb,null,taskDbModel.getId());
+                    Long uid = taskDbModel.getUserId();
+                    if(taskRemoveUser.isSelected()) {
+                        taskDb.setStatus(TaskDb.Status.NEW.getValue());
+                        uid=null;
+                    }
+
+                    return TaskDb.updateTask(taskDb,uid,taskDbModel.getId());
                 }
             };
             task.setOnRunning(event -> {
                 loading.setVisible(true);
             });
             task.setOnFailed(event -> {
+                task.getException().printStackTrace();
                 loading.setVisible(false);
                 new Alert(Alert.AlertType.ERROR, "Błąd podczas wykonywania zadania").show();
             });

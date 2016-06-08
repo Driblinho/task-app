@@ -185,6 +185,8 @@ public class ShowProjectController extends BaseController{
     @PostConstruct
     public void init(){
 
+        Platform.runLater(() -> userBarSearch.setDisable(true));
+
         breadCrumb.setSelectedCrumb(signalProject);
         breadCrumb.setOnCrumbAction(crumbActionEventEventHandler());
 
@@ -207,7 +209,8 @@ public class ShowProjectController extends BaseController{
         project = Project.getProject((long)ApplicationContext.getInstance().getRegisteredObject("projectId"));
         user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
         ApplicationContext.getInstance().register("projectModel", project);
-        new StockButtons(operationButtons, flowActionHandler).inProjectButton();
+        if(project.isClose()) new StockButtons(operationButtons, flowActionHandler).inCloseProject();
+        else new StockButtons(operationButtons, flowActionHandler).inProjectButton();
         ApplicationContext.getInstance().register("projectLider", project.getLider());
             inprojectTitle.setText(project.getNazwa());
             inprojectDesc.setText(project.getOpis());
@@ -324,26 +327,37 @@ public class ShowProjectController extends BaseController{
             Button removeBtn = (Button) anchorPane.lookup(".removeUserFormProject");
 
             if((project.getLider()==user.getUzytkownikId() || user.isAdmin()) && userData.getUzytkownikId()!=project.getLider() )
+            {
+                removeBtn.setVisible(true);
+                removeBtn.setOnAction(event -> {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Usuwanie użytkownika z projektu");
+                    alert.setHeaderText("LUsuwasz użytkownika");
+                    alert.setContentText("Na pewno usunąć użytkownika?");
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get() == ButtonType.OK) {
+                        Object[] msg = Project.removeUserFormProject(userData.getUzytkownikId(), project.getProjektId());
+                        Alert infoAlert = new Alert(Alert.AlertType.INFORMATION, (String) msg[1]);
+                        if((boolean)msg[0]) {
+                            infoAlert.show();
+                            DataFxEXceptionHandler.navigateQuietly(flowActionHandler,getClass());
+                        } else {
+                            infoAlert.setAlertType(Alert.AlertType.ERROR);
+                            infoAlert.show();
+                        }
+                    }
+                });
+            } else {
                 removeBtn.setVisible(true);
 
-            removeBtn.setOnAction(event -> {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Usuwanie użytkownika z projektu");
-                alert.setHeaderText("LUsuwasz użytkownika");
-                alert.setContentText("Na pewno usunąć użytkownika?");
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == ButtonType.OK) {
-                    Object[] msg = Project.removeUserFormProject(userData.getUzytkownikId(), project.getProjektId());
-                    Alert infoAlert = new Alert(Alert.AlertType.INFORMATION, (String) msg[1]);
-                    if((boolean)msg[0]) {
-                        infoAlert.show();
-                        DataFxEXceptionHandler.navigateQuietly(flowActionHandler,getClass());
-                    } else {
-                        infoAlert.setAlertType(Alert.AlertType.ERROR);
-                        infoAlert.show();
-                    }
-                }
-            });
+                removeBtn.setOnAction(event -> {
+                    ApplicationContext.getInstance().register("userToChange", userData.getUzytkownikId());
+                    DataFxEXceptionHandler.navigateQuietly(flowActionHandler,ChangeProjectOwnerController.class);
+                });
+            }
+
+
+
 
             avatar.setFill(new ImagePattern(new Image(userData.getAvatarUrl())));
             name.setOnAction(event -> navigateToProfile(userData.getUzytkownikId()));

@@ -376,11 +376,13 @@ public class UserAuth {
      * @return Zwraca tablice {@link Object} z logiczną wartością określającą status operacji i wiadomością na temat operacji
      */
     public static Object[] setAvatar(String imagePath,long userId) {
-        String sql = "UPDATE Uzytkownicy SET avatar_id = ? WHERE Uzytkownicy.uzytkownik_id = ?";
+        String sql = "UPDATE Uzytkownicy SET avatar_id = ? WHERE uzytkownik_id = ?";
 
         try {
             ImageCloudinaryUpload imageCloudinaryUpload = new ImageCloudinaryUpload();
-
+            if(!ImageCloudinaryUpload.exists("http://cloudinary.com/")) {
+                return new Object[] {false,"Brak dostępu do cloudinary.com"};
+            }
             Map<String,Object> image = imageCloudinaryUpload.send(imagePath);
             String imgId = (String) image.get("public_id");
             Connection connection = new InitializeConnection().connect();
@@ -498,6 +500,42 @@ public class UserAuth {
             return new Object[]{false,"Błąd bazy danych"};
         }
 
+    }
+
+    public static Object[] changeProjectOwner(Long projectId, Long newOwner) {
+        Connection connection = null;
+        try {
+            connection = new InitializeConnection().connect();
+            connection.setAutoCommit(false);
+
+
+            PreparedStatement ps = (PreparedStatement) connection.prepareStatement("update Projekty set lider=? where projekt_id=?;");
+            ps.setLong(1,newOwner);
+            ps.setLong(2,projectId);
+            ps.executeUpdate();
+
+
+            ps = (PreparedStatement) connection.prepareStatement("insert into ProjektyUzytkownicy (uzytkownik_id,projekt_id,lider) select uzytkownik_id,projekt_id,0 from ProjektyUzytkownicy where lider=1 and projekt_id=?");
+            ps.setLong(1,projectId);
+            ps.executeUpdate();
+
+            ps = (PreparedStatement) connection.prepareStatement("update ProjektyUzytkownicy set uzytkownik_id=? where projekt_id=? and lider=1;");
+            ps.setLong(1,newOwner);
+            ps.setLong(2,projectId);
+            ps.executeUpdate();
+
+            ps = (PreparedStatement) connection.prepareStatement("delete from ProjektyUzytkownicy where uzytkownik_id=? and lider=0;");
+            ps.setLong(1,newOwner);
+            ps.executeUpdate();
+
+
+
+            connection.commit();
+            return new Object[]{true,"Zmieniono właściciela"};
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new Object[]{false,"Błąd bazy danych"};
+        }
     }
 
 

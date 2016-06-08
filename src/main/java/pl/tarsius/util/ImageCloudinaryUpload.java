@@ -5,6 +5,8 @@ import com.cloudinary.utils.ObjectUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Map;
 
 /**Klasa obsługująca wysyłanie awatarów
@@ -82,6 +84,25 @@ public class ImageCloudinaryUpload {
         return cloudinary.url().transformation(
                 new Transformation().width(128).height(128).crop("thumb").gravity("faces")
         ).generate(id);
+    }
+
+    /**
+     * Metoda sprawdza czy adres URL jest dostępny
+     * @param URLName adres url
+     * @return Informacje czy adres istnieje
+     */
+    public static boolean exists(String URLName){
+        try {
+            HttpURLConnection.setFollowRedirects(false);
+            HttpURLConnection con =
+                    (HttpURLConnection) new URL(URLName).openConnection();
+            con.setRequestMethod("HEAD");
+            return (con.getResponseCode() == HttpURLConnection.HTTP_OK);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 

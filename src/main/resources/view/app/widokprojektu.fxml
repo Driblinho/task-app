@@ -139,10 +139,18 @@
                                           <SegmentedButton fx:id="sortProjectUsers" prefHeight="26.0" prefWidth="160.0" />
                                        </children>
                                     </HBox>
-                                    <VBox fx:id="userInProject" spacing="10.0">
+                                    <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="320.0">
+                                       <content>
+                                          <VBox fx:id="userInProject" spacing="10.0">
+                                             <padding>
+                                                <Insets right="10.0" />
+                                             </padding>
+                                          </VBox>
+                                       </content>
                                        <padding>
-                                          <Insets right="10.0" />
-                                       </padding></VBox>
+                                          <Insets bottom="10.0" />
+                                       </padding>
+                                    </ScrollPane>
                                     <Pagination fx:id="InProjectMemberPagination" pageCount="1" prefHeight="51.0" prefWidth="961.0" />
                                  </children>
                                  <padding>
@@ -187,10 +195,18 @@
                                           <Insets bottom="10.0" />
                                        </VBox.margin>
                                     </HBox>
-                                    <VBox fx:id="taskInProject" spacing="10.0">
+                                    <ScrollPane fitToHeight="true" fitToWidth="true">
+                                       <content>
+                                          <VBox fx:id="taskInProject" spacing="10.0">
+                                             <padding>
+                                                <Insets right="10.0" />
+                                             </padding>
+                                          </VBox>
+                                       </content>
                                        <padding>
-                                          <Insets right="10.0" />
-                                       </padding></VBox>
+                                          <Insets bottom="10.0" />
+                                       </padding>
+                                    </ScrollPane>
                                     <Pagination fx:id="inProjectTaskPg" pageCount="1" prefHeight="51.0" prefWidth="961.0" />
                                  </children>
                                  <padding>

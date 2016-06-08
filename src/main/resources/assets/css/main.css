@@ -61,3 +61,5 @@
 .scroll-pane > .viewport {
    -fx-background-color: transparent;
 }
+
+.hyperlink {-fx-focus-color: transparent;}

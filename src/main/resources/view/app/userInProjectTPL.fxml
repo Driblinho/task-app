@@ -9,7 +9,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="60.0" prefWidth="960.0" style="-fx-background-color: #fff;" xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="60.0" style="-fx-background-color: #fff;" xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Circle fx:id="InProjectMemberAvatar" fill="DODGERBLUE" layoutX="34.0" layoutY="33.0" radius="20.0" stroke="BLACK" strokeType="INSIDE" styleClass="userInProjectAvatar" />
       <Hyperlink fx:id="InProjectMemberName" layoutX="63.0" layoutY="10.0" prefHeight="26.0" prefWidth="188.0" styleClass="userInProjectName" text="Jan Kowalski">

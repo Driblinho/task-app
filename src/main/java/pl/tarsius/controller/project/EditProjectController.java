@@ -59,7 +59,7 @@ public class EditProjectController extends BaseController {
      * Button obsługujący zapis projektu
      */
     @FXML
-    @ActionTrigger("saveProject")
+    @ActionTrigger("updateProject")
     private Button newProjectSave;
     /**
      * Buton obsługujący akcje cofania (Anuluj)

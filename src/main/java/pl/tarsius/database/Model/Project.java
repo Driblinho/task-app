@@ -140,7 +140,7 @@ public class Project {
             resultSet.next();
             long lastId = resultSet.getLong(1);
 
-            sql = "insert into ProjektyUzytkownicy (uzytkownik_id,projekt_d,lider) values( ?, ?, ?);";
+            sql = "insert into ProjektyUzytkownicy (uzytkownik_id,projekt_id,lider) values( ?, ?, ?);";
             preparedStatement = (PreparedStatement) connection.prepareStatement(sql);
             preparedStatement.setLong(1, this.lider);
             preparedStatement.setLong(2, lastId);
