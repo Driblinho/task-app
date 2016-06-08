@@ -123,9 +123,6 @@ public class GenReportService extends Service<Void>{
             // Create a simple pie chart
             DefaultPieDataset pieDataset = new DefaultPieDataset();
 
-
-            System.out.println(report.getNewTask()+" "+report.getInProgressTask());
-
             if(report.getNewTask()>0) pieDataset.setValue("Nowe", report.getNewTask());
             if(report.getInProgressTask()>0) pieDataset.setValue("Wykonywane", report.getInProgressTask());
             if(report.getEndTask()>0) pieDataset.setValue("Zakończone", report.getEndTask());
@@ -238,16 +235,18 @@ public class GenReportService extends Service<Void>{
                 }
 
             } catch (Exception e) {
-                System.out.println("Problem occurred creating chart.");
+                e.printStackTrace();
+                new Alert(Alert.AlertType.ERROR,"Problem podczas tworzenia alertu").show();
             }
         });
         try {
-            tmpName = new Timestamp(new java.util.Date().getTime()).toString()+"_tmp.pdf";
+            tmpName = new Timestamp(new java.util.Date().getTime()).toString().replace(":","")+"_tmp.pdf";
             doc.save(tmpName);
             doc.close();
             System.out.println("CLOSE PDF");
         } catch (IOException e) {
             e.printStackTrace();
+            new Alert(Alert.AlertType.ERROR,"Problem z tworzeniem pliku").show();
         }
     }
 
@@ -341,7 +340,7 @@ public class GenReportService extends Service<Void>{
             }
 
         try {
-            tmpName = new Timestamp(new java.util.Date().getTime()).toString()+"_tmp.pdf";
+            tmpName = new Timestamp(new java.util.Date().getTime()).toString().replace(":","")+"_tmp.pdf";
             doc.save(tmpName);
             doc.close();
             System.out.println("CLOSE PDF");
