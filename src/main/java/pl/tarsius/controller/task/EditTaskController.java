@@ -34,6 +34,7 @@ import pl.tarsius.database.InitializeConnection;
 import pl.tarsius.database.Model.TaskDb;
 import pl.tarsius.database.Model.User;
 import pl.tarsius.util.gui.BlockDatePicker;
+import pl.tarsius.util.gui.DataFxEXceptionHandler;
 import pl.tarsius.util.gui.StockButtons;
 import pl.tarsius.util.validator.form.TaskFormValidator;
 
@@ -265,7 +266,7 @@ public class EditTaskController extends BaseController {
                 @Override
                 protected Object[] call() throws Exception {
                     taskDb.setStatus(taskDbModel.getStatus());
-                    if(toggleGroup.getSelectedToggle()!=null) {
+                    if(toggleGroup.getSelectedToggle().isSelected()) {
                         User user = (User) toggleGroup.getSelectedToggle().getUserData();
                         // TODO: 03.05.16 FIX SETTER
                         taskDb.setStatus(TaskDb.Status.INPROGRES.getValue());
@@ -279,17 +280,15 @@ public class EditTaskController extends BaseController {
             task.setOnRunning(event -> {
                 loading.setVisible(true);
             });
+            task.setOnFailed(event -> {
+                loading.setVisible(false);
+                new Alert(Alert.AlertType.ERROR, "Błąd podczas wykonywania zadania").show();
+            });
             task.setOnSucceeded(event -> {
                 loading.setVisible(false);
                 if((boolean)task.getValue()[0]) {
                     new Alert(Alert.AlertType.INFORMATION,(String)task.getValue()[1]).show();
-                    try {
-                        flowActionHandler.navigate(ShowTaskController.class);
-                    } catch (VetoException e) {
-                        e.printStackTrace();
-                    } catch (FlowException e) {
-                        e.printStackTrace();
-                    }
+                    DataFxEXceptionHandler.navigateQuietly(flowActionHandler,ShowTaskController.class);
                 } else new Alert(Alert.AlertType.ERROR,(String)task.getValue()[1]).show();
             });
             new Thread(task).start();
