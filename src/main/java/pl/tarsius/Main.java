@@ -59,6 +59,8 @@ public class Main extends Application {
         primaryStage.setMinWidth(1138);
         primaryStage.setMinHeight(800);
 
+        primaryStage.setMaximized(true);
+
 
         primaryStage.getScene().heightProperty().addListener((observable, oldValue, newValue) -> {
             Platform.runLater(() -> new ResponsiveDesign(primaryStage).resizeBodyHeight(newValue.doubleValue()));
