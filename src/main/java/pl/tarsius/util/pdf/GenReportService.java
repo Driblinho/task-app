@@ -495,12 +495,13 @@ public class GenReportService extends Service<Void>{
                     genProjectReport();
                 Platform.runLater(() -> {
                     al[0].close();
-                    al[0].setContentText("Raport został wygenerowany");
+                    al[0].setContentText("Raport został wygenerowany (Główny katalog aplikacji)\nZapisz go lub wydrukuj\nUwaga: Po zamknięciu aplikacji\nPliki zostają usuwane z dysku");
                     al[0].setHeaderText("Wygenerowano raport");
-                    al[0].show();
+                    al[0].showAndWait();
+                    if(hostServices!=null)
+                        hostServices.showDocument(tmpName);
                 });
-                if(hostServices!=null)
-                    hostServices.showDocument(tmpName);
+
                 return null;
             }
         };
