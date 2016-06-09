@@ -4,11 +4,12 @@ import org.controlsfx.validation.Validator;
 import pl.tarsius.util.validator.CustomValidator;
 
 /**
+ * Klasa przygotowująca {@link Validator} dla formularza zadań
  * Created by ireq on 10.05.16.
  */
 public class TaskFormValidator {
     /**
-     * Get {@link Validator}
+     * Pobiera {@link Validator} dla nazwy zadania
      *
      * @return Validator
      */
@@ -19,7 +20,7 @@ public class TaskFormValidator {
         );
     }
     /**
-     * Get {@link Validator}
+     * Pobiera {@link Validator} dla opisu zadania
      *
      * @return Validator
      */

@@ -25,7 +25,5 @@ public class AboutController extends BaseController {
     @PostConstruct
     public void init () {
         new StockButtons(operationButtons,flowActionHandler).homeAction();
-        breadCrumb.setSelectedCrumb(editTask);
-        breadCrumb.setOnCrumbAction(crumbActionEventEventHandler());
     }
 }

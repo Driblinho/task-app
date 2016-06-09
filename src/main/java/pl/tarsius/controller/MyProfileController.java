@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 /**
+ * Klasa wyświetlająca profil użytkownika
  * Created by Ireneusz Kuliga on 02.04.16.
  */
 @FXMLController(value = "/view/app/profile.fxml", title = "Profil użytkownika - Tarsius")
@@ -115,6 +116,9 @@ public class MyProfileController extends BaseController {
     private Long showId;
     private User user;
 
+    /**
+     * Inicjalizacja kontrolera
+     */
     @PostConstruct
     public void init() {
 
@@ -129,6 +133,7 @@ public class MyProfileController extends BaseController {
         showId = (Long) ApplicationContext.getInstance().getRegisteredObject("showUserID");
         if(showId!=null) {
             user = UserAuth.userByID(showId);
+
         } else user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
         setProfileCard(user);
 
@@ -171,6 +176,10 @@ public class MyProfileController extends BaseController {
 
     }
 
+    /**
+     * Ustawia pasek użytkownik
+     * @param user Dane użytkownika
+     */
     private void setProfileCard(User user) {
 
         profileDataAvatar.setFill(new ImagePattern(new Image(user.getAvatarUrl())));
@@ -187,6 +196,11 @@ public class MyProfileController extends BaseController {
         profileDataName.setText(user.getImie());
         profileDataSurname.setText(user.getNazwisko());
         profileDataPesel.setText(user.getPesel());
+
+        User session = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
+        if(showId!=null && !(session.isAdmin() || session.isManager()))
+            profileDataPesel.setText("Nie można wyświetlić");
+
         profileDataBirthday.setText(user.getDataUrodzenia().toString());
         profileDataTel.setText(user.getTelefon());
         profileDataCity.setText(user.getMiasto());
@@ -194,56 +208,75 @@ public class MyProfileController extends BaseController {
         profileDataZip.setText(user.getKodPocztowy());
     }
 
+    /**
+     * Metoda obsługująca wyświetlanie formularza edycji profilu
+     */
     @ActionMethod("editProfile")
     public void editProfile() {
-        profileCard.setVisible(false);
-        newPasswordForm.setVisible(false);
-        profileEdit.setVisible(true);
-        editProfile.setDisable(true);
-        changePassword.setDisable(false);
-    }
-
-    @ActionMethod("newPassword")
-    public void newPassword() {
-        profileCard.setVisible(false);
-        profileEdit.setVisible(false);
-        newPasswordForm.setVisible(true);
-        editProfile.setDisable(false);
-        changePassword.setDisable(true);
-
-    }
-
-    @ActionMethod("changeAvatar")
-    public void changeAvatar() throws VetoException, FlowException {
-
-
-        new StockButtons(operationButtons, flowActionHandler).homeAction();
-        User user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Resource File");
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("JPG", "*.jpg"),
-                new FileChooser.ExtensionFilter("PNG", "*.png")
-        );
-        File file = fileChooser.showOpenDialog(profileDataAvatar.getScene().getWindow());
-        if(file != null) {
-
-            final String[] msg = new String[1];
-            Task<Boolean> task = new Task<Boolean>() {
-                @Override
-                protected Boolean call() {
-                    Object[] userAuth = UserAuth.setAvatar(file.getAbsolutePath(), user.getUzytkownikId());
-                    msg[0] = (String) userAuth[1];
-                    return (boolean) userAuth[0];
-                }
-            };
-            task.setOnRunning(event -> loading.setVisible(true));
-            task.setOnFailed(event -> new Alert(Alert.AlertType.ERROR,msg[0]));
-            task.setOnSucceeded(event -> loading.setVisible(false));
-            new Thread(task).start();
+        User session = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
+        if(showId==null || session.isAdmin()) {
+            profileCard.setVisible(false);
+            newPasswordForm.setVisible(false);
+            profileEdit.setVisible(true);
+            editProfile.setDisable(true);
+            changePassword.setDisable(false);
         }
     }
 
+    /**
+     * Metoda obsługująca wyświetlenie formularza zmiany hasła
+     */
+    @ActionMethod("newPassword")
+    public void newPassword() {
+        User session = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
+        if(showId==null || session.isAdmin()) {
+            profileCard.setVisible(false);
+            profileEdit.setVisible(false);
+            newPasswordForm.setVisible(true);
+            editProfile.setDisable(false);
+            changePassword.setDisable(true);
+        }
+    }
+
+    /**
+     * Metoda obsługująca zmianę avatara
+     */
+    @ActionMethod("changeAvatar")
+    public void changeAvatar() {
+        User session = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
+        if(showId==null || session.isAdmin()) {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Open Resource File");
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("JPG", "*.jpg"),
+                    new FileChooser.ExtensionFilter("PNG", "*.png")
+            );
+            File file = fileChooser.showOpenDialog(profileDataAvatar.getScene().getWindow());
+            if (file != null) {
+
+                final String[] msg = new String[1];
+                Task<Boolean> task = new Task<Boolean>() {
+                    @Override
+                    protected Boolean call() {
+                        Object[] userAuth = UserAuth.setAvatar(file.getAbsolutePath(), session.getUzytkownikId());
+                        msg[0] = (String) userAuth[1];
+                        return (boolean) userAuth[0];
+                    }
+                };
+                task.setOnRunning(event -> loading.setVisible(true));
+                task.setOnFailed(event -> new Alert(Alert.AlertType.ERROR, "Problem podczas wykonywana zadania"));
+                task.setOnSucceeded(event -> {
+                    loading.setVisible(false);
+                    if(!task.getValue()) new Alert(Alert.AlertType.ERROR, msg[0]).show();
+                });
+                new Thread(task).start();
+            }
+        }
+    }
+
+    /**
+     * Metoda obsługuje ukrywanie formularzy
+     */
     @ActionMethod("formCancel")
     public void formCancel() {
         editProfile.setDisable(false);
@@ -253,6 +286,11 @@ public class MyProfileController extends BaseController {
         newPasswordForm.setVisible(false);
     }
 
+    /**
+     * Metoda aktualizująca hasło
+     * @throws VetoException DataFX
+     * @throws FlowException DataFX
+     */
     @ActionMethod("updatePassword")
     public void updatePassword() throws VetoException, FlowException {
 
@@ -280,6 +318,12 @@ public class MyProfileController extends BaseController {
             }
         }
     }
+
+    /**
+     * Aktualizacja danych użytkownika
+     * @throws VetoException DataFX
+     * @throws FlowException DataFX
+     */
     @ActionMethod("updateUserData")
     public void updateUserData() throws VetoException, FlowException {
         if(validationSupportNewData.isInvalid()) {
@@ -308,6 +352,10 @@ public class MyProfileController extends BaseController {
         }
     }
 
+    /**
+     * Informacja o edycji profilu
+     * @param email adres email gdzie ma zostać wysłana informacja
+     */
     private void infoEmail(String email) {
         try {
             Mail mail = new Mail(UserAuth.class.getResourceAsStream("/assets/emailtempleate.html"));

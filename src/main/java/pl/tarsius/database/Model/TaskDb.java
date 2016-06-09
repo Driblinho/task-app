@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Klasa reprezentująca zadanie
  * Created by ireq on 28.04.16.
  */
 public class TaskDb {
@@ -31,6 +32,15 @@ public class TaskDb {
 
     private static Logger loger = LoggerFactory.getLogger(TaskDb.class);
 
+    /**
+     * Konstruktor inicjalizujący
+     * @param id ID zadania
+     * @param name Nazwa zadania
+     * @param desc Opis zadania
+     * @param status Status zadania
+     * @param projectId ID projektu
+     * @param endDate Data zakończenia
+     */
     public TaskDb(Long id, String name, String desc, Status status, Long projectId, Date endDate) {
         this.id = id;
         this.name = name;
@@ -40,16 +50,38 @@ public class TaskDb {
         this.endDate = endDate;
     }
 
+    /**
+     * Konstruktor inicjalizujący
+     * @param id ID zadania
+     * @param name Nazwa zadania
+     * @param desc Opis zadania
+     * @param status Status zadania
+     * @param projectId ID projektu
+     * @param endDate Data zakończenia
+     * @param userName Nazwa użytkownika
+     * @param userId ID użytkownika
+     */
     public TaskDb(Long id, String name, String desc, Status status, Long projectId, Date endDate, String userName, Long userId) {
         this(id,name,desc,status,projectId,endDate);
         this.userName=userName;
         this.userId=userId;
     }
 
+    /**
+     * Konstruktor inicjalizujący
+     * @param name Nazwa zadania
+     * @param desc Opis zadania
+     * @param status Status zadania
+     * @param projectId ID projektu
+     * @param endDate Data zakończenia
+     */
     public TaskDb(String name, String desc, Status status, Long projectId,Date endDate) {
         this(null, name, desc, status, projectId, endDate);
     }
 
+    /**
+     * Enum statusów projektów
+     */
     public enum Status {
         NEW(1),INPROGRES(2),FORTEST(3),END(0);
         private final int value;
@@ -69,11 +101,21 @@ public class TaskDb {
         }
 
 
+        /**
+         * Getter for property 'value'.
+         *
+         * @return Value for property 'value'.
+         */
         public int getValue(){
             return this.value;
         }
     }
 
+    /**
+     * Metoda dodająca nowe zadanie
+     * @param taskDb Obiekt {@link TaskDb}
+     * @return Zwraca tablice {@link Object} z logiczną wartością określającą status operacji i wiadomością na temat operacji
+     */
     public static Object[] insert(TaskDb taskDb) {
         return insertWithUser(taskDb,null);
     }
@@ -109,6 +151,13 @@ public class TaskDb {
         }
     }
 
+    /**
+     * Aktualizacja zadania
+     * @param taskDb Obiekt {@link TaskDb}
+     * @param userId ID użytkownika
+     * @param taskId ID zadania
+     * @return Zwraca tablice {@link Object} z logiczną wartością określającą status operacji i wiadomością na temat operacji
+     */
     public static Object[] updateTask(TaskDb taskDb,Long userId, Long taskId) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -133,6 +182,11 @@ public class TaskDb {
         }
     }
 
+    /**
+     * Metoda usuwa zadanie
+     * @param id ID zadania
+     * @return Zwraca tablice {@link Object} z logiczną wartością określającą status operacji i wiadomością na temat operacji
+     */
     public static Object[] remove(Long id) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -150,6 +204,12 @@ public class TaskDb {
         }
     }
 
+    /**
+     * Aktualizuje status zadania
+     * @param id ID zadania
+     * @param status Now status zadania
+     * @return Zwraca tablice {@link Object} z logiczną wartością określającą status operacji i wiadomością na temat operacji
+     */
     public static Object[] updateStatus(Long id,TaskDb.Status status) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -169,6 +229,13 @@ public class TaskDb {
         }
     }
 
+    /**
+     * Metod aktualizująca status
+     * @param id ID zadania
+     * @param status Nowy status zadania
+     * @param comment Komentarz
+     * @return Zwraca tablice {@link Object} z logiczną wartością określającą status operacji i wiadomością na temat operacji
+     */
     public static Object[] updateStatus(Long id, TaskDb.Status status, String comment) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -195,6 +262,10 @@ public class TaskDb {
         }
     }
 
+    /**
+     * DataFX JDBCConverter dla zadań
+     * @return JDBCConverter
+     */
     public static JdbcConverter<TaskDb> jdbcConverter() {
         return new JdbcConverter<TaskDb>() {
             @Override
@@ -204,6 +275,7 @@ public class TaskDb {
                     String un="";
                     if(resultSet.getString("imie")!=null)
                         un=resultSet.getString("imie")+" "+resultSet.getString("nazwisko");
+                    Long uid = (resultSet.getLong("uzytkownik_id")==0)?null:resultSet.getLong("uzytkownik_id");
                     return new TaskDb(
                             resultSet.getLong("zadanie_id"),
                             resultSet.getString("nazwa"),
@@ -212,7 +284,7 @@ public class TaskDb {
                             resultSet.getLong("projekt_id"),
                             resultSet.getDate("data_zakonczenia"),
                             un,
-                            resultSet.getLong("uzytkownik_id")
+                            uid
                     );
                 } catch (SQLException e) {
                     loger.debug("JDBCConverter", e);
@@ -222,6 +294,11 @@ public class TaskDb {
         };
     }
 
+    /**
+     * Pobiera zadanie po ID
+     * @param id ID zadania
+     * @return TaskDb
+     */
     public static TaskDb getById(long id) {
         String sql = "select z.*,u.imie,u.nazwisko from Zadania z,Uzytkownicy u where z.uzytkownik_id=u.uzytkownik_id and z.zadanie_id="+id+"\n" +
                 "union \n" +
@@ -242,66 +319,146 @@ public class TaskDb {
         }
     }
 
+    /**
+     * Getter for property 'id'.
+     *
+     * @return Value for property 'id'.
+     */
     public Long getId() {
         return id;
     }
 
+    /**
+     * Setter for property 'id'.
+     *
+     * @param id Value to set for property 'id'.
+     */
     public void setId(Long id) {
         this.id = id;
     }
 
+    /**
+     * Getter for property 'name'.
+     *
+     * @return Value for property 'name'.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Setter for property 'name'.
+     *
+     * @param name Value to set for property 'name'.
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Getter for property 'desc'.
+     *
+     * @return Value for property 'desc'.
+     */
     public String getDesc() {
         return desc;
     }
 
+    /**
+     * Setter for property 'desc'.
+     *
+     * @param desc Value to set for property 'desc'.
+     */
     public void setDesc(String desc) {
         this.desc = desc;
     }
 
+    /**
+     * Getter for property 'status'.
+     *
+     * @return Value for property 'status'.
+     */
     public int getStatus() {
         return status;
     }
 
+    /**
+     * Setter for property 'status'.
+     *
+     * @param status Value to set for property 'status'.
+     */
     public void setStatus(int status) {
         this.status = status;
     }
 
+    /**
+     * Getter for property 'projectId'.
+     *
+     * @return Value for property 'projectId'.
+     */
     public Long getProjectId() {
         return projectId;
     }
 
+    /**
+     * Setter for property 'projectId'.
+     *
+     * @param projectId Value to set for property 'projectId'.
+     */
     public void setProjectId(Long projectId) {
         this.projectId = projectId;
     }
 
+    /**
+     * Getter for property 'endDate'.
+     *
+     * @return Value for property 'endDate'.
+     */
     public Date getEndDate() {
         return endDate;
     }
 
+    /**
+     * Setter for property 'endDate'.
+     *
+     * @param endDate Value to set for property 'endDate'.
+     */
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 
+    /**
+     * Getter for property 'userName'.
+     *
+     * @return Value for property 'userName'.
+     */
     public String getUserName() {
         return userName;
     }
 
+    /**
+     * Setter for property 'userName'.
+     *
+     * @param userName Value to set for property 'userName'.
+     */
     public void setUserName(String userName) {
         this.userName = userName;
     }
 
+    /**
+     * Getter for property 'userId'.
+     *
+     * @return Value for property 'userId'.
+     */
     public Long getUserId() {
         return userId;
     }
 
+    /**
+     * Setter for property 'userId'.
+     *
+     * @param userId Value to set for property 'userId'.
+     */
     public void setUserId(Long userId) {
         this.userId = userId;
     }

@@ -15,12 +15,14 @@ import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
 import pl.tarsius.controller.BaseController;
 import pl.tarsius.database.Model.TaskDb;
+import pl.tarsius.util.gui.DataFxEXceptionHandler;
 import pl.tarsius.util.gui.StockButtons;
 import pl.tarsius.util.validator.CustomValidator;
 
 import javax.annotation.PostConstruct;
 
 /**
+ * Klasa odpowiedzialna za zmiane statusu zadania
  * Created by ireq on 03.05.16.
  */
 @FXMLController(value = "/view/app/taskStatus.fxml", title = "Określ status zadania - Tarsius")
@@ -38,6 +40,10 @@ public class StatusController extends BaseController{
     @FXML private TextField taskComment;
     private ValidationSupport validationSupport;
     private boolean statusTyp;
+
+    /**
+     * Metoda inicjalizująca kontroler
+     */
     @PostConstruct
     public void init() {
 
@@ -50,7 +56,7 @@ public class StatusController extends BaseController{
         else
             new StockButtons(operationButtons,flowActionHandler).inTask();
         statusTyp = (taskDb.getStatus()==TaskDb.Status.FORTEST.getValue() || taskDb.getStatus()==TaskDb.Status.END.getValue());
-        Validator validator = CustomValidator.createMaxSizeValidator("Maksymalnie 100 znaków", 100);
+        Validator validator = CustomValidator.createMaxSizeValidator("Maksymalnie 30 znaków", 30);
 
         if(statusTyp) {
             taskSave.setText("Zmień na : W Trakcie");
@@ -64,8 +70,12 @@ public class StatusController extends BaseController{
 
     }
 
+
+    /**
+     * Zapis statusu zadania
+     */
     @ActionMethod("saveStatus")
-    public void  saveStatus() throws VetoException, FlowException {
+    public void  saveStatus() {
         if(validationSupport.isInvalid()) {
             validationSupport.initInitialDecoration();
         } else {
@@ -77,7 +87,7 @@ public class StatusController extends BaseController{
                 else msg = TaskDb.updateStatus(taskDb.getId(), TaskDb.Status.FORTEST, taskComment.getText());
             }
             if((boolean)msg[0]) {
-                flowActionHandler.navigate(ShowTaskController.class);
+                DataFxEXceptionHandler.navigateQuietly(flowActionHandler,ShowTaskController.class);
             } else new Alert(Alert.AlertType.ERROR,""+msg[1]).show();
 
 

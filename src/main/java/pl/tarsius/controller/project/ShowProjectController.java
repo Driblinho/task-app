@@ -17,8 +17,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
@@ -186,6 +185,8 @@ public class ShowProjectController extends BaseController{
     @PostConstruct
     public void init(){
 
+        Platform.runLater(() -> userBarSearch.setDisable(true));
+
         breadCrumb.setSelectedCrumb(signalProject);
         breadCrumb.setOnCrumbAction(crumbActionEventEventHandler());
 
@@ -208,13 +209,14 @@ public class ShowProjectController extends BaseController{
         project = Project.getProject((long)ApplicationContext.getInstance().getRegisteredObject("projectId"));
         user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
         ApplicationContext.getInstance().register("projectModel", project);
-        new StockButtons(operationButtons, flowActionHandler).inProjectButton();
+        if(project.isClose()) new StockButtons(operationButtons, flowActionHandler).inCloseProject();
+        else new StockButtons(operationButtons, flowActionHandler).inProjectButton();
         ApplicationContext.getInstance().register("projectLider", project.getLider());
             inprojectTitle.setText(project.getNazwa());
             inprojectDesc.setText(project.getOpis());
-            inprojectDataStart.setText(project.getData_dodania().toString());
+            inprojectDataStart.setText(project.getDataDodania().toString());
             inprojectAuthor.setText(project.getLiderImieNazwisko());
-            Timestamp dz = project.getData_zakonczenia();
+            Timestamp dz = project.getDataZakonczenia();
             if(dz!=null) {
                 inprojectDataStop.setText(dz.toString());
             } else {
@@ -281,7 +283,7 @@ public class ShowProjectController extends BaseController{
             Task<Map<TaskDb.Status,Long>> countTask = new Task<Map<TaskDb.Status, Long>>() {
                 @Override
                 protected Map<TaskDb.Status, Long> call() throws Exception {
-                    return Project.getStatistic(project.getProjekt_id());
+                    return Project.getStatistic(project.getProjektId());
                 }
             };
             countTask.setOnSucceeded(event -> {
@@ -325,26 +327,37 @@ public class ShowProjectController extends BaseController{
             Button removeBtn = (Button) anchorPane.lookup(".removeUserFormProject");
 
             if((project.getLider()==user.getUzytkownikId() || user.isAdmin()) && userData.getUzytkownikId()!=project.getLider() )
+            {
+                removeBtn.setVisible(true);
+                removeBtn.setOnAction(event -> {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Usuwanie użytkownika z projektu");
+                    alert.setHeaderText("LUsuwasz użytkownika");
+                    alert.setContentText("Na pewno usunąć użytkownika?");
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get() == ButtonType.OK) {
+                        Object[] msg = Project.removeUserFormProject(userData.getUzytkownikId(), project.getProjektId());
+                        Alert infoAlert = new Alert(Alert.AlertType.INFORMATION, (String) msg[1]);
+                        if((boolean)msg[0]) {
+                            infoAlert.show();
+                            DataFxEXceptionHandler.navigateQuietly(flowActionHandler,getClass());
+                        } else {
+                            infoAlert.setAlertType(Alert.AlertType.ERROR);
+                            infoAlert.show();
+                        }
+                    }
+                });
+            } else {
                 removeBtn.setVisible(true);
 
-            removeBtn.setOnAction(event -> {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Usuwanie użytkownika z projektu");
-                alert.setHeaderText("LUsuwasz użytkownika");
-                alert.setContentText("Na pewno usunąć użytkownika?");
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == ButtonType.OK) {
-                    Object[] msg = Project.removeUserFormProject(userData.getUzytkownikId(), project.getProjekt_id());
-                    Alert infoAlert = new Alert(Alert.AlertType.INFORMATION, (String) msg[1]);
-                    if((boolean)msg[0]) {
-                        infoAlert.show();
-                        DataFxEXceptionHandler.navigateQuietly(flowActionHandler,getClass());
-                    } else {
-                        infoAlert.setAlertType(Alert.AlertType.ERROR);
-                        infoAlert.show();
-                    }
-                }
-            });
+                removeBtn.setOnAction(event -> {
+                    ApplicationContext.getInstance().register("userToChange", userData.getUzytkownikId());
+                    DataFxEXceptionHandler.navigateQuietly(flowActionHandler,ChangeProjectOwnerController.class);
+                });
+            }
+
+
+
 
             avatar.setFill(new ImagePattern(new Image(userData.getAvatarUrl())));
             name.setOnAction(event -> navigateToProfile(userData.getUzytkownikId()));
@@ -358,14 +371,25 @@ public class ShowProjectController extends BaseController{
         }
 
     }
+
     /**
-     * Metoda generująca pojedynczy wiersz z użytkownikami uczestniczącymi w projekcie
+     * Nakładka na metodę statyczną generującą szablon zadania
      * @param taskDb Obiekt reprezentujący dane zadania
-     * @return AnchorPane - wiersz z zadaniem
+     * @return Wiersz z zadaniem
      */
-    private AnchorPane inProjectTask(TaskDb taskDb) {
+    private GridPane inProjectTask(TaskDb taskDb) {
+        return inProjectTaskTpl(taskDb,flowActionHandler);
+    }
+
+    /**
+     * Metoda generująca pojedynczy wiersz z zadaniem dostępne statycznie dla innych kontrolerów
+     * @param taskDb Obiekt reprezentujący dane zadania
+     * @param flowActionHandler {@link FlowActionHandler} DataFX
+     * @return wiersz z zadaniem
+     */
+    public static GridPane inProjectTaskTpl(TaskDb taskDb, FlowActionHandler flowActionHandler) {
         try {
-            AnchorPane anchorPane  = FXMLLoader.load(getClass().getClassLoader().getResource("view/app/taskInProjectTPL.fxml"));
+            GridPane anchorPane  = FXMLLoader.load(ShowProjectController.class.getClassLoader().getResource("view/app/taskInProjectTPL.fxml"));
             Hyperlink taskName = (Hyperlink) anchorPane.lookup(".taskName");
             Hyperlink taskUser = (Hyperlink) anchorPane.lookup(".taskUser");
             Label taskUserL = (Label) anchorPane.lookup(".taskUserL");
@@ -373,7 +397,7 @@ public class ShowProjectController extends BaseController{
             Text taskDate = (Text) anchorPane.lookup(".taskDate");
             Label taskStatus = (Label) anchorPane.lookup(".taskStatus");
 
-            taskUser.setOnAction(event -> navigateToProfile(taskDb.getUserId()));
+            taskUser.setOnAction(event -> new ShowProjectController().navigateToProfile(taskDb.getUserId()));
 
             String status = "Zakończone";
             switch (taskDb.getStatus()) {
@@ -385,6 +409,7 @@ public class ShowProjectController extends BaseController{
 
             taskName.setText(taskDb.getName());
             taskName.setOnAction(event -> {
+                ApplicationContext.getInstance().register("projectId", taskDb.getProjectId());
                 ApplicationContext.getInstance().register("taskId", taskDb.getId());
                 DataFxEXceptionHandler.navigateQuietly(flowActionHandler,ShowTaskController.class);
             });
@@ -415,9 +440,9 @@ public class ShowProjectController extends BaseController{
      * @return Task wyświetlający listę zadań
      */
     private Task<ObservableList<TaskDb>> renderTasks(Connection connection,int page){
-        String sql = "select {tpl} from (select z.*,u.imie,u.nazwisko from Zadania z,Uzytkownicy u where z.uzytkownik_id=u.uzytkownik_id and z.projekt_id="+project.getProjekt_id()+"\n" +
+        String sql = "select {tpl} from (select z.*,u.imie,u.nazwisko from Zadania z,Uzytkownicy u where z.uzytkownik_id=u.uzytkownik_id and z.projekt_id="+project.getProjektId()+"\n" +
                 "union \n" +
-                "select *,null,null from Zadania where uzytkownik_id is null and projekt_id="+project.getProjekt_id()+") Z";
+                "select *,null,null from Zadania where uzytkownik_id is null and projekt_id="+project.getProjektId()+") Z";
 
 
         int perPage=USER_AND_TASK_PER_PAGE;
@@ -493,13 +518,13 @@ public class ShowProjectController extends BaseController{
      * @return Task wyświetlający listę użytkowników
      */
     private Task<ObservableList<User>> renderUser(Connection connection,int page) {
-        String sql = "SELECT {tpl} FROM ProjektyUzytkownicy pu,Uzytkownicy u WHERE projekt_id="+project.getProjekt_id()+" and u.uzytkownik_id=pu.uzytkownik_id";
+        String sql = "SELECT {tpl} FROM ProjektyUzytkownicy pu,Uzytkownicy u WHERE projekt_id="+project.getProjektId()+" and u.uzytkownik_id=pu.uzytkownik_id";
 
         if (sort.length()>0) sql+= " order by pu.projekt_uzytkownik "+sort;
         int perPage=USER_AND_TASK_PER_PAGE;
         String countSql = sql.replace("{tpl}", "count(*)");
         sql+= " limit "+page*perPage+","+perPage+"";
-        String exc = sql.replace("{tpl}", "u.uzytkownik_id,u.imie,u.nazwisko,u.avatar_id,u.email");
+        String exc = sql.replace("{tpl}", "u.*");
         DataReader<User> dataReader = new JdbcSource<>(connection, exc, User.jdbcConverter());
         Task<ObservableList<User>> task = new Task<ObservableList<User>>() {
             @Override

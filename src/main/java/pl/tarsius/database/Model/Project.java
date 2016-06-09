@@ -3,22 +3,19 @@ package pl.tarsius.database.Model;
 import com.mysql.jdbc.PreparedStatement;
 import com.mysql.jdbc.Statement;
 import io.datafx.io.converter.JdbcConverter;
-import javafx.collections.ObservableList;
 import org.apache.commons.dbutils.DbUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.tarsius.controller.project.AddToProjectController;
 import pl.tarsius.database.InitializeConnection;
 
 import java.sql.*;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Ireneusz Kuliga on 16.04.16.
+ * Klasa reprezentująca Projekt
  */
 public class Project {
     private static Logger loger = LoggerFactory.getLogger(Project.class);
@@ -26,43 +23,75 @@ public class Project {
     private String opis;
     private long lider;
     private String liderImieNazwisko;
-    private Timestamp data_dodania;
+    private Timestamp dataDodania;
     private Timestamp data_zakonczenia;
-    private long projekt_id;
+    private long projektId;
     private int status;
 
-    public Project() {
-        this.data_dodania = null;
-        this.data_zakonczenia = null;
-        this.lider = 0;
-        this.liderImieNazwisko = null;
-        this.nazwa = null;
-        this.opis = null;
-        this.projekt_id = 0;
-    }
+    /**
+     * Domyślny konstruktor
+     */
+    public Project() {}
 
-    public Project(String nazwa, String opis, long lider, Timestamp data_dodania, Timestamp data_zakonczenia) {
-        this.data_dodania = data_dodania;
-        this.data_zakonczenia = data_zakonczenia;
+    /**
+     * Konstruktor inicjalizujący
+     * @param nazwa Nazwa projektu
+     * @param opis Opis projektu
+     * @param lider ID projektu
+     * @param dataDodania {@link Timestamp} dodania projektu
+     * @param dataZakonczenia {@link Timestamp} zakończenia projektu
+     */
+    public Project(String nazwa, String opis, long lider, Timestamp dataDodania, Timestamp dataZakonczenia) {
+        this.dataDodania = dataDodania;
+        this.data_zakonczenia = dataZakonczenia;
         this.lider = lider;
         this.opis = opis;
         this.nazwa = nazwa;
     }
 
-    public Project(long projekt_id, String nazwa, String opis, long lider, Timestamp data_dodania, Timestamp data_zakonczenia) {
-        this(nazwa, opis, lider, data_dodania, data_zakonczenia);
-        this.projekt_id = projekt_id;
+    /**
+     * Konstruktor inicjalizujący
+     * @param projektId ID projektu
+     * @param nazwa Nazwa projektu
+     * @param opis Opis projektu
+     * @param lider ID lidera projektu
+     * @param dataDodania {@link Timestamp} daty dodania
+     * @param dataZakonczenia {@link Timestamp} daty zakończenia
+     */
+    public Project(long projektId, String nazwa, String opis, long lider, Timestamp dataDodania, Timestamp dataZakonczenia) {
+        this(nazwa, opis, lider, dataDodania, dataZakonczenia);
+        this.projektId = projektId;
     }
 
-    public Project(String nazwa, String opis, long lider, Timestamp data_zakonczenia) {
-        this(nazwa, opis, lider, null, data_zakonczenia);
+    /**
+     * Konstruktor inicjalizujący
+     * @param nazwa Nazwa projektu
+     * @param opis Opis projektu
+     * @param lider ID lidera projektu
+     * @param dataZakonczenia {@link Timestamp} daty zakończenia projektu
+     */
+    public Project(String nazwa, String opis, long lider, Timestamp dataZakonczenia) {
+        this(nazwa, opis, lider, null, dataZakonczenia);
     }
 
-    public Project(long projekt_id, String nazwa, String opis, long lider, Timestamp data_zakonczenia) {
-        this(nazwa, opis, lider, null, data_zakonczenia);
-        this.projekt_id = projekt_id;
+    /**
+     * Konstruktor inicjalizujący
+     * @param projektId ID projektu
+     * @param nazwa Nazwa projektu
+     * @param opis Opis projektu
+     * @param lider ID lidera projektu
+     * @param dataZakonczenia {@link Timestamp} daty projektu
+     */
+    public Project(long projektId, String nazwa, String opis, long lider, Timestamp dataZakonczenia) {
+        this(nazwa, opis, lider, null, dataZakonczenia);
+        this.projektId = projektId;
     }
 
+    /**
+     * Metoda aktualizująca projekt
+     * @param project Obiekt klasy {@link Project} który maz zostać zmieniony
+     * @return Zwraca tablice {@link Object} z logiczną wartością określającą status operacji i wiadomością na temat operacji
+     */
     public static Object[] updateProject(Project project) {
         Connection connection = null;
         PreparedStatement ps = null;
@@ -72,17 +101,21 @@ public class Project {
             ps.setString(1, project.getNazwa());
             ps.setString(2, project.getOpis());
             ps.setTimestamp(3, project.data_zakonczenia);
-            ps.setLong(4, project.getProjekt_id());
+            ps.setLong(4, project.getProjektId());
             ps.executeUpdate();
             return new Object[]{true, "Zaktualizowano signalProject"};
         } catch (SQLException e) {
-            e.printStackTrace();
+            loger.debug("Aktualizacja projektu", e);
             return new Object[]{false, "Błąd bazy danych"};
         } finally {
             DbUtils.closeQuietly(connection, ps, null);
         }
     }
 
+    /**
+     * Tworzy nowy projekt
+     * @return Zwraca tablice {@link Object} z logiczną wartością określającą status operacji i wiadomością na temat operacji
+     */
     public Object[] save() {
         String sql = "INSERT INTO `Projekty` " +
                 "(`nazwa`, `opis`,`data_zakonczenia`, `lider`, `status`) " +
@@ -125,6 +158,12 @@ public class Project {
         }
     }
 
+    /**
+     * Metoda dodająca użytkownika do projektu
+     * @param userId ID użytkownika
+     * @param projectId ID projektu do którego ma zostać dodany użytkownik
+     * @return Zwraca tablice {@link Object} z logiczną wartością określającą status operacji i wiadomością na temat operacji
+     */
     public static Object[] addUserToProject(long userId, long projectId) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -144,20 +183,25 @@ public class Project {
         }
     }
 
-    public static Project getProject(long projekt_id) {
+    /**
+     * Metoda pobiera projekt z bazy
+     * @param projektId ID projektu do pobrania
+     * @return Obiekt {@link Project} z wypełnionymi danymi dla istniejącego projektu lub null dla nie znaleźnego projektu
+     */
+    public static Project getProject(long projektId) {
         Connection connection = null;
         Project project = null;
         try {
             connection = new InitializeConnection().connect();
 
             PreparedStatement preparedStatement = (PreparedStatement) connection.prepareStatement("select * from Projekty where projekt_id = ?");
-            preparedStatement.setLong(1, projekt_id);
+            preparedStatement.setLong(1, projektId);
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
 
             project = new Project(resultSet.getString("nazwa"), resultSet.getString("opis"), resultSet.getLong("lider"), resultSet.getTimestamp("data_zakonczenia"));
-            project.setData_dodania(resultSet.getTimestamp("data_dodania"));
-            project.setProjekt_id(resultSet.getLong("projekt_id"));
+            project.setDataDodania(resultSet.getTimestamp("data_dodania"));
+            project.setProjektId(resultSet.getLong("projekt_id"));
             project.setStatus(resultSet.getInt("status"));
 
             DbUtils.closeQuietly(null, preparedStatement, resultSet);
@@ -197,6 +241,13 @@ public class Project {
             }
         };
     }
+
+    /**
+     * Dodaje do projektu użytkowników
+     * @param users {@link HashSet} z id użytkowników do dodania
+     * @param projectId ID projektu do dodania
+     * @return Zwraca tablice {@link Object} z logiczną wartością określającą status operacji i wiadomością na temat operacji
+     */
     public static Object[] addUsersToProject(HashSet<Long> users,long projectId) {
         Connection connection = null;
         PreparedStatement ps = null;
@@ -217,7 +268,7 @@ public class Project {
                 ps.setLong(2,projectId);
                 ps.addBatch();
             }
-            ps.executeUpdate();
+            ps.executeBatch();
             connection.createStatement().executeUpdate("delete from Zaproszenia where projekt_id = "+projectId+" and uzytkownik_id in ("+users.toString().replace("[","").replace("]","")+")");
             connection.commit();
             msg = new Object[]{true,"Użytkownicy zostali dodani do projektu"};
@@ -230,6 +281,11 @@ public class Project {
         }
     }
 
+    /**
+     * Pobiera statystyki projektu i zwraca mapę z danymi
+     * @param projectId ID projektu
+     * @return Statystyki projektu w postaci {@link Map} klucz: {@link pl.tarsius.database.Model.TaskDb.Status} Wartość: {@link Long}
+     */
     public static Map<TaskDb.Status, Long> getStatistic(Long projectId) {
         Map<TaskDb.Status, Long> stat = new HashMap<>();
         Connection connection = null;
@@ -250,6 +306,12 @@ public class Project {
         }
     }
 
+    /**
+     * Metoda usuwająca użytkownika z projektu
+     * @param userId ID użytkownika
+     * @param projectId ID projektu
+     * @return Zwraca tablice {@link Object} z logiczną wartością określającą status operacji i wiadomością na temat operacji
+     */
     public static Object[] removeUserFormProject(Long userId, Long projectId) {
         try {
             Connection connection = new InitializeConnection().connect();
@@ -257,7 +319,7 @@ public class Project {
             PreparedStatement ps = (PreparedStatement) connection.prepareStatement("DELETE FROM ProjektyUzytkownicy WHERE projekt_id=? AND uzytkownik_id=?;");
             ps.setLong(1, projectId);
             ps.setLong(2, userId);
-            int del = ps.executeUpdate();
+            ps.executeUpdate();
             ps = (PreparedStatement) connection.prepareStatement("UPDATE Zadania SET uzytkownik_id=NULL,stan=1 WHERE projekt_id=? AND uzytkownik_id=?");
             ps.setLong(1, projectId);
             ps.setLong(2, userId);
@@ -270,74 +332,164 @@ public class Project {
         }
     }
 
-    public Timestamp getData_dodania() {
-        return data_dodania;
+    /**
+     * Getter for property 'dataDodania'.
+     *
+     * @return Value for property 'dataDodania'.
+     */
+    public Timestamp getDataDodania() {
+        return dataDodania;
     }
 
-    public void setData_dodania(Timestamp data_dodania) {
-        this.data_dodania = data_dodania;
+    /**
+     * Setter for property 'dataDodania'.
+     *
+     * @param dataDodania Value to set for property 'dataDodania'.
+     */
+    public void setDataDodania(Timestamp dataDodania) {
+        this.dataDodania = dataDodania;
     }
 
-    public Timestamp getData_zakonczenia() {
+    /**
+     * Getter for property 'dataZakonczenia'.
+     *
+     * @return Value for property 'dataZakonczenia'.
+     */
+    public Timestamp getDataZakonczenia() {
         return data_zakonczenia;
     }
 
-    public void setData_zakonczenia(Timestamp data_zakonczenia) {
-        this.data_zakonczenia = data_zakonczenia;
+    /**
+     * Setter for property 'dataZakonczenia'.
+     *
+     * @param dataZakonczenia Value to set for property 'dataZakonczenia'.
+     */
+    public void setDataZakonczenia(Timestamp dataZakonczenia) {
+        this.data_zakonczenia = dataZakonczenia;
     }
 
+    /**
+     * Getter for property 'lider'.
+     *
+     * @return Value for property 'lider'.
+     */
     public long getLider() {
         return lider;
     }
 
+    /**
+     * Setter for property 'lider'.
+     *
+     * @param lider Value to set for property 'lider'.
+     */
     public void setLider(long lider) {
         this.lider = lider;
     }
 
+    /**
+     * Getter for property 'opis'.
+     *
+     * @return Value for property 'opis'.
+     */
     public String getOpis() {
         return opis;
     }
 
+    /**
+     * Setter for property 'opis'.
+     *
+     * @param opis Value to set for property 'opis'.
+     */
     public void setOpis(String opis) {
         this.opis = opis;
     }
 
-    public long getProjekt_id() {
-        return projekt_id;
+    /**
+     * Getter for property 'projektId'.
+     *
+     * @return Value for property 'projektId'.
+     */
+    public long getProjektId() {
+        return projektId;
     }
 
-    public void setProjekt_id(long projekt_id) {
-        this.projekt_id = projekt_id;
+    /**
+     * Setter for property 'projektId'.
+     *
+     * @param projektId Value to set for property 'projektId'.
+     */
+    public void setProjektId(long projektId) {
+        this.projektId = projektId;
     }
 
+    /**
+     * Getter for property 'nazwa'.
+     *
+     * @return Value for property 'nazwa'.
+     */
     public String getNazwa() {
         return nazwa;
     }
 
+    /**
+     * Setter for property 'nazwa'.
+     *
+     * @param nazwa Value to set for property 'nazwa'.
+     */
     public void setNazwa(String nazwa) {
         this.nazwa = nazwa;
     }
 
+    /**
+     * Getter for property 'liderImieNazwisko'.
+     *
+     * @return Value for property 'liderImieNazwisko'.
+     */
     public String getLiderImieNazwisko() {
         return liderImieNazwisko;
     }
 
+    /**
+     * Setter ustawiający imię i nazwisko lidera
+     * @param imie imię
+     * @param nazwisko nazwisko
+     */
     public void setLiderImieNazwisko(String imie, String nazwisko) {
         this.liderImieNazwisko = imie + " " + nazwisko;
     }
 
+    /**
+     * Getter for property 'status'.
+     *
+     * @return Value for property 'status'.
+     */
     public int getStatus() {
         return status;
     }
 
+    /**
+     * Setter for property 'status'.
+     *
+     * @param status Value to set for property 'status'.
+     */
     public void setStatus(int status) {
         this.status = status;
     }
 
+    /**
+     * Getter for property 'open'.
+     *
+     * @return Value for property 'open'.
+     */
     public boolean isOpen() {
         return this.status == 1;
     }
 
+    /**
+     * Getter for property 'close'.
+     *
+     * @return Value for property 'close'.
+     */
     public boolean isClose() {
         return !isOpen();
     }

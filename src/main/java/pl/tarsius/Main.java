@@ -8,6 +8,9 @@ import io.datafx.controller.context.ApplicationContext;
 import io.datafx.controller.flow.Flow;
 import io.datafx.controller.flow.FlowException;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,11 +27,19 @@ import java.net.URLDecoder;
 import java.sql.SQLException;
 import java.util.HashSet;
 
+/**
+ * Główna klasa aplikacji inicjalizująca aplikację
+ */
 public class Main extends Application {
 
     private static Logger loger = LoggerFactory.getLogger(Main.class);
+
+    /**
+     * Inicjalizacja aplikacji JavaFX
+     * @param primaryStage {@link Stage}
+     */
     @Override
-    public void start(Stage primaryStage) throws FlowException, SQLException {
+    public void start(Stage primaryStage) {
 
 
         ApplicationContext.getInstance().register("userSession",new Object());//
@@ -38,29 +49,35 @@ public class Main extends Application {
         InitializeConnection.configLoader(); //Ładowanie dko ApplicationContext konfiguracji połączenia z bazą danych
 
         Flow flow = new Flow(StartupController.class);
-        flow.startInStage(primaryStage);
+        try {
+            flow.startInStage(primaryStage);
+        } catch (FlowException e) {
+           new Alert(Alert.AlertType.ERROR,"Błąd DataFX").show();
+        }
         primaryStage.setWidth(1170.0);
         primaryStage.setHeight(835.0);
         primaryStage.centerOnScreen();
         primaryStage.setMinWidth(1138);
         primaryStage.setMinHeight(800);
 
+        primaryStage.setMaximized(true);
+
 
         primaryStage.getScene().heightProperty().addListener((observable, oldValue, newValue) -> {
-            new ResponsiveDesign(primaryStage).resizeBodyHeight(newValue.doubleValue());
+            Platform.runLater(() -> new ResponsiveDesign(primaryStage).resizeBodyHeight(newValue.doubleValue()));
             loger.info("H"+newValue);
         });
 
         primaryStage.getScene().widthProperty().addListener((observable, oldValue, newValue) -> {
-            new ResponsiveDesign(primaryStage).resizeBodyWidth(newValue.doubleValue());
+            Platform.runLater(() -> new ResponsiveDesign(primaryStage).resizeBodyWidth(newValue.doubleValue()));
             loger.info("W"+newValue);
-
         });
-
-
     }
 
 
+    /**
+     * Metoda usuwa podczas zamykania aplikacji wygenerowane raporty pdf
+     */
     @Override
     public void stop(){
         URL url = Main.class.getProtectionDomain().getCodeSource().getLocation();

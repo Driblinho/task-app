@@ -5,6 +5,8 @@ import com.cloudinary.utils.ObjectUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Map;
 
 /**Klasa obsługująca wysyłanie awatarów
@@ -31,9 +33,9 @@ public class ImageCloudinaryUpload {
 
     /**
      * Konstruktor pobierający konfigurację API
-     * @param cloudNam
-     * @param apiSecret
-     * @param apiKey
+     * @param cloudNam nazwa
+     * @param apiSecret secret key
+     * @param apiKey api key
      */
     public ImageCloudinaryUpload(String cloudNam, String apiSecret, String apiKey) {
 
@@ -46,9 +48,9 @@ public class ImageCloudinaryUpload {
 
     /**
      * Metoda wysyłająca zdjęcie
-     * @param imagePath
-     * @return
-     * @throws IOException
+     * @param imagePath położenie obrazka
+     * @return Mapa z odpowiedzią API
+     * @throws IOException błąd podczas ładowania obrazka
      */
     public Map<String,Object> send(String imagePath) throws IOException {
 
@@ -82,6 +84,25 @@ public class ImageCloudinaryUpload {
         return cloudinary.url().transformation(
                 new Transformation().width(128).height(128).crop("thumb").gravity("faces")
         ).generate(id);
+    }
+
+    /**
+     * Metoda sprawdza czy adres URL jest dostępny
+     * @param URLName adres url
+     * @return Informacje czy adres istnieje
+     */
+    public static boolean exists(String URLName){
+        try {
+            HttpURLConnection.setFollowRedirects(false);
+            HttpURLConnection con =
+                    (HttpURLConnection) new URL(URLName).openConnection();
+            con.setRequestMethod("HEAD");
+            return (con.getResponseCode() == HttpURLConnection.HTTP_OK);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 

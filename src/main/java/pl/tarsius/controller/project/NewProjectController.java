@@ -43,7 +43,7 @@ public class NewProjectController extends BaseController {
     /**
      * Pole mapujące TextField na opis projektu
      */
-    @FXML private TextField newProjectDescField;
+    @FXML private TextArea newProjectDescField;
     /**
      * Pole mapujące DataPicker na date zakończenia projektu
      */
@@ -105,7 +105,7 @@ public class NewProjectController extends BaseController {
      * Metoda zapisująca nowy  projekt do bazy
      */
    @ActionMethod("saveProject")
-   public void saveProject() throws VetoException, FlowException {
+   public void saveProject() {
 
        if(validationSupport.isInvalid()) {
         validationSupport.initInitialDecoration();

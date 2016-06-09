@@ -30,7 +30,7 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 /**
- * Klasa obsługująca nawigację w spersonalizowaną dla użytkowników (Sidebar -> Akcje)
+ * Klasa obsługująca nawigację w spersonalizowaną dla użytkowników (Sidebar:Akcje)
  * Created by Ireneusz Kuliga on 15.04.16.
  */
 public class StockButtons {
@@ -155,13 +155,7 @@ public class StockButtons {
                 Object[] msg = TaskDb.updateStatus(taskDb.getId(), TaskDb.Status.END);
                 if((boolean) msg[0]) {
                     new Alert(Alert.AlertType.INFORMATION,""+msg[1]).show();
-                    try {
-                        flowActionHandler.navigate(ShowProjectController.class);
-                    } catch (VetoException e) {
-                        e.printStackTrace();
-                    } catch (FlowException e) {
-                        e.printStackTrace();
-                    }
+                    DataFxEXceptionHandler.navigateQuietly(flowActionHandler,ShowProjectController.class);
                 } else new Alert(Alert.AlertType.ERROR,""+msg[1]).show();
             }
         });
@@ -177,19 +171,13 @@ public class StockButtons {
                 Object[] msg = TaskDb.remove(taskDb.getId());
                 if((boolean) msg[0]) {
                     new Alert(Alert.AlertType.INFORMATION,""+msg[1]).show();
-                    try {
-                        flowActionHandler.navigate(ShowProjectController.class);
-                    } catch (VetoException e) {
-                        e.printStackTrace();
-                    } catch (FlowException e) {
-                        e.printStackTrace();
-                    }
+                    DataFxEXceptionHandler.navigateQuietly(flowActionHandler,ShowProjectController.class);
                 } else new Alert(Alert.AlertType.ERROR,""+msg[1]).show();
             }
         });
 
 
-        if((taskDb.getUserId()==curUser.getUzytkownikId() && taskDb.getStatus()!=TaskDb.Status.END.getValue() && taskDb.getStatus()!=TaskDb.Status.FORTEST.getValue()) || curUser.isAdmin()) {
+        if((taskDb.getUserId()!=null && taskDb.getUserId()==curUser.getUzytkownikId() && taskDb.getStatus()!=TaskDb.Status.END.getValue() && taskDb.getStatus()!=TaskDb.Status.FORTEST.getValue()) || curUser.isAdmin()) {
             container.getChildren().add(status);
         }
         if(curUser.isAdmin() || project.getLider()==curUser.getUzytkownikId()) {
@@ -204,6 +192,11 @@ public class StockButtons {
     public void inCloseTask() {
         this.inTask();
         container.getChildren().remove(2);
+    }
+
+    public void inCloseProject() {
+        this.inProjectButton();
+        container.getChildren().forEach(node -> node.setDisable(true));
     }
 
 

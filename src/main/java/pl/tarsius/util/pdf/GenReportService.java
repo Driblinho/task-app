@@ -35,6 +35,7 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
+ * Klasa do generowania raportów PDF
  * Created by ireq on 17.05.16.
  */
 public class GenReportService extends Service<Void>{
@@ -60,15 +61,27 @@ public class GenReportService extends Service<Void>{
 
     private HostServices hostServices;
 
+    /**
+     * Konstruktor inicjalizujący id użytkownika
+     * @param userId ID użytkownika
+     */
     public GenReportService(long userId) {
         this();
         this.userId = userId;
     }
+
+    /**
+     * Konstruktor inicjalizujący listę ID projektów
+     * @param projectIds Zbiór ID użytkowników
+     */
     public GenReportService(HashSet<Long> projectIds) {
         this();
         this.projectIds = projectIds;
     }
 
+    /**
+     * Domyślny konstruktor
+     */
     public GenReportService() {
         hostServices = new Main().getHostServices();
     }
@@ -83,7 +96,7 @@ public class GenReportService extends Service<Void>{
     }
 
     /**
-     * Getter for property 'taskReport'.
+     * Zwraca informacje czy ma być generowany raport z zadań
      *
      * @return Value for property 'taskReport'.
      */
@@ -92,7 +105,7 @@ public class GenReportService extends Service<Void>{
     }
 
     /**
-     * Setter for property 'taskReport'.
+     * Ustawia wartość logiczną określającą czy rodzaj generowanego raportu
      *
      * @param taskReport Value to set for property 'taskReport'.
      */
@@ -100,15 +113,15 @@ public class GenReportService extends Service<Void>{
         isTaskReport = taskReport;
     }
 
+    /**
+     * Metoda generująca raport z projektów
+     */
     private void genProjectReport() {
         final PDDocument doc = new PDDocument();
         reportProjectsesList=(userId!=null)?new ReportProject().genProjects(new ReportProject().getUserProject(userId)):new ReportProject().genProjects(projectIds);
         reportProjectsesList.forEach(report -> {
             // Create a simple pie chart
             DefaultPieDataset pieDataset = new DefaultPieDataset();
-
-
-            System.out.println(report.getNewTask()+" "+report.getInProgressTask());
 
             if(report.getNewTask()>0) pieDataset.setValue("Nowe", report.getNewTask());
             if(report.getInProgressTask()>0) pieDataset.setValue("Wykonywane", report.getInProgressTask());
@@ -156,7 +169,7 @@ public class GenReportService extends Service<Void>{
                     content.endText();
 
                     //Opis projektu
-                    generateMultiLineText(content,font, report.getDesc());
+                    generateMultiLineText(content,font, report.getDesc().replaceAll("[\\t\\n\\r]"," "));
 
                     content.beginText();
                     content.setFont(font, 11);
@@ -222,19 +235,24 @@ public class GenReportService extends Service<Void>{
                 }
 
             } catch (Exception e) {
-                System.out.println("Problem occurred creating chart.");
+                e.printStackTrace();
+                new Alert(Alert.AlertType.ERROR,"Problem podczas tworzenia alertu").show();
             }
         });
         try {
-            tmpName = new Timestamp(new java.util.Date().getTime()).toString()+"_tmp.pdf";
+            tmpName = new Timestamp(new java.util.Date().getTime()).toString().replace(":","")+"_tmp.pdf";
             doc.save(tmpName);
             doc.close();
             System.out.println("CLOSE PDF");
         } catch (IOException e) {
             e.printStackTrace();
+            new Alert(Alert.AlertType.ERROR,"Problem z tworzeniem pliku").show();
         }
     }
 
+    /**
+     * Metoda generująca raport z zadań
+     */
     private void genTaskReport() {
         final PDDocument doc = new PDDocument();
 
@@ -322,7 +340,7 @@ public class GenReportService extends Service<Void>{
             }
 
         try {
-            tmpName = new Timestamp(new java.util.Date().getTime()).toString()+"_tmp.pdf";
+            tmpName = new Timestamp(new java.util.Date().getTime()).toString().replace(":","")+"_tmp.pdf";
             doc.save(tmpName);
             doc.close();
             System.out.println("CLOSE PDF");
@@ -332,6 +350,12 @@ public class GenReportService extends Service<Void>{
     }
 
 
+    /**
+     * Metoda zwraca tabelę z użytkownikami i zliczonymi zadaniami użytkowników
+     * @param userList
+     * @param font
+     * @return
+     */
     private Table userTable(List<String[]> userList, PDFont font) {
         List<Column> columns = new ArrayList<>();
         columns.add(new Column("Imię", 100));
@@ -362,6 +386,12 @@ public class GenReportService extends Service<Void>{
         return table;
     }
 
+    /**
+     * Metoda zwraca tabelę z zadaniami
+     * @param userList
+     * @param font
+     * @return
+     */
     private Table taskTable(List<String[]> userList, PDFont font) {
         List<Column> columns = new ArrayList<Column>();
         columns.add(new Column("Zadanie", 400));
@@ -389,6 +419,13 @@ public class GenReportService extends Service<Void>{
     }
 
 
+    /**
+     * Metoda generuje wieloliniowy tekst
+     * @param content {@link PDPageContentStream}
+     * @param font Czcionka
+     * @param text Tekst do wstawienia
+     * @throws IOException Wyjątek zwracany podczas ładowania czcionki
+     */
     private void generateMultiLineText(PDPageContentStream content, PDFont font, String text) throws IOException {
         int fontSize = 12;
         float leading = 1.5f * fontSize;
@@ -436,6 +473,10 @@ public class GenReportService extends Service<Void>{
     }
 
 
+    /**
+     * Task generujący PDF
+     * @return Task
+     */
     @Override
     protected Task<Void> createTask() {
         return new Task<Void>() {

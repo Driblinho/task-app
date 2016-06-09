@@ -4,7 +4,7 @@
 .manageOptions:hover Hyperlink > Glyph,.manageOptions:hover > Hyperlink { -fx-text-fill: #fff;-fx-underline:false;}
 #profileCard Label {-fx-font-weight:Bold;-fx-font-size: 13;}
 
-.text-field {
+.text-field, .text-area {
     -fx-background-color: #fff;
     -fx-prompt-text-fill: rgba(97, 97, 97, 0.5) ;
     -fx-effect: dropshadow(three-pass-box, rgb(0,0,0,0.1), 4, 0, 1, 1);
@@ -58,18 +58,8 @@
     -fx-background-radius: 3, 2, 2;
 }
 
-
-.pagination{
-    -fx-page-information-visible
-}
-.pagination .pagination-control .bullet-button {
-    -fx-background-color: transparent, #DDF1F8, #0E5D79, white, white;
+.scroll-pane > .viewport {
+   -fx-background-color: transparent;
 }
 
-.pagination .pagination-control .bullet-button:selected {
-    -fx-background-color: transparent, #DDF1F8, #0E5D79, white, #0E5D79;
-}
-
-.pagination .pagination-control .left-arrow, .right-arrow{
-    -fx-background-color: #DDF1F8, #0E5D79;
-}
+.hyperlink {-fx-focus-color: transparent;}

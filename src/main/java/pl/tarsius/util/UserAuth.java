@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 
-/**
+/** Klas odpowiedzialna za autoryzacje użytkownika
  * Created by Ireneusz Kuliga on 29.03.16.
  */
 public class UserAuth {
@@ -31,11 +31,22 @@ public class UserAuth {
     private static Connection connection;
 
 
+    /**
+     * Metoda generująca hash hasła
+     * @param password Hasło na podstawie którego ma zostać wygenerowany hash
+     * @return Hash hasła
+     */
     public static String genHash(String password) {
         return BCrypt.hashpw(password, BCrypt.gensalt(12));
     }
 
 
+    /**
+     * Metoda autoryzująca użytkownika
+     * @param password Hasło użytkownika
+     * @param email Email użytkownika
+     * @return Zwraca tablice {@link Object} z logiczną wartością określającą status operacji i wiadomością na temat operacji
+     */
     public static Object[] authUser(String password, String email) {
         Object [] value = new Object[2];
         value[1] = "Nieprawidłowy email lub hasło";
@@ -75,6 +86,11 @@ public class UserAuth {
         return new Object[] {true,"Zalogowano"};
     }
 
+    /**
+     * Metoda tworząca użytkownika
+     * @param userData Dane użytkownika
+     * @return Zwraca tablice {@link Object} z logiczną wartością określającą status operacji i wiadomością na temat operacji
+     */
     public static Object[] createUser(User userData) {
         Object [] status = new Object[2];
         status[0] = false;
@@ -132,12 +148,21 @@ public class UserAuth {
         }
     }
 
+    /**
+     * Metoda generująca token do odzyskiwania hasła
+     * @return token do odzyskiwania
+     */
     private static String genRecoveryToken() {
         SecureRandom random = new SecureRandom();
         String s = new BigInteger(130, random).toString(32).toUpperCase();
         return s.substring(0,10);
     }
 
+    /**
+     * Metoda zapisująca token i wysyłająca token użytkownikowi
+     * @param email adres email
+     * @return Zwraca tablice {@link Object} z logiczną wartością określającą status operacji i wiadomością na temat operacji
+     */
     public static Object[] sendToken(String email) {
         Object[] values = new Object[2];
         values[0]=false;
@@ -201,6 +226,12 @@ public class UserAuth {
 
     }
 
+    /**
+     * @param email adres email
+     * @param token token odzyskiwania
+     * @param password hasło
+     * @return Zwraca tablice {@link Object} z logiczną wartością określającą status operacji i wiadomością na temat operacji
+     */
     public static Object[] changePassword(String email, String token, String password) {
         Object[] value = new Object[2];
         value[0]=false;
@@ -244,6 +275,12 @@ public class UserAuth {
 
     }
 
+    /**
+     * Metoda zmieniająca hasło
+     * @param password hasło
+     * @param userId ID użytkownika
+     * @return Zwraca tablice {@link Object} z logiczną wartością określającą status operacji i wiadomością na temat operacji
+     */
     public static Object[] updatePassword(String password, long userId) {
         String sql = "UPDATE Uzytkownicy SET haslo = ? WHERE Uzytkownicy.uzytkownik_id = ?;";
         Object[] value = new Object[3];
@@ -270,6 +307,11 @@ public class UserAuth {
         }
     }
 
+    /**
+     * Metoda aktualizująca dane użytkownika
+     * @param userModel dane użytkownika
+     * @return Zwraca tablice {@link Object} z logiczną wartością określającą status operacji i wiadomością na temat operacji
+     */
     public static Object[] updateUser(User userModel) {
         String sql = "UPDATE Uzytkownicy SET email = ?, imie = ?, nazwisko = ?, data_urodzenia =  ?, telefon = ?, kod_pocztowy = ?, miasto = ?, ulica = ?, PESEL = ?  WHERE Uzytkownicy.uzytkownik_id = ?";
         try {
@@ -302,6 +344,12 @@ public class UserAuth {
     }
 
 
+    /**
+     * Metoda generuje Obiekt użytkownika na bazie {@link ResultSet}
+     * @param resultSet {@link ResultSet}
+     * @return obiekt {@link User}
+     * @throws SQLException Wyjątek
+     */
     public static User setUserModel(ResultSet resultSet) throws SQLException {
         User userModel = new User();
         userModel.setUzytkownikId(resultSet.getLong("uzytkownik_id"));
@@ -321,12 +369,20 @@ public class UserAuth {
         return userModel;
     }
 
+    /**
+     * Metoda ustawiająca avatar użytkownika
+     * @param imagePath położenie awatara
+     * @param userId ID użytkownika
+     * @return Zwraca tablice {@link Object} z logiczną wartością określającą status operacji i wiadomością na temat operacji
+     */
     public static Object[] setAvatar(String imagePath,long userId) {
-        String sql = "UPDATE Uzytkownicy SET avatar_id = ? WHERE Uzytkownicy.uzytkownik_id = ?";
+        String sql = "UPDATE Uzytkownicy SET avatar_id = ? WHERE uzytkownik_id = ?";
 
         try {
             ImageCloudinaryUpload imageCloudinaryUpload = new ImageCloudinaryUpload();
-
+            if(!ImageCloudinaryUpload.exists("http://cloudinary.com/")) {
+                return new Object[] {false,"Brak dostępu do cloudinary.com"};
+            }
             Map<String,Object> image = imageCloudinaryUpload.send(imagePath);
             String imgId = (String) image.get("public_id");
             Connection connection = new InitializeConnection().connect();
@@ -347,6 +403,12 @@ public class UserAuth {
         }
     }
 
+    /**
+     * Metoda aktualizuje typ konta użytkownika
+     * @param typ typ konta użytkownika
+     * @param userId ID użytkownika
+     * @return Zwraca tablice {@link Object} z logiczną wartością określającą status operacji i wiadomością na temat operacji
+     */
     public static Object[] updateTyp(int typ,long userId) {
         try {
             Connection connection = new InitializeConnection().connect();
@@ -361,6 +423,12 @@ public class UserAuth {
         }
     }
 
+    /**
+     * Metoda aktualizująca status użytkownika
+     * @param status Status użytkownika
+     * @param userId ID użytkownika
+     * @return Zwraca tablice {@link Object} z logiczną wartością określającą status operacji i wiadomością na temat operacji
+     */
     public static Object[] updateStatus(int status,long userId) {
         try {
             Connection connection = new InitializeConnection().connect();
@@ -375,6 +443,11 @@ public class UserAuth {
         }
     }
 
+    /**
+     * Pobiera dane użytkownika po ID
+     * @param userId ID użytkownika
+     * @return Obiekt {@link User}
+     */
     public static User userByID(long userId) {
         try {
             Connection connection = new InitializeConnection().connect();
@@ -391,8 +464,13 @@ public class UserAuth {
     }
 
 
+    /**
+     * Metoda usuwa użytkownika i przekazuje nowemu użytkownikowi jego projekty
+     * @param userId ID użytkownika do usunięcia
+     * @param newOwner ID użytkownika który przejmie projekty
+     * @return Zwraca tablice {@link Object} z logiczną wartością określającą status operacji i wiadomością na temat operacji
+     */
     public static Object[] deleteUser(long userId,long newOwner) {
-        String sql = "";
         Connection connection = null;
         try {
             connection = new InitializeConnection().connect();
@@ -422,6 +500,42 @@ public class UserAuth {
             return new Object[]{false,"Błąd bazy danych"};
         }
 
+    }
+
+    public static Object[] changeProjectOwner(Long projectId, Long newOwner) {
+        Connection connection = null;
+        try {
+            connection = new InitializeConnection().connect();
+            connection.setAutoCommit(false);
+
+
+            PreparedStatement ps = (PreparedStatement) connection.prepareStatement("update Projekty set lider=? where projekt_id=?;");
+            ps.setLong(1,newOwner);
+            ps.setLong(2,projectId);
+            ps.executeUpdate();
+
+
+            ps = (PreparedStatement) connection.prepareStatement("insert into ProjektyUzytkownicy (uzytkownik_id,projekt_id,lider) select uzytkownik_id,projekt_id,0 from ProjektyUzytkownicy where lider=1 and projekt_id=?");
+            ps.setLong(1,projectId);
+            ps.executeUpdate();
+
+            ps = (PreparedStatement) connection.prepareStatement("update ProjektyUzytkownicy set uzytkownik_id=? where projekt_id=? and lider=1;");
+            ps.setLong(1,newOwner);
+            ps.setLong(2,projectId);
+            ps.executeUpdate();
+
+            ps = (PreparedStatement) connection.prepareStatement("delete from ProjektyUzytkownicy where uzytkownik_id=? and lider=0;");
+            ps.setLong(1,newOwner);
+            ps.executeUpdate();
+
+
+
+            connection.commit();
+            return new Object[]{true,"Zmieniono właściciela"};
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new Object[]{false,"Błąd bazy danych"};
+        }
     }
 
 

@@ -15,7 +15,7 @@
    <children>
       <VBox alignment="TOP_CENTER" prefHeight="224.0" prefWidth="550.0">
          <children>
-            <Label text="Podaj adres email i hsało">
+            <Label text="Podaj adres email i hasło">
                <font>
                   <Font size="20.0" />
                </font>

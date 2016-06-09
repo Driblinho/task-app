@@ -22,6 +22,7 @@ import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import org.controlsfx.control.BreadCrumbBar;
 import pl.tarsius.controller.invite.InvitesController;
+import pl.tarsius.controller.project.ChangeProjectOwnerController;
 import pl.tarsius.controller.project.EditProjectController;
 import pl.tarsius.controller.project.NewProjectController;
 import pl.tarsius.controller.project.ShowProjectController;
@@ -35,6 +36,8 @@ import pl.tarsius.util.gui.MyBread;
 import pl.tarsius.util.gui.ResponsiveDesign;
 
 import javax.annotation.PostConstruct;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -43,6 +46,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 /**
+ * Klasa bazowego kontrolera dostarcza funkcjonalności dla pozostałych kontrolerów
  * Created by Jarek on 2016-04-09.
  */
 public abstract class BaseController {
@@ -113,6 +117,7 @@ public abstract class BaseController {
     public TreeItem<MyBread> editProject = new TreeItem<>(new MyBread("Edytuj projekt", EditProjectController.class));
     public TreeItem<MyBread> about = new TreeItem<>(new MyBread("O programie", AboutController.class));
     public TreeItem<MyBread> addUserToProject = new TreeItem<>(new MyBread("Dodaj do projektu", ReportController.class));
+    public TreeItem<MyBread> newProjectOwner = new TreeItem<>(new MyBread("Zmień właściciela projektu", ChangeProjectOwnerController.class));
     public User user;
 
 
@@ -127,6 +132,9 @@ public abstract class BaseController {
     }
 
 
+    /**
+     * Inicjalizacja niezbędnych części GUI
+     */
     @PostConstruct
     public void start() {
         user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");
@@ -137,26 +145,23 @@ public abstract class BaseController {
 
 
 
-        signalProject.getChildren().addAll(task, noweTask,editProject,addUserToProject);
+        signalProject.getChildren().addAll(task, noweTask,editProject,addUserToProject,newProjectOwner);
         task.getChildren().addAll(changeTaskStatus, editTask);
 
         root.getChildren().addAll(signalProject, newProject, myTaskList, myInv, useresManagment, profilView, bucketReport,about);
         breadCrumb=new BreadCrumbBar(root);
 
-        Platform.runLater(() -> {
-            new ResponsiveDesign((Stage) operationButtons.getParent().getScene().getWindow()).resizeBodyWidth(operationButtons.getParent().getScene().getWindow().getWidth());
-            //-3.48% HACK
-            double h = operationButtons.getParent().getScene().getWindow().getHeight();
-            //h = h-h*0.0348;
-            h = h-h*0.0248;
-            new ResponsiveDesign((Stage) sideBarProject.getParent().getScene().getWindow()).resizeBodyHeight(h);
-        });
+        ResponsiveDesign.scaleGUI(sideBarProject);
 
         new Thread(countSidebar()).start();
 
 
     }
 
+    /**
+     * Metoda aktualizuje zliczenia dla sidebar
+     * @return Task aktualizujący zliczenia
+     */
     public Task<HashMap<String, Long>> countSidebar(){
 
         Task<HashMap<String, Long>> localTask = new Task<HashMap<String, Long>>() {
@@ -211,9 +216,6 @@ public abstract class BaseController {
 
         });
 
-
-
-
         return localTask;
 
     }
@@ -221,11 +223,9 @@ public abstract class BaseController {
 
     /**
      * Metoda otwierająca profil obecnie zalogowanego użytkownika
-     * @throws VetoException
-     * @throws FlowException
      */
     @ActionMethod("OpenProfile")
-    public void OpenProfile() throws VetoException, FlowException {
+    public void OpenProfile() {
         navigateToProfile(null);
     }
 
@@ -235,9 +235,15 @@ public abstract class BaseController {
         HashSet<Long> bucket = (HashSet<Long>) ApplicationContext.getInstance().getRegisteredObject("reportBucket");
         bucket.add(projectId);
         ApplicationContext.getInstance().register("reportBucket", bucket);
+        Platform.runLater(() -> sideBarRaportsCount.setText(""+bucket.size()));
+
     }
 
 
+    /**
+     * Metoda obsługuje kliknięcie w BreadCrumb
+     * @return EventHandler
+     */
     public EventHandler<BreadCrumbBar.BreadCrumbActionEvent> crumbActionEventEventHandler() {
         return event -> {
             System.out.println(event.getSelectedCrumb().toString());
@@ -249,8 +255,6 @@ public abstract class BaseController {
     /**
      * Metoda odpowiada za nawigację do profilu użytkownika
      * @param profileID ID użytkownika którego profil ma zostać wyświetlony
-     * @throws VetoException
-     * @throws FlowException
      */
     public void navigateToProfile(Long profileID) {
         user = (User) ApplicationContext.getInstance().getRegisteredObject("userSession");

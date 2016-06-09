@@ -19,6 +19,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
@@ -42,6 +43,7 @@ import java.sql.SQLException;
 import java.util.Map;
 
 /**
+ * Klasa startowa po zalogowaniu
  * Created by Ireneusz Kuliga on 02.04.16.
  */
 @FXMLController(value = "/view/app/start.fxml", title = "Projekty - Tarsius")
@@ -80,10 +82,13 @@ public class HomeController extends BaseController{
     @FXML private CheckBox collProjects;
     @FXML private CheckBox managerProjects;
 
-    @PostConstruct
-    public void init() throws VetoException, FlowException {
+    @FXML private GridPane projectListLoading;
 
-        contentFlow.setPrefHeight(400.0);
+    /**
+     * Inicjalizacja kontroler
+     */
+    @PostConstruct
+    public void init() {
 
         isBoss = false;
         showMyproject = false;
@@ -149,6 +154,10 @@ public class HomeController extends BaseController{
     }
 
 
+    /**
+     * Metoda tworząca listę projektów
+     * @param project Obiekt {@link Project}
+     */
     private void createLis(Project project) {
         if(project==null) return;
         try {
@@ -170,14 +179,16 @@ public class HomeController extends BaseController{
 
             author.setOnAction(event -> navigateToProfile(project.getLider()));
 
-            desc.setText(project.getOpis());
+            String s = project.getOpis().replaceAll("[\\t\\n\\r]"," ");
+            try {s=s.substring(0,150);} catch (IndexOutOfBoundsException e) {}
+            desc.setText(s);
             title.setText(project.getNazwa());
-            title.setUserData(project.getProjekt_id());
+            title.setUserData(project.getProjektId());
 
-            if(project.getData_zakonczenia()==null) {
+            if(project.getDataZakonczenia()==null) {
                 end.setVisible(false);
                 endL.setVisible(false);
-            } else end.setText(project.getData_zakonczenia().toString());
+            } else end.setText(project.getDataZakonczenia().toString());
 
 
             title.setOnAction(event -> {
@@ -190,7 +201,7 @@ public class HomeController extends BaseController{
             Task<Map<TaskDb.Status,Long>> countTask = new Task<Map<TaskDb.Status, Long>>() {
                 @Override
                 protected Map<TaskDb.Status, Long> call() throws Exception {
-                    return Project.getStatistic(project.getProjekt_id());
+                    return Project.getStatistic(project.getProjektId());
                 }
             };
             countTask.setOnSucceeded(event -> {
@@ -214,6 +225,13 @@ public class HomeController extends BaseController{
     }
 
 
+    /**
+     * Metoda dostarczająca {@link Service}
+     * @param search parametr wyszukiwania
+     * @param page obecna strona projektów
+     * @param connection połączenie z bazą
+     * @return Service wyświetlający projekty
+     */
     private Service<ObservableList<Project>> renderProject(String search, int page, Connection connection) {
 
 
@@ -279,17 +297,15 @@ public class HomeController extends BaseController{
                     @Override
                     protected ObservableList<Project> call() throws InterruptedException, IOException {
                         ObservableList<Project> observableList = FXCollections.observableArrayList();
-                        do {
-                            Project i = dataReader.get();
-                            observableList.add(i);
-                            Thread.sleep(500);
-                        } while (dataReader.next());
+                        dataReader.forEach(project -> observableList.add(project));
                         return observableList;
                     }
                 };
+                task.setOnRunning(event -> projectListLoading.setVisible(true));
                 task.setOnSucceeded(event -> {
                     contentFlow.getChildren().clear();
                     task.getValue().forEach(project -> createLis(project));
+                    projectListLoading.setVisible(false);
                 });
                 return task;
             }
@@ -298,6 +314,10 @@ public class HomeController extends BaseController{
         return service;
     }
 
+    /**
+     * Metoda przeładowująca listę projektów
+     * @param connection połączenia z bazą
+     */
     private void reloadProject(Connection connection) {
         if(renderService.isRunning()) renderService.cancel();
         renderService = renderProject(search,0,connection);
