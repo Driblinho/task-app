@@ -75,6 +75,8 @@ public class ShowTaskController extends BaseController {
         taskTitle.setText(taskDb.getName());
         taskDesc.setText(taskDb.getDesc());
         taskProjectAuthor.setText(taskDb.getUserName());
+        if(taskDb.getEndDate()!=null)
+        taskEnd.setText(taskDb.getEndDate().toString());
 
         String status = "Zakończone";
         switch (taskDb.getStatus()) {

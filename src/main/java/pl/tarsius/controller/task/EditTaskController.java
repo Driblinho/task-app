@@ -151,6 +151,8 @@ public class EditTaskController extends BaseController {
 
         taskDesc.setText(taskDbModel.getDesc());
         taskName.setText(taskDbModel.getName());
+        if(taskDbModel.getEndDate()!=null)
+        taskEndDatePicker.setValue(taskDbModel.getEndDate().toLocalDate());
 
         toggleGroup = new ToggleGroup();
         long projectId = (long) ApplicationContext.getInstance().getRegisteredObject("projectId");

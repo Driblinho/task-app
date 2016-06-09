@@ -78,7 +78,7 @@
                                           <Label layoutX="-85.0" text="Data startu: " />
                                           <Text fx:id="taskStart" layoutX="-3.0" layoutY="13.0" strokeType="OUTSIDE" strokeWidth="0.0" text="11.04.2016" />
                                           <Label fx:id="inprojectDataStopLabel" layoutX="101.0" text="Data końcowa:" />
-                                          <Text fx:id="taskEnd" layoutX="206.0" layoutY="13.0" strokeType="OUTSIDE" strokeWidth="0.0" text="30.05.2016" />
+                                          <Text fx:id="taskEnd" layoutX="206.0" layoutY="13.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Brak" />
                                        </children>
                                     </Group>
                                  </children>
